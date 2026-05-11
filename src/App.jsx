@@ -9,6 +9,7 @@ import Landing from './pages/Landing';
 import InputForm from './pages/InputForm';
 import Dashboard from './pages/Dashboard';
 import Education from './pages/Education';
+import StockLearning from './pages/StockLearning';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -39,6 +40,7 @@ const AuthenticatedApp = () => {
       <Route path="/analyze" element={<InputForm />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/education" element={<Education />} />
+      <Route path="/stocks" element={<StockLearning />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

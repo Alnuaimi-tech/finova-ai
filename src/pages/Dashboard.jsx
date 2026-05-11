@@ -84,6 +84,13 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3">
             <a
+              href="/stocks"
+              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              Stocks
+            </a>
+            <a
               href="/education"
               className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
