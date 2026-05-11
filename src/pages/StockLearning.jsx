@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import {
   Cpu, ArrowLeft, TrendingUp, Brain, AlertTriangle, BookOpen,
   DollarSign, BarChart3, Shield, Zap, CheckCircle2, XCircle, MinusCircle,
@@ -351,6 +352,9 @@ export default function StockLearning() {
             <p className="text-xs text-muted-foreground mt-4 text-center">
               * Simulation uses 7% average annual return (index fund estimate). Not financial advice. Actual returns vary.
             </p>
+
+            {/* Growth Chart */}
+            <GrowthChart baseMonthly={parseFloat(monthly) || 200} totalMonths={parseInt(months) || 12} />
           </motion.div>
         </section>
 
@@ -389,6 +393,68 @@ export default function StockLearning() {
         </motion.div>
 
       </div>
+    </div>
+  );
+}
+
+// ─── Growth Chart Component ───────────────────────────────────────────────────
+function GrowthChart({ baseMonthly, totalMonths }) {
+  const monthlyRate = 0.07 / 12;
+
+  const amounts = useMemo(() => {
+    const half = Math.round(baseMonthly / 2);
+    const double = Math.round(baseMonthly * 2);
+    return [
+      { amount: half, color: '#6366f1', label: `AED ${half}/mo` },
+      { amount: baseMonthly, color: '#f5c441', label: `AED ${baseMonthly}/mo` },
+      { amount: double, color: '#10b981', label: `AED ${double}/mo` },
+    ].filter(a => a.amount > 0);
+  }, [baseMonthly]);
+
+  const data = useMemo(() => {
+    const points = Math.min(totalMonths, 60);
+    return Array.from({ length: points + 1 }, (_, i) => {
+      const entry = { month: i === 0 ? 'Start' : `M${i}` };
+      amounts.forEach(({ amount, label }) => {
+        entry[label] = i === 0 ? 0 : Math.round(amount * ((Math.pow(1 + monthlyRate, i) - 1) / monthlyRate));
+      });
+      return entry;
+    });
+  }, [amounts, totalMonths, monthlyRate]);
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="glass-card rounded-lg px-3 py-2 border border-white/10 text-xs space-y-1">
+        <p className="text-muted-foreground font-medium mb-1">{label}</p>
+        {payload.map((p, i) => (
+          <p key={i} style={{ color: p.color }} className="font-semibold">
+            {p.name}: AED {p.value?.toLocaleString()}
+          </p>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="mt-6">
+      <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-3">
+        Hypothetical Growth Comparison
+      </p>
+      <ResponsiveContainer width="100%" height={220}>
+        <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+          <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false}
+            interval={Math.max(1, Math.floor(data.length / 6) - 1)} />
+          <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false}
+            tickFormatter={v => `${(v / 1000).toFixed(0)}k`} width={36} />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend formatter={v => <span className="text-xs text-muted-foreground">{v}</span>} iconType="circle" iconSize={7} />
+          {amounts.map(({ label, color }) => (
+            <Line key={label} type="monotone" dataKey={label} stroke={color} strokeWidth={2}
+              dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }
