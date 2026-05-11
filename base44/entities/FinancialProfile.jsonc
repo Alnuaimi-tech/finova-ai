@@ -1,0 +1,58 @@
+{
+  "name": "FinancialProfile",
+  "type": "object",
+  "properties": {
+    "monthly_income": {
+      "type": "number",
+      "description": "Monthly income in AED"
+    },
+    "rent": {
+      "type": "number",
+      "description": "Monthly rent expense in AED"
+    },
+    "food": {
+      "type": "number",
+      "description": "Monthly food expense in AED"
+    },
+    "transport": {
+      "type": "number",
+      "description": "Monthly transport expense in AED"
+    },
+    "shopping": {
+      "type": "number",
+      "description": "Monthly shopping expense in AED"
+    },
+    "other": {
+      "type": "number",
+      "description": "Monthly other expenses in AED"
+    },
+    "current_savings": {
+      "type": "number",
+      "description": "Current savings in AED"
+    },
+    "stability_score": {
+      "type": "number",
+      "description": "Calculated financial stability score 0-100"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "High Risk",
+        "Medium Risk",
+        "Low Risk"
+      ],
+      "description": "Risk classification"
+    },
+    "ai_analysis": {
+      "type": "string",
+      "description": "AI-generated analysis and explanation"
+    },
+    "prediction_summary": {
+      "type": "string",
+      "description": "AI-generated 3-month prediction"
+    }
+  },
+  "required": [
+    "monthly_income"
+  ]
+}
