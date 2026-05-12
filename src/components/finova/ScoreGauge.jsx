@@ -32,7 +32,7 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative w-44 h-44">
+      <div className="relative w-56 h-56">
         <svg viewBox="0 0 120 120" className="w-full h-full -rotate-[135deg] score-ring">
           {/* Background track */}
           <circle
@@ -61,7 +61,7 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
-            className="text-5xl font-bold font-space tabular-nums"
+            className="text-6xl font-bold font-space tabular-nums"
             style={{ color: getScoreColor() }}
           >
             {displayScore}

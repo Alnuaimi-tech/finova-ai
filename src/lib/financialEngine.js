@@ -25,10 +25,17 @@ export function calculateFinancialScore(data) {
   // Shopping < 10% = 100, 30%+ = 0
   const riskySpendScore = Math.max(0, Math.min(100, ((20 - shoppingRatio) / 20) * 100));
 
+  // Emergency fund bonus (up to +10 pts): 3+ months coverage = full bonus
+  const monthsOfRunway = (current_savings || 0) > 0 && totalExpenses > 0
+    ? (current_savings || 0) / totalExpenses
+    : 0;
+  const emergencyBonus = Math.min(10, (monthsOfRunway / 3) * 10);
+
   const finalScore = Math.round(
-    savingsScore * 0.4 +
-    expenseScore * 0.3 +
-    riskySpendScore * 0.3
+    savingsScore * 0.35 +
+    expenseScore * 0.28 +
+    riskySpendScore * 0.27 +
+    emergencyBonus
   );
 
   return {
@@ -39,9 +46,11 @@ export function calculateFinancialScore(data) {
     rentRatio: Math.round(rentRatio * 10) / 10,
     totalExpenses,
     monthlySurplus,
+    monthsOfRunway: Math.round(monthsOfRunway * 10) / 10,
     savingsScore: Math.round(savingsScore),
     expenseScore: Math.round(expenseScore),
     riskySpendScore: Math.round(riskySpendScore),
+    emergencyBonus: Math.round(emergencyBonus),
   };
 }
 
@@ -206,6 +215,33 @@ export function generatePredictions(data, metrics) {
   }
 
   return { predictions, narrative };
+}
+
+export function getRiskTrend(metrics) {
+  const { savingsRate, expenseRatio } = metrics;
+  if (savingsRate >= 20 && expenseRatio <= 70) return { label: 'Improving', color: 'text-emerald-400', bg: 'bg-emerald-500/10', arrow: '↑' };
+  if (savingsRate >= 10 && expenseRatio <= 85) return { label: 'Stable', color: 'text-amber-400', bg: 'bg-amber-500/10', arrow: '→' };
+  return { label: 'Worsening', color: 'text-rose-400', bg: 'bg-rose-500/10', arrow: '↓' };
+}
+
+export function simulateScenario(data, metrics, scenarioType) {
+  let modified = { ...data };
+  let label = '';
+  if (scenarioType === 'reduce_shopping_10pct') {
+    const reduction = data.monthly_income * 0.10;
+    modified.shopping = Math.max(0, (data.shopping || 0) - reduction);
+    label = 'Reduce spending by 10%';
+  } else if (scenarioType === 'reduce_rent') {
+    modified.rent = Math.round((data.rent || 0) * 0.85);
+    label = 'Cut rent by 15%';
+  } else if (scenarioType === 'boost_savings') {
+    modified.shopping = Math.max(0, (data.shopping || 0) * 0.5);
+    modified.other = Math.max(0, (data.other || 0) * 0.8);
+    label = 'Minimize discretionary spending';
+  }
+  const newMetrics = calculateFinancialScore(modified);
+  const newRisk = classifyRisk(newMetrics.score);
+  return { label, newScore: newMetrics.score, newRisk, newMetrics, scoreDelta: newMetrics.score - metrics.score };
 }
 
 export function generateRecommendations(data, metrics, riskLevel) {

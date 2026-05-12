@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, ArrowRight, Brain, TrendingUp, Shield, BookOpen, Zap, BarChart3 } from 'lucide-react';
+import { Cpu, ArrowRight, Brain, TrendingUp, Shield, BookOpen, Zap, BarChart3, LineChart } from 'lucide-react';
 
 const features = [
   { icon: Brain, title: 'AI Explanation Engine', desc: 'Contextual analysis of your financial behavior with human-like reasoning', color: 'text-purple-400', bg: 'bg-purple-500/10' },
@@ -37,13 +37,22 @@ export default function Landing() {
               <span className="font-space font-bold text-xl text-primary ml-1">AI</span>
             </div>
           </div>
-          <button
-            onClick={() => navigate('/education')}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            Education
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/stocks')}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
+            >
+              <LineChart className="w-3.5 h-3.5" />
+              Stocks
+            </button>
+            <button
+              onClick={() => navigate('/education')}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              Education
+            </button>
+          </div>
         </div>
       </header>
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard } from 'lucide-react';
+import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import ScoreGauge from '../components/finova/ScoreGauge';
 import ExpenseChart from '../components/finova/ExpenseChart';
@@ -16,6 +16,8 @@ import {
   generateAIExplanations,
   generatePredictions,
   generateRecommendations,
+  getRiskTrend,
+  simulateScenario,
 } from '../lib/financialEngine';
 
 const TABS = [
@@ -23,6 +25,7 @@ const TABS = [
   { id: 'insights', label: 'AI Insights', icon: Brain },
   { id: 'predictions', label: 'Predictions', icon: TrendingUp },
   { id: 'recommendations', label: 'Action Plan', icon: Sparkles },
+  { id: 'scenarios', label: 'Scenarios', icon: Sliders },
 ];
 
 export default function Dashboard() {
@@ -35,6 +38,7 @@ export default function Dashboard() {
   const [insights, setInsights] = useState([]);
   const [predictionData, setPredictionData] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [riskTrend, setRiskTrend] = useState(null);
 
   useEffect(() => {
     const raw = sessionStorage.getItem('finova_data');
@@ -61,6 +65,7 @@ export default function Dashboard() {
     setInsights(ex);
     setPredictionData(pred);
     setRecommendations(recs);
+    setRiskTrend(getRiskTrend(m));
   }, [navigate]);
 
   if (!data || !metrics) {
@@ -83,6 +88,13 @@ export default function Dashboard() {
             <span className="font-space font-bold text-lg text-foreground tracking-tight">FINOVA AI</span>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/analyst')}
+              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              AI Analyst
+            </button>
             <a
               href="/stocks"
               className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
@@ -120,7 +132,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Hero Score Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Score Gauge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -129,12 +141,18 @@ export default function Dashboard() {
           >
             <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-4">Financial Stability Score</p>
             <ScoreGauge score={metrics.score} riskLevel={riskLevel} riskColor={riskColor} />
-            <p className="text-xs text-muted-foreground text-center mt-4 max-w-[200px] leading-relaxed">
+            {riskTrend && (
+              <div className={`mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${riskTrend.bg} ${riskTrend.color}`}>
+                <span>{riskTrend.arrow}</span>
+                <span>Trend: {riskTrend.label}</span>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground text-center mt-3 max-w-[200px] leading-relaxed">
               Calculated from savings behavior, expense patterns, and spending risk
             </p>
           </motion.div>
 
-          {/* Key Metrics */}
+          {/* Score Breakdown */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,28 +161,6 @@ export default function Dashboard() {
           >
             <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Score Breakdown</p>
             <ScoreBreakdown metrics={metrics} />
-            <div className="pt-2 border-t border-border space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Monthly Income</span>
-                <span className="font-semibold text-gold">AED {data.monthly_income.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Total Expenses</span>
-                <span className="font-semibold text-foreground">AED {metrics.totalExpenses.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Monthly Surplus</span>
-                <span className={`font-semibold ${metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {metrics.monthlySurplus >= 0 ? '+' : ''}AED {metrics.monthlySurplus.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Savings Rate</span>
-                <span className={`font-semibold ${metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400'}`}>
-                  {metrics.savingsRate}%
-                </span>
-              </div>
-            </div>
           </motion.div>
 
           {/* Expense Chart */}
@@ -178,6 +174,28 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mb-2">% of monthly income — AED {data.monthly_income.toLocaleString()}</p>
             <ExpenseChart data={data} income={data.monthly_income} />
           </motion.div>
+        </div>
+
+        {/* Summary Stat Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          {[
+            { icon: Wallet, label: 'Monthly Income', value: `AED ${data.monthly_income.toLocaleString()}`, color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+            { icon: ReceiptText, label: 'Total Expenses', value: `AED ${metrics.totalExpenses.toLocaleString()}`, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+            { icon: PiggyBank, label: 'Monthly Surplus', value: `${metrics.monthlySurplus >= 0 ? '+' : ''}AED ${metrics.monthlySurplus.toLocaleString()}`, color: metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400', bg: metrics.monthlySurplus >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10', border: metrics.monthlySurplus >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20' },
+            { icon: ShieldAlert, label: 'Savings Rate', value: `${metrics.savingsRate}%`, color: metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400', bg: metrics.savingsRate >= 20 ? 'bg-emerald-500/10' : metrics.savingsRate >= 10 ? 'bg-amber-500/10' : 'bg-rose-500/10', border: metrics.savingsRate >= 20 ? 'border-emerald-500/20' : metrics.savingsRate >= 10 ? 'border-amber-500/20' : 'border-rose-500/20' },
+          ].map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.07 }}
+                className={`glass-card rounded-2xl border ${stat.border} ${stat.bg} p-4`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon className={`w-4 h-4 ${stat.color}`} />
+                  <span className="text-xs text-muted-foreground">{stat.label}</span>
+                </div>
+                <p className={`text-lg font-bold font-space ${stat.color}`}>{stat.value}</p>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Tabs */}
@@ -269,6 +287,7 @@ export default function Dashboard() {
                   predictions={predictionData.predictions}
                   narrative={predictionData.narrative}
                   currentSavings={data.current_savings}
+                  riskTrend={riskTrend}
                 />
               )}
             </motion.div>
@@ -294,6 +313,56 @@ export default function Dashboard() {
               {recommendations.map((rec, i) => (
                 <RecommendationCard key={i} rec={rec} index={i} />
               ))}
+            </motion.div>
+          )}
+
+          {activeTab === 'scenarios' && (
+            <motion.div
+              key="scenarios"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-4"
+            >
+              <div className="glass-card rounded-xl border border-border p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <Sliders className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-semibold text-foreground">Scenario Simulation</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  See how small changes to your spending would affect your FINOVA stability score.
+                </p>
+              </div>
+              {['reduce_shopping_10pct', 'reduce_rent', 'boost_savings'].map((scenarioType) => {
+                const sim = simulateScenario(data, metrics, scenarioType);
+                const simRiskColor = getRiskColor(sim.newRisk);
+                return (
+                  <div key={scenarioType} className="glass-card rounded-2xl border border-border p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-foreground mb-1">What if you {sim.label.toLowerCase()}?</p>
+                        <div className="flex items-center gap-3 mt-3">
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-0.5">Current Score</p>
+                            <p className="text-2xl font-bold font-space" style={{ color: riskColor.hex }}>{metrics.score}</p>
+                          </div>
+                          <div className="text-xl text-muted-foreground">→</div>
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-0.5">New Score</p>
+                            <p className="text-2xl font-bold font-space" style={{ color: simRiskColor.hex }}>{sim.newScore}</p>
+                          </div>
+                          <div className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${sim.scoreDelta > 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}>
+                            {sim.scoreDelta > 0 ? '+' : ''}{sim.scoreDelta} pts
+                          </div>
+                        </div>
+                        <div className={`mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${simRiskColor.bg} ${simRiskColor.border} ${simRiskColor.text}`}>
+                          {sim.newRisk}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>
