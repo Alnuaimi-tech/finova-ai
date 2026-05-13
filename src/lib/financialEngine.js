@@ -1,6 +1,6 @@
 /**
- * FINOVA AI — Financial Analysis Engine
- * Core scoring, risk classification, and prediction logic
+ * FINOVA AI — Financial Analysis Engine v2
+ * Core scoring, risk classification, prediction, and reasoning logic
  */
 
 export function calculateFinancialScore(data) {

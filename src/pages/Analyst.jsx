@@ -5,6 +5,28 @@ import { Cpu, ArrowLeft, Send, Brain, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ReactMarkdown from 'react-markdown';
 
+// Build a financial context summary string from sessionStorage
+function buildFinancialContext() {
+  const raw = sessionStorage.getItem('finova_data');
+  if (!raw) return '';
+  try {
+    const d = Object.fromEntries(Object.entries(JSON.parse(raw)).map(([k, v]) => [k, parseFloat(v) || 0]));
+    const total = (d.rent||0)+(d.food||0)+(d.transport||0)+(d.shopping||0)+(d.other||0);
+    const surplus = d.monthly_income - total;
+    const savingsRate = d.monthly_income > 0 ? ((surplus / d.monthly_income)*100).toFixed(1) : 0;
+    const expRatio = d.monthly_income > 0 ? ((total / d.monthly_income)*100).toFixed(1) : 100;
+    const runway = total > 0 ? ((d.current_savings||0) / total).toFixed(1) : 0;
+    const savingsScore = Math.round(Math.max(0,Math.min(100,(savingsRate/20)*100)));
+    const expScore = Math.round(Math.max(0,Math.min(100,((100-expRatio)/30)*100)));
+    const shopRatio = d.monthly_income > 0 ? (d.shopping/d.monthly_income*100) : 0;
+    const riskScore = Math.round(Math.max(0,Math.min(100,((20-shopRatio)/20)*100)));
+    const bonus = Math.min(10,(runway/3)*10);
+    const score = Math.round(Math.max(0,Math.min(100, savingsScore*0.35+expScore*0.28+riskScore*0.27+bonus)));
+    const risk = score>=70?'Low Risk':score>=40?'Medium Risk':'High Risk';
+    return `\n\n[USER FINANCIAL PROFILE]\nMonthly Income: AED ${d.monthly_income.toLocaleString()}\nTotal Expenses: AED ${total.toLocaleString()}\nMonthly Surplus: AED ${surplus.toLocaleString()}\nSavings Rate: ${savingsRate}%\nExpense Ratio: ${expRatio}%\nShopping: AED ${(d.shopping||0).toLocaleString()} (${shopRatio.toFixed(1)}% of income)\nRent: AED ${(d.rent||0).toLocaleString()} (${d.monthly_income>0?((d.rent/d.monthly_income)*100).toFixed(1):0}% of income)\nCurrent Savings: AED ${(d.current_savings||0).toLocaleString()} (${runway} months runway)\nFINOVA Score: ${score}/100 — ${risk}\n[END PROFILE]\n\nPlease use this profile in all your answers. Be specific with numbers and AED amounts.`;
+  } catch { return ''; }
+}
+
 export default function Analyst() {
   const navigate = useNavigate();
   const [conversation, setConversation] = useState(null);
@@ -12,6 +34,11 @@ export default function Analyst() {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
+  const financialContext = buildFinancialContext();
+
+  const smartPrompts = financialContext
+    ? ['Explain my score', 'What should I fix first?', 'How can I reach score 90?', 'Am I ready to invest?']
+    : ['How do I start budgeting?', 'What is the 50/30/20 rule?', 'Is Tabby bad for my finances?', 'When should I start investing?'];
 
   useEffect(() => {
     async function init() {
@@ -40,7 +67,11 @@ export default function Analyst() {
     const text = input.trim();
     setInput('');
     setSending(true);
-    await base44.agents.addMessage(conversation, { role: 'user', content: text });
+    // Prepend financial context to the first real message so the agent has full profile
+    const contentWithContext = (messages.filter(m => m.role === 'user').length === 0 && financialContext)
+      ? `${text}${financialContext}`
+      : text;
+    await base44.agents.addMessage(conversation, { role: 'user', content: contentWithContext });
     setSending(false);
   };
 
@@ -87,12 +118,7 @@ export default function Analyst() {
               I'm your AI financial advisor, built for UAE students. Ask me about your score, how to save more, budgeting tips, or anything about money in the UAE.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
-              {[
-                'Why is my score low?',
-                'How do I save more in Dubai?',
-                'Is Tabby bad for my finances?',
-                'When should I start investing?',
-              ].map((q) => (
+              {smartPrompts.map((q) => (
                 <button key={q} onClick={() => setInput(q)}
                   className="text-xs px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-white/20 transition-all">
                   {q}

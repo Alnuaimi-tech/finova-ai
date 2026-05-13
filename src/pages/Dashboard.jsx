@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle } from 'lucide-react';
+import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, FlaskConical } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import ScoreGauge from '../components/finova/ScoreGauge';
 import ExpenseChart from '../components/finova/ExpenseChart';
@@ -9,6 +9,7 @@ import AIInsightCard from '../components/finova/AIInsightCard';
 import PredictionCard from '../components/finova/PredictionCard';
 import RecommendationCard from '../components/finova/RecommendationCard';
 import ScoreBreakdown from '../components/finova/ScoreBreakdown';
+import AIReasoningEngine from '../components/finova/AIReasoningEngine';
 import {
   calculateFinancialScore,
   classifyRisk,
@@ -22,7 +23,8 @@ import {
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'insights', label: 'AI Insights', icon: Brain },
+  { id: 'reasoning', label: 'AI Reasoning', icon: Brain },
+  { id: 'insights', label: 'AI Insights', icon: FlaskConical },
   { id: 'predictions', label: 'Predictions', icon: TrendingUp },
   { id: 'recommendations', label: 'Action Plan', icon: Sparkles },
   { id: 'scenarios', label: 'Scenarios', icon: Sliders },
@@ -101,6 +103,13 @@ export default function Dashboard() {
             >
               <TrendingUp className="w-3.5 h-3.5" />
               Stocks
+            </a>
+            <a
+              href="/ai-model"
+              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <FlaskConical className="w-3.5 h-3.5" />
+              AI Model
             </a>
             <a
               href="/education"
@@ -243,6 +252,17 @@ export default function Dashboard() {
             </motion.div>
           )}
 
+          {activeTab === 'reasoning' && (
+            <motion.div
+              key="reasoning"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <AIReasoningEngine data={data} metrics={metrics} />
+            </motion.div>
+          )}
+
           {activeTab === 'insights' && (
             <motion.div
               key="insights"
@@ -327,40 +347,52 @@ export default function Dashboard() {
               <div className="glass-card rounded-xl border border-border p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Sliders className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-foreground">Scenario Simulation</span>
+                  <span className="text-sm font-semibold text-foreground">What-If Scenario Simulation</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  See how small changes to your spending would affect your FINOVA stability score.
+                  See how targeted changes to your spending habits would affect your FINOVA score and risk tier.
                 </p>
               </div>
               {['reduce_shopping_10pct', 'reduce_rent', 'boost_savings'].map((scenarioType) => {
                 const sim = simulateScenario(data, metrics, scenarioType);
                 const simRiskColor = getRiskColor(sim.newRisk);
+                const riskChanged = sim.newRisk !== riskLevel;
                 return (
-                  <div key={scenarioType} className="glass-card rounded-2xl border border-border p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground mb-1">What if you {sim.label.toLowerCase()}?</p>
-                        <div className="flex items-center gap-3 mt-3">
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-0.5">Current Score</p>
-                            <p className="text-2xl font-bold font-space" style={{ color: riskColor.hex }}>{metrics.score}</p>
-                          </div>
-                          <div className="text-xl text-muted-foreground">→</div>
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-0.5">New Score</p>
-                            <p className="text-2xl font-bold font-space" style={{ color: simRiskColor.hex }}>{sim.newScore}</p>
-                          </div>
-                          <div className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${sim.scoreDelta > 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}>
-                            {sim.scoreDelta > 0 ? '+' : ''}{sim.scoreDelta} pts
-                          </div>
-                        </div>
-                        <div className={`mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${simRiskColor.bg} ${simRiskColor.border} ${simRiskColor.text}`}>
-                          {sim.newRisk}
-                        </div>
+                  <motion.div key={scenarioType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    className="glass-card rounded-2xl border border-border p-5">
+                    <p className="text-sm font-semibold text-foreground mb-4">
+                      💡 What if you <span className="text-primary">{sim.label.toLowerCase()}</span>?
+                    </p>
+
+                    {/* BEFORE vs AFTER */}
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="rounded-xl bg-secondary/30 border border-border p-4 text-center">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">BEFORE</p>
+                        <p className="text-3xl font-bold font-space mb-1" style={{ color: riskColor.hex }}>{metrics.score}</p>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}>{riskLevel}</span>
+                      </div>
+                      <div className={`rounded-xl border p-4 text-center ${simRiskColor.bg} ${simRiskColor.border}`}>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">AFTER</p>
+                        <p className="text-3xl font-bold font-space mb-1" style={{ color: simRiskColor.hex }}>{sim.newScore}</p>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${simRiskColor.bg} ${simRiskColor.border} ${simRiskColor.text}`}>{sim.newRisk}</span>
                       </div>
                     </div>
-                  </div>
+
+                    {/* Change summary */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${sim.scoreDelta > 0 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : sim.scoreDelta < 0 ? 'text-rose-400 bg-rose-500/10 border border-rose-500/20' : 'text-muted-foreground bg-secondary/30 border border-border'}`}>
+                        Score change: {sim.scoreDelta > 0 ? '+' : ''}{sim.scoreDelta} pts
+                      </div>
+                      {riskChanged && (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 border border-primary/20 text-primary">
+                          Risk: {riskLevel} → {sim.newRisk}
+                        </div>
+                      )}
+                      {!riskChanged && (
+                        <span className="text-xs text-muted-foreground">Risk tier unchanged</span>
+                      )}
+                    </div>
+                  </motion.div>
                 );
               })}
             </motion.div>
