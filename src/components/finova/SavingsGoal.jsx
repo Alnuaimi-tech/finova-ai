@@ -5,10 +5,12 @@ import { Target, Pencil, CheckCircle2, X } from 'lucide-react';
 const STORAGE_KEY = 'finova_savings_goal';
 
 export default function SavingsGoal({ currentSavings }) {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  const [goal, setGoal] = useState(saved ? parseFloat(saved) : null);
-  const [editing, setEditing] = useState(!saved);
-  const [inputVal, setInputVal] = useState(saved || '');
+  const [goal, setGoal] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? parseFloat(saved) : null;
+  });
+  const [editing, setEditing] = useState(() => !localStorage.getItem(STORAGE_KEY));
+  const [inputVal, setInputVal] = useState(() => localStorage.getItem(STORAGE_KEY) || '');
 
   const current = currentSavings || 0;
   const progress = goal > 0 ? Math.min(100, Math.round((current / goal) * 100)) : 0;
