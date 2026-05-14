@@ -10,6 +10,7 @@ import PredictionCard from '../components/finova/PredictionCard';
 import RecommendationCard from '../components/finova/RecommendationCard';
 import ScoreBreakdown from '../components/finova/ScoreBreakdown';
 import AIReasoningEngine from '../components/finova/AIReasoningEngine';
+import SavingsGoal from '../components/finova/SavingsGoal';
 import {
   calculateFinancialScore,
   classifyRisk,
@@ -238,6 +239,7 @@ export default function Dashboard() {
               exit={{ opacity: 0, y: -10 }}
               className="space-y-4"
             >
+              <SavingsGoal currentSavings={data.current_savings} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {insights.slice(0, 4).map((insight, i) => (
                   <AIInsightCard key={i} insight={insight} index={i} />
