@@ -5,8 +5,9 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } f
 import {
   Cpu, ArrowLeft, TrendingUp, Brain, AlertTriangle, BookOpen,
   DollarSign, BarChart3, Shield, Zap, CheckCircle2, XCircle, MinusCircle,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Building2
 } from 'lucide-react';
+import UAEStocksPanel from '../components/finova/UAEStocksPanel';
 
 // ─── AI Readiness Logic ───────────────────────────────────────────────────────
 function getReadiness(score) {
@@ -355,6 +356,14 @@ export default function StockLearning() {
 
             {/* Growth Chart */}
             <GrowthChart baseMonthly={parseFloat(monthly) || 200} totalMonths={parseInt(months) || 12} />
+          </motion.div>
+        </section>
+
+        {/* ── 6b. UAE Listed Companies ── */}
+        <section>
+          <SectionHeader icon={Building2} label="ADX · DFM" title="UAE Listed Companies — Practice Board" color="text-blue-400" />
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-5">
+            <UAEStocksPanel />
           </motion.div>
         </section>
 
