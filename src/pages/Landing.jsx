@@ -1,17 +1,30 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, ArrowRight, Brain, TrendingUp, Shield, BookOpen, Zap, BarChart3, LineChart } from 'lucide-react';
+import { Cpu, ArrowRight, Brain, TrendingUp, Shield, BookOpen, Zap, BarChart3, LineChart, Building2 } from 'lucide-react';
 
 const features = [
-  { icon: Brain, title: 'AI Explanation Engine', desc: 'Contextual analysis of your financial behavior with human-like reasoning', color: 'text-purple-400', bg: 'bg-purple-500/10' },
-  { icon: BarChart3, title: 'Stability Score (0–100)', desc: 'Multi-factor score based on savings, expenses, and spending risk', color: 'text-gold', bg: 'bg-yellow-500/10' },
-  { icon: TrendingUp, title: '3-Month Prediction', desc: 'AI-generated financial trajectory simulation for the next 90 days', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-  { icon: Shield, title: 'Risk Classification', desc: 'Instant risk profiling: High, Medium, or Low — with detailed explanation', color: 'text-rose-400', bg: 'bg-rose-500/10' },
+  { icon: Brain, title: 'AI Explanation Engine', desc: 'Contextual analysis tailored to UAE student spending patterns and AED-based expenses', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+  { icon: BarChart3, title: 'Stability Score (0–100)', desc: 'Multi-factor score benchmarked against UAE student financial norms and cost of living', color: 'text-gold', bg: 'bg-yellow-500/10' },
+  { icon: TrendingUp, title: '3-Month Prediction', desc: 'AI-generated trajectory based on Dubai & Abu Dhabi living costs and your spending habits', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { icon: Shield, title: 'Risk Classification', desc: 'Instant risk profiling aligned with UAE financial benchmarks — High, Medium, or Low', color: 'text-rose-400', bg: 'bg-rose-500/10' },
 ];
 
 const pipeline = [
   'User Input', 'Processing', 'AI Analysis', 'Risk Score', 'Prediction', 'Insights', 'Education'
 ];
+
+const companies = [
+  { name: 'ADNOC', sector: 'Energy' },
+  { name: 'Emirates NBD', sector: 'Banking' },
+  { name: 'Etisalat (e&)', sector: 'Telecom' },
+  { name: 'Emaar', sector: 'Real Estate' },
+  { name: 'DP World', sector: 'Logistics' },
+  { name: 'FAB', sector: 'Banking' },
+  { name: 'Aldar', sector: 'Real Estate' },
+  { name: 'Dubai Airports', sector: 'Aviation' },
+];
+
+const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa University', 'Zayed University', 'HCT'];
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -43,7 +56,7 @@ export default function Landing() {
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
             >
               <LineChart className="w-3.5 h-3.5" />
-              Stocks
+              UAE Stocks
             </button>
             <button
               onClick={() => navigate('/education')}
@@ -65,18 +78,18 @@ export default function Landing() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6 tracking-wide">
             <Zap className="w-3 h-3" />
-            AI-POWERED FINANCIAL INTELLIGENCE FOR UAE STUDENTS
+            🇦🇪 AI-POWERED FINANCIAL INTELLIGENCE — BUILT FOR THE UAE
           </div>
 
           <h1 className="text-5xl md:text-7xl font-space font-bold text-foreground mb-4 leading-tight tracking-tight">
-            Know Your
+            Your UAE Student
             <span className="block text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, hsl(43,96%,56%), hsl(38,92%,45%))' }}>
               Financial Reality
             </span>
           </h1>
 
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            FINOVA AI analyzes your income, expenses, and behavior to generate a personalized financial stability score, risk profile, and 3-month prediction — built specifically for students in the UAE.
+            FINOVA AI analyzes your AED income, UAE living expenses, and spending behavior to generate a personalized stability score, risk profile, and 3-month prediction — calibrated for the UAE cost of living.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -127,7 +140,7 @@ export default function Landing() {
       </div>
 
       {/* Features */}
-      <div className="relative max-w-5xl mx-auto px-6 pb-20">
+      <div className="relative max-w-5xl mx-auto px-6 pb-10">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -154,16 +167,51 @@ export default function Landing() {
             })}
           </div>
         </motion.div>
+      </div>
 
-        {/* Bottom badge */}
+      {/* UAE Companies Section */}
+      <div className="relative max-w-5xl mx-auto px-6 pb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="glass-card rounded-2xl border border-border p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Building2 className="w-4 h-4 text-primary" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">UAE's Top Companies — Know Where to Invest</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {companies.map((c, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.75 + i * 0.05 }}
+                className="rounded-xl bg-secondary/30 border border-border px-4 py-3 text-center hover:border-primary/30 transition-all cursor-pointer"
+                onClick={() => navigate('/stocks')}
+              >
+                <p className="text-sm font-bold font-space text-foreground">{c.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{c.sector}</p>
+              </motion.div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-4 text-center">
+            Tap any company to explore UAE stocks and investment readiness →
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Bottom badge */}
+      <div className="relative max-w-5xl mx-auto px-6 pb-16">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
-          className="text-center mt-12"
+          className="text-center"
         >
           <p className="text-xs text-muted-foreground">
-            🇦🇪 Designed for students across UAE universities · ADNOC, UAEU, AUS, NYU Abu Dhabi, AUD
+            🇦🇪 Designed for students across UAE universities · {universities.join(' · ')}
           </p>
         </motion.div>
       </div>
