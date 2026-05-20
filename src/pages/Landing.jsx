@@ -52,6 +52,13 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={() => navigate('/market')}
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5"
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              Market Dashboard
+            </button>
+            <button
               onClick={() => navigate('/stocks')}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
             >
