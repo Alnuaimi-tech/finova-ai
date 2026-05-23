@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } f
 import {
   Cpu, ArrowLeft, TrendingUp, Brain, AlertTriangle, BookOpen,
   DollarSign, BarChart3, Shield, Zap, CheckCircle2, XCircle, MinusCircle,
-  ChevronDown, ChevronUp, Building2
+  ChevronDown, ChevronUp, Building2, PiggyBank
 } from 'lucide-react';
 import UAEStocksPanel from '../components/finova/UAEStocksPanel';
 
@@ -383,6 +383,21 @@ export default function StockLearning() {
             ))}
           </div>
         </section>
+
+        {/* ── Virtual Portfolio CTA ── */}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 flex flex-col sm:flex-row items-center gap-5">
+          <PiggyBank className="w-10 h-10 text-emerald-400 flex-shrink-0" />
+          <div className="flex-1 text-center sm:text-left">
+            <p className="text-sm font-semibold text-foreground mb-1 font-space">Ready to practice? Try the Virtual Portfolio Tracker</p>
+            <p className="text-xs text-muted-foreground">Add UAE stocks, simulate buys, and track your P&amp;L — with zero real money on the line.</p>
+          </div>
+          <button onClick={() => navigate('/portfolio')}
+            className="flex-shrink-0 gold-gradient text-primary-foreground px-5 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <PiggyBank className="w-4 h-4" />
+            Open Portfolio
+          </button>
+        </motion.div>
 
         {/* ── FINOVA AI Connect ── */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}

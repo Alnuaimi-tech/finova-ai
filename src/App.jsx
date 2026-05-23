@@ -13,6 +13,7 @@ import StockLearning from './pages/StockLearning';
 import Analyst from './pages/Analyst';
 import AIModel from './pages/AIModel';
 import MarketDashboard from './pages/MarketDashboard';
+import Portfolio from './pages/Portfolio';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
       <Route path="/analyst" element={<Analyst />} />
       <Route path="/ai-model" element={<AIModel />} />
       <Route path="/market" element={<MarketDashboard />} />
+      <Route path="/portfolio" element={<Portfolio />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

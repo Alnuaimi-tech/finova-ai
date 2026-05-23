@@ -1,0 +1,45 @@
+{
+  "name": "VirtualHolding",
+  "type": "object",
+  "properties": {
+    "ticker": {
+      "type": "string",
+      "description": "Stock ticker symbol"
+    },
+    "name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "exchange": {
+      "type": "string",
+      "description": "ADX or DFM"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Number of shares held"
+    },
+    "purchase_price": {
+      "type": "number",
+      "description": "Price per share at purchase in AED"
+    },
+    "purchase_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of virtual purchase"
+    },
+    "sector": {
+      "type": "string",
+      "description": "Industry sector"
+    },
+    "emoji": {
+      "type": "string",
+      "description": "Company emoji icon"
+    }
+  },
+  "required": [
+    "ticker",
+    "name",
+    "quantity",
+    "purchase_price"
+  ]
+}
