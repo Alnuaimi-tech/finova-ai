@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, ArrowLeft, Send, Brain, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ReactMarkdown from 'react-markdown';
+import MobileNav from '../components/finova/MobileNav';
 
 // Build a financial context summary string from sessionStorage
 function buildFinancialContext() {
@@ -82,9 +83,9 @@ export default function Analyst() {
   const visibleMessages = messages.filter(m => m.role === 'user' || (m.role === 'assistant' && m.content));
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
@@ -107,7 +108,7 @@ export default function Analyst() {
       </header>
 
       {/* Chat area */}
-      <div className="flex-1 max-w-3xl w-full mx-auto px-6 py-6 flex flex-col gap-4 overflow-y-auto pb-36">
+      <div className="flex-1 max-w-3xl w-full mx-auto px-3 md:px-6 py-4 md:py-6 flex flex-col gap-3 md:gap-4 overflow-y-auto pb-36 md:pb-36">
         {/* Welcome */}
         {visibleMessages.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -168,9 +169,10 @@ export default function Analyst() {
         <div ref={bottomRef} />
       </div>
 
+      <MobileNav />
       {/* Input bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border px-6 py-4">
-        <div className="max-w-3xl mx-auto flex gap-3">
+      <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border px-3 md:px-6 py-3 md:py-4 z-40">
+        <div className="max-w-3xl mx-auto flex gap-2 md:gap-3">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}

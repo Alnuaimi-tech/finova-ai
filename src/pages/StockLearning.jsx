@@ -8,6 +8,7 @@ import {
   ChevronDown, ChevronUp, Building2, PiggyBank
 } from 'lucide-react';
 import UAEStocksPanel from '../components/finova/UAEStocksPanel';
+import MobileNav from '../components/finova/MobileNav';
 
 // ─── AI Readiness Logic ───────────────────────────────────────────────────────
 function getReadiness(score) {
@@ -126,9 +127,9 @@ export default function StockLearning() {
   const [expanded, setExpanded] = useState(null);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
@@ -146,7 +147,7 @@ export default function StockLearning() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
+      <div className="max-w-5xl mx-auto px-3 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
 
         {/* ── Page Title ── */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center">
@@ -417,6 +418,7 @@ export default function StockLearning() {
         </motion.div>
 
       </div>
+      <MobileNav />
     </div>
   );
 }

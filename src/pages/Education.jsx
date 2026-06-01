@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, BookOpen, ArrowLeft, GraduationCap, DollarSign, Shield, TrendingUp, CreditCard, Lightbulb } from 'lucide-react';
+import MobileNav from '../components/finova/MobileNav';
 
 const modules = [
   {
@@ -87,9 +88,9 @@ export default function Education() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
@@ -107,18 +108,18 @@ export default function Education() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-10">
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-4">
             <BookOpen className="w-3 h-3" />
             Financial Education Module
           </div>
-          <h1 className="text-3xl md:text-4xl font-space font-bold text-foreground mb-3">
+          <h1 className="text-2xl md:text-4xl font-space font-bold text-foreground mb-3">
             Learn Financial Intelligence
           </h1>
           <p className="text-muted-foreground text-sm max-w-xl mx-auto">
@@ -179,6 +180,7 @@ export default function Education() {
           </button>
         </motion.div>
       </div>
+      <MobileNav />
     </div>
   );
 }

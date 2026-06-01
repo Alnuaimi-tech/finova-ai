@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Cpu, ArrowLeft, Plus, PiggyBank, RefreshCw } from 'lucide-react';
+import MobileNav from '../components/finova/MobileNav';
 import { base44 } from '@/api/base44Client';
 import PortfolioSummaryCard from '../components/portfolio/PortfolioSummaryCard';
 import PortfolioGrowthChart from '../components/portfolio/PortfolioGrowthChart';
@@ -65,16 +66,16 @@ export default function Portfolio() {
   }, 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
               <Cpu className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-space font-bold text-lg text-foreground tracking-tight">FINOVA AI</span>
-            <span className="text-muted-foreground text-sm ml-1">/ Virtual Portfolio</span>
+            <span className="font-space font-bold text-base md:text-lg text-foreground tracking-tight">FINOVA AI</span>
+            <span className="text-muted-foreground text-xs md:text-sm ml-1 hidden sm:block">/ Virtual Portfolio</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -82,20 +83,21 @@ export default function Portfolio() {
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
-              Add Holding
+              <span className="hidden sm:inline">Add Holding</span>
+              <span className="sm:hidden">Add</span>
             </button>
             <button
               onClick={() => navigate(-1)}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Back
+              <span className="hidden sm:inline">Back</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">
+      <div className="max-w-5xl mx-auto px-3 md:px-6 py-5 md:py-10 space-y-5 md:space-y-8">
 
         {/* Title */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
@@ -171,6 +173,7 @@ export default function Portfolio() {
       {showModal && (
         <AddHoldingModal onClose={() => setShowModal(false)} onAdd={handleAdd} />
       )}
+      <MobileNav />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, ArrowRight, Brain, TrendingUp, Shield, BookOpen, Zap, BarChart3, LineChart, Building2 } from 'lucide-react';
+import MobileNav from '../components/finova/MobileNav';
 
 const features = [
   { icon: Brain, title: 'AI Explanation Engine', desc: 'Contextual analysis tailored to UAE student spending patterns and AED-based expenses', color: 'text-purple-400', bg: 'bg-purple-500/10' },
@@ -30,7 +31,7 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden pb-16 md:pb-0">
       {/* Background glow effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
@@ -39,18 +40,18 @@ export default function Landing() {
       </div>
 
       {/* Header */}
-      <header className="relative border-b border-border/40 px-6 py-4">
+      <header className="relative border-b border-border/40 px-4 md:px-6 py-3 md:py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 gold-gradient rounded-xl flex items-center justify-center">
-              <Cpu className="w-5 h-5 text-primary-foreground" />
+            <div className="w-8 h-8 md:w-9 md:h-9 gold-gradient rounded-xl flex items-center justify-center">
+              <Cpu className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
             </div>
             <div>
-              <span className="font-space font-bold text-xl text-foreground tracking-tight">FINOVA</span>
-              <span className="font-space font-bold text-xl text-primary ml-1">AI</span>
+              <span className="font-space font-bold text-lg md:text-xl text-foreground tracking-tight">FINOVA</span>
+              <span className="font-space font-bold text-lg md:text-xl text-primary ml-1">AI</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <button
               onClick={() => navigate('/market')}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5"
@@ -73,33 +74,39 @@ export default function Landing() {
               Education
             </button>
           </div>
+          <button
+            onClick={() => navigate('/analyze')}
+            className="md:hidden gold-gradient text-primary-foreground px-4 py-2 rounded-xl font-space font-bold text-sm"
+          >
+            Start
+          </button>
         </div>
       </header>
 
       {/* Hero */}
-      <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-12 text-center">
+      <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-12 md:pt-20 pb-8 md:pb-12 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6 tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] md:text-xs font-semibold mb-4 md:mb-6 tracking-wide">
             <Zap className="w-3 h-3" />
-            🇦🇪 AI-POWERED FINANCIAL INTELLIGENCE — BUILT FOR THE UAE
+            🇦🇪 AI-POWERED — BUILT FOR UAE STUDENTS
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-space font-bold text-foreground mb-4 leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-7xl font-space font-bold text-foreground mb-3 md:mb-4 leading-tight tracking-tight">
             Your UAE Student
             <span className="block text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, hsl(43,96%,56%), hsl(38,92%,45%))' }}>
               Financial Reality
             </span>
           </h1>
 
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            FINOVA AI analyzes your AED income, UAE living expenses, and spending behavior to generate a personalized stability score, risk profile, and 3-month prediction — calibrated for the UAE cost of living.
+          <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto mb-7 md:mb-10 leading-relaxed">
+            FINOVA AI analyzes your AED income, UAE living expenses, and spending behavior to generate a personalized stability score, risk profile, and 3-month prediction.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -210,7 +217,7 @@ export default function Landing() {
       </div>
 
       {/* Bottom badge */}
-      <div className="relative max-w-5xl mx-auto px-6 pb-16">
+      <div className="relative max-w-5xl mx-auto px-4 md:px-6 pb-8 md:pb-16">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -222,6 +229,7 @@ export default function Landing() {
           </p>
         </motion.div>
       </div>
+      <MobileNav />
     </div>
   );
 }

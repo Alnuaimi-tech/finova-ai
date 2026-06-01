@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, FlaskConical, Download } from 'lucide-react';
+import MobileNav from '../components/finova/MobileNav';
 import { generatePDFReport } from '../lib/generatePDFReport';
 import AIPipeline from '../components/finova/AIPipeline';
 import ScoreGauge from '../components/finova/ScoreGauge';
@@ -88,17 +89,17 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
               <Cpu className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-space font-bold text-lg text-foreground tracking-tight">FINOVA AI</span>
+            <span className="font-space font-bold text-base md:text-lg text-foreground tracking-tight">FINOVA AI</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/analyst')}
               className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
@@ -106,59 +107,47 @@ export default function Dashboard() {
               <MessageCircle className="w-3.5 h-3.5" />
               AI Analyst
             </button>
-            <a
-              href="/stocks"
-              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <TrendingUp className="w-3.5 h-3.5" />
-              Stocks
+            <a href="/stocks" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <TrendingUp className="w-3.5 h-3.5" />Stocks
             </a>
-            <a
-              href="/ai-model"
-              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <FlaskConical className="w-3.5 h-3.5" />
-              AI Model
+            <a href="/ai-model" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <FlaskConical className="w-3.5 h-3.5" />AI Model
             </a>
-            <a
-              href="/education"
-              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              Education
+            <a href="/education" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <BookOpen className="w-3.5 h-3.5" />Education
             </a>
             <button
               onClick={handleDownloadPDF}
               disabled={downloading}
-              className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5 disabled:opacity-60"
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-2.5 md:px-3 py-1.5 disabled:opacity-60"
             >
               <Download className="w-3.5 h-3.5" />
-              {downloading ? 'Generating...' : 'PDF Report'}
+              <span className="hidden sm:inline">{downloading ? 'Generating...' : 'PDF Report'}</span>
             </button>
             <button
               onClick={() => navigate('/')}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2.5 md:px-3 py-1.5"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              New Analysis
+              <span className="hidden sm:inline">New Analysis</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8">
         {/* AI Pipeline */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card rounded-2xl border border-border p-4 mb-8"
+          className="glass-card rounded-2xl border border-border p-3 md:p-4 mb-5 md:mb-8 overflow-x-auto"
         >
           <p className="text-xs text-muted-foreground text-center mb-3 uppercase tracking-widest font-medium">AI Analysis Complete</p>
           <AIPipeline activeStep={6} />
         </motion.div>
 
         {/* Hero Score Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
           {/* Score Gauge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -203,7 +192,7 @@ export default function Dashboard() {
         </div>
 
         {/* Summary Stat Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
           {[
             { icon: Wallet, label: 'Monthly Income', value: `AED ${data.monthly_income.toLocaleString()}`, color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
             { icon: ReceiptText, label: 'Total Expenses', value: `AED ${metrics.totalExpenses.toLocaleString()}`, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
@@ -213,33 +202,34 @@ export default function Dashboard() {
             const Icon = stat.icon;
             return (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.07 }}
-                className={`glass-card rounded-2xl border ${stat.border} ${stat.bg} p-4`}>
+                className={`glass-card rounded-2xl border ${stat.border} ${stat.bg} p-3 md:p-4`}>
                 <div className="flex items-center gap-2 mb-2">
                   <Icon className={`w-4 h-4 ${stat.color}`} />
                   <span className="text-xs text-muted-foreground">{stat.label}</span>
                 </div>
-                <p className={`text-lg font-bold font-space ${stat.color}`}>{stat.value}</p>
+                <p className={`text-sm md:text-lg font-bold font-space ${stat.color} truncate`}>{stat.value}</p>
               </motion.div>
             );
           })}
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-secondary/30 rounded-xl border border-border mb-6 overflow-x-auto">
+        <div className="flex gap-1 p-1 bg-secondary/30 rounded-xl border border-border mb-4 md:mb-6 overflow-x-auto scrollbar-none">
           {TABS.map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-1 justify-center ${
+                className={`flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 whitespace-nowrap flex-1 justify-center ${
                   activeTab === tab.id
                     ? 'bg-card text-foreground shadow-sm border border-border'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
               </button>
             );
           })}
@@ -355,6 +345,7 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'scenarios' && (
+
             <motion.div
               key="scenarios"
               initial={{ opacity: 0, y: 10 }}
@@ -377,7 +368,7 @@ export default function Dashboard() {
                 const riskChanged = sim.newRisk !== riskLevel;
                 return (
                   <motion.div key={scenarioType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    className="glass-card rounded-2xl border border-border p-5">
+                    className="glass-card rounded-2xl border border-border p-4 md:p-5">
                     <p className="text-sm font-semibold text-foreground mb-4">
                       💡 What if you <span className="text-primary">{sim.label.toLowerCase()}</span>?
                     </p>
@@ -417,6 +408,7 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
       </div>
+      <MobileNav />
     </div>
   );
 }

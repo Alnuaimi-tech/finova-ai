@@ -45,7 +45,7 @@ FINOVA AI:`;
   }
 
   return (
-    <div className="glass-card rounded-2xl border border-border flex flex-col h-[480px]">
+    <div className="glass-card rounded-2xl border border-border flex flex-col h-[380px] md:h-[480px]">
       {/* Header */}
       <div className="flex items-center gap-2.5 p-4 border-b border-border">
         <div className="w-7 h-7 gold-gradient rounded-lg flex items-center justify-center">

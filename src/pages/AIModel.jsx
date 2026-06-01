@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, ArrowLeft, Brain, BarChart3, GitBranch, FlaskConical, Database, Calculator, CheckCircle2 } from 'lucide-react';
+import MobileNav from '../components/finova/MobileNav';
 
 const features = [
   { key: 'savings_rate', label: 'Savings Rate', formula: '(Income − Expenses) / Income × 100', weight: '35%', ideal: '≥ 20%', impact: 'Primary driver of long-term financial health', color: 'text-gold' },
@@ -49,8 +50,8 @@ export default function AIModel() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 px-6 py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
@@ -66,7 +67,7 @@ export default function AIModel() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
 
         {/* Title */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center">
@@ -237,6 +238,7 @@ export default function AIModel() {
         </section>
 
       </div>
+      <MobileNav />
     </div>
   );
 }

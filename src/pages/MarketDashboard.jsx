@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import MarketHeader from '../components/market/MarketHeader';
+import MobileNav from '../components/finova/MobileNav';
 import MarketOverview from '../components/market/MarketOverview';
 import CandlestickChart from '../components/market/CandlestickChart';
 import TrendingStocks from '../components/market/TrendingStocks';
@@ -10,10 +11,10 @@ import AIChat from '../components/market/AIChat';
 
 export default function MarketDashboard() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <MarketHeader />
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
         {/* Market Overview Bar */}
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <MarketOverview />
@@ -52,6 +53,7 @@ export default function MarketDashboard() {
           ⚠️ All prices are <strong className="text-foreground">simulated for educational purposes</strong>. FINOVA AI is not a trading platform. For real market data visit <a href="https://www.adx.ae" target="_blank" rel="noopener noreferrer" className="underline text-primary">adx.ae</a> or <a href="https://www.dfm.ae" target="_blank" rel="noopener noreferrer" className="underline text-primary">dfm.ae</a>.
         </p>
       </div>
+      <MobileNav />
     </div>
   );
 }

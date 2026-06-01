@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, DollarSign, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
+import MobileNav from '../components/finova/MobileNav';
 
 const fields = [
   { key: 'rent', label: 'Rent', icon: Home, placeholder: '3,500', color: 'text-indigo-400', desc: 'Monthly rent / accommodation' },
@@ -47,30 +48,30 @@ export default function InputForm() {
   const isValid = parseFloat(formData.monthly_income) > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Header */}
-      <header className="border-b border-border/50 px-6 py-4">
+      <header className="border-b border-border/50 px-4 md:px-6 py-3 md:py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
               <Cpu className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-space font-bold text-lg text-foreground tracking-tight">FINOVA AI</span>
+            <span className="font-space font-bold text-base md:text-lg text-foreground tracking-tight">FINOVA AI</span>
           </div>
-          <span className="text-xs text-muted-foreground px-3 py-1 rounded-full border border-border">
+          <span className="text-xs text-muted-foreground px-2 md:px-3 py-1 rounded-full border border-border hidden sm:block">
             UAE Student Finance System
           </span>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-10">
         {/* AI Pipeline */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
-          <div className="glass-card rounded-2xl border border-border p-4 mb-8">
+          <div className="glass-card rounded-2xl border border-border p-3 md:p-4 mb-6 md:mb-8 overflow-x-auto">
             <p className="text-xs text-muted-foreground text-center mb-3 uppercase tracking-widest font-medium">AI Analysis Pipeline</p>
             <AIPipeline activeStep={0} />
           </div>
@@ -85,7 +86,7 @@ export default function InputForm() {
                 <Sparkles className="w-3 h-3" />
                 AI-Powered Financial Analysis
               </div>
-              <h1 className="text-3xl md:text-4xl font-space font-bold text-foreground mb-2">
+              <h1 className="text-2xl md:text-4xl font-space font-bold text-foreground mb-2">
                 Enter Your Financial Data
               </h1>
               <p className="text-muted-foreground text-sm max-w-md mx-auto">
@@ -263,6 +264,7 @@ export default function InputForm() {
           🔒 Your data is processed locally and never shared
         </p>
       </div>
+      <MobileNav />
     </div>
   );
 }

@@ -47,12 +47,12 @@ export default function MarketHeader() {
       </div>
 
       {/* Main nav */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
+      <div className="max-w-7xl mx-auto px-3 md:px-4 py-2.5 md:py-3 flex items-center justify-between gap-2 md:gap-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center flex-shrink-0">
             <Cpu className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="font-space font-bold text-lg tracking-tight">FINOVA <span className="text-primary">AI</span></span>
+          <span className="font-space font-bold text-base md:text-lg tracking-tight">FINOVA <span className="text-primary">AI</span></span>
         </div>
 
         <nav className="hidden md:flex items-center gap-1 text-xs text-muted-foreground">
@@ -66,16 +66,16 @@ export default function MarketHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2">
           <div className="hidden sm:flex items-center gap-2 bg-secondary/50 border border-border rounded-xl px-3 py-1.5">
             <Search className="w-3.5 h-3.5 text-muted-foreground" />
-            <input placeholder="Search stocks…" className="bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none w-32" />
+            <input placeholder="Search stocks…" className="bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none w-24 md:w-32" />
           </div>
-          <button className="relative p-2 rounded-xl border border-border hover:bg-secondary/50 transition-all">
+          <button className="relative p-1.5 md:p-2 rounded-xl border border-border hover:bg-secondary/50 transition-all">
             <Bell className="w-4 h-4 text-muted-foreground" />
             <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full" />
           </button>
-          <button onClick={() => navigate('/analyze')} className="gold-gradient text-primary-foreground text-xs font-bold px-4 py-2 rounded-xl">
+          <button onClick={() => navigate('/analyze')} className="gold-gradient text-primary-foreground text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-xl">
             My Score
           </button>
         </div>
