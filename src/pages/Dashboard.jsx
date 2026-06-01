@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, FlaskConical } from 'lucide-react';
+import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, FlaskConical, Download } from 'lucide-react';
+import { generatePDFReport } from '../lib/generatePDFReport';
 import AIPipeline from '../components/finova/AIPipeline';
 import ScoreGauge from '../components/finova/ScoreGauge';
 import ExpenseChart from '../components/finova/ExpenseChart';
@@ -42,6 +43,13 @@ export default function Dashboard() {
   const [predictionData, setPredictionData] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [riskTrend, setRiskTrend] = useState(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    await generatePDFReport({ data, metrics, riskLevel, insights, recommendations });
+    setDownloading(false);
+  };
 
   useEffect(() => {
     const raw = sessionStorage.getItem('finova_data');
@@ -119,6 +127,14 @@ export default function Dashboard() {
               <BookOpen className="w-3.5 h-3.5" />
               Education
             </a>
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloading}
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5 disabled:opacity-60"
+            >
+              <Download className="w-3.5 h-3.5" />
+              {downloading ? 'Generating...' : 'PDF Report'}
+            </button>
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
