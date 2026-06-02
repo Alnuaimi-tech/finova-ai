@@ -5,15 +5,12 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import Landing from './pages/Landing';
+import Home from './pages/Home';
 import InputForm from './pages/InputForm';
 import Dashboard from './pages/Dashboard';
-import Education from './pages/Education';
-import StockLearning from './pages/StockLearning';
-import Analyst from './pages/Analyst';
-import AIModel from './pages/AIModel';
-import MarketDashboard from './pages/MarketDashboard';
-import Portfolio from './pages/Portfolio';
+import Learn from './pages/Learn';
+import Market from './pages/Market';
+import Profile from './pages/Profile';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -40,15 +37,12 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<Home />} />
       <Route path="/analyze" element={<InputForm />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/education" element={<Education />} />
-      <Route path="/stocks" element={<StockLearning />} />
-      <Route path="/analyst" element={<Analyst />} />
-      <Route path="/ai-model" element={<AIModel />} />
-      <Route path="/market" element={<MarketDashboard />} />
-      <Route path="/portfolio" element={<Portfolio />} />
+      <Route path="/learn" element={<Learn />} />
+      <Route path="/market" element={<Market />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

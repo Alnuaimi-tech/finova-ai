@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, BookOpen, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, FlaskConical, Download } from 'lucide-react';
+import { Cpu, RefreshCw, TrendingUp, Brain, ChevronRight, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, Download, Send, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { useRef } from 'react';
+import { base44 } from '@/api/base44Client';
 import MobileNav from '../components/finova/MobileNav';
 import { generatePDFReport } from '../lib/generatePDFReport';
 import AIPipeline from '../components/finova/AIPipeline';
@@ -11,7 +14,6 @@ import AIInsightCard from '../components/finova/AIInsightCard';
 import PredictionCard from '../components/finova/PredictionCard';
 import RecommendationCard from '../components/finova/RecommendationCard';
 import ScoreBreakdown from '../components/finova/ScoreBreakdown';
-import AIReasoningEngine from '../components/finova/AIReasoningEngine';
 import SavingsGoal from '../components/finova/SavingsGoal';
 import {
   calculateFinancialScore,
@@ -26,12 +28,19 @@ import {
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'reasoning', label: 'AI Reasoning', icon: Brain },
-  { id: 'insights', label: 'AI Insights', icon: FlaskConical },
+  { id: 'insights', label: 'AI Insights', icon: Brain },
   { id: 'predictions', label: 'Predictions', icon: TrendingUp },
   { id: 'recommendations', label: 'Action Plan', icon: Sparkles },
   { id: 'scenarios', label: 'Scenarios', icon: Sliders },
+  { id: 'analyst', label: 'AI Chat', icon: MessageCircle },
 ];
+
+// ─── AI Analyst helpers ───────────────────────────────────────────────────────
+function buildFinancialContext(data, metrics, riskLevel) {
+  if (!data || !metrics) return '';
+  const surplus = metrics.monthlySurplus;
+  return `\n\n[USER FINANCIAL PROFILE]\nMonthly Income: AED ${data.monthly_income.toLocaleString()}\nTotal Expenses: AED ${metrics.totalExpenses.toLocaleString()}\nMonthly Surplus: AED ${surplus.toLocaleString()}\nSavings Rate: ${metrics.savingsRate}%\nFINOVA Score: ${metrics.score}/100 — ${riskLevel}\n[END PROFILE]\n\nBe specific with AED numbers and give practical UAE-focused advice.`;
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -45,6 +54,13 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [riskTrend, setRiskTrend] = useState(null);
   const [downloading, setDownloading] = useState(false);
+
+  // AI Analyst state
+  const [conversation, setConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const chatBottomRef = useRef(null);
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
@@ -80,6 +96,35 @@ export default function Dashboard() {
     setRiskTrend(getRiskTrend(m));
   }, [navigate]);
 
+  // Init AI Analyst conversation when tab opened
+  useEffect(() => {
+    if (activeTab !== 'analyst' || conversation) return;
+    async function initChat() {
+      const conv = await base44.agents.createConversation({ agent_name: 'finova_analyst', metadata: { name: 'Dashboard Chat' } });
+      setConversation(conv);
+      setMessages(conv.messages || []);
+      const unsub = base44.agents.subscribeToConversation(conv.id, (d) => setMessages(d.messages || []));
+      return unsub;
+    }
+    const cleanup = initChat();
+    return () => { cleanup.then(fn => fn && fn()); };
+  }, [activeTab, conversation]);
+
+  useEffect(() => {
+    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleChatSend = async () => {
+    if (!chatInput.trim() || !conversation || sending) return;
+    const text = chatInput.trim();
+    setChatInput('');
+    setSending(true);
+    const ctx = buildFinancialContext(data, metrics, riskLevel);
+    const content = (messages.filter(m => m.role === 'user').length === 0 && ctx) ? `${text}${ctx}` : text;
+    await base44.agents.addMessage(conversation, { role: 'user', content });
+    setSending(false);
+  };
+
   if (!data || !metrics) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -101,35 +146,19 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => navigate('/analyst')}
-              className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-3 py-1.5"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              AI Analyst
-            </button>
-            <a href="/stocks" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <TrendingUp className="w-3.5 h-3.5" />Stocks
-            </a>
-            <a href="/ai-model" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <FlaskConical className="w-3.5 h-3.5" />AI Model
-            </a>
-            <a href="/education" className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <BookOpen className="w-3.5 h-3.5" />Education
-            </a>
-            <button
               onClick={handleDownloadPDF}
               disabled={downloading}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-2.5 md:px-3 py-1.5 disabled:opacity-60"
             >
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{downloading ? 'Generating...' : 'PDF Report'}</span>
+              <span className="hidden sm:inline">{downloading ? 'Generating...' : 'PDF'}</span>
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/analyze')}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2.5 md:px-3 py-1.5"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">New Analysis</span>
+              <span className="hidden sm:inline">Re-analyze</span>
             </button>
           </div>
         </div>
@@ -257,17 +286,6 @@ export default function Dashboard() {
               >
                 View All AI Insights <ChevronRight className="w-4 h-4" />
               </button>
-            </motion.div>
-          )}
-
-          {activeTab === 'reasoning' && (
-            <motion.div
-              key="reasoning"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              <AIReasoningEngine data={data} metrics={metrics} />
             </motion.div>
           )}
 
@@ -406,6 +424,74 @@ export default function Dashboard() {
               })}
             </motion.div>
           )}
+          {activeTab === 'analyst' && (
+            <motion.div
+              key="analyst"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex flex-col"
+              style={{ height: '60vh', minHeight: 380 }}
+            >
+              <div className="flex-1 overflow-y-auto space-y-3 pb-4">
+                {messages.filter(m => m.role === 'user' || (m.role === 'assistant' && m.content)).length === 0 && (
+                  <div className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
+                    <Brain className="w-10 h-10 text-gold mx-auto mb-3" />
+                    <p className="text-base font-space font-bold text-foreground mb-2">FINOVA Analyst</p>
+                    <p className="text-sm text-muted-foreground mb-4">Ask me anything about your finances, score, or how to improve.</p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {['Explain my score', 'What should I fix first?', 'Am I ready to invest?', 'How to save more?'].map(q => (
+                        <button key={q} onClick={() => setChatInput(q)}
+                          className="text-xs px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-white/20 transition-all">
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {messages.filter(m => m.role === 'user' || (m.role === 'assistant' && m.content)).map((msg, i) => (
+                  <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {msg.role === 'assistant' && (
+                      <div className="w-7 h-7 rounded-lg gold-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Cpu className="w-3.5 h-3.5 text-primary-foreground" />
+                      </div>
+                    )}
+                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user' ? 'bg-primary/15 border border-primary/20 text-foreground' : 'glass-card border border-border text-foreground'}`}>
+                      {msg.role === 'assistant' ? (
+                        <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">{msg.content}</ReactMarkdown>
+                      ) : msg.content}
+                    </div>
+                  </div>
+                ))}
+                {sending && (
+                  <div className="flex gap-2 justify-start">
+                    <div className="w-7 h-7 rounded-lg gold-gradient flex items-center justify-center flex-shrink-0">
+                      <Cpu className="w-3.5 h-3.5 text-primary-foreground" />
+                    </div>
+                    <div className="glass-card border border-border rounded-2xl px-4 py-3 flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+                      <span className="text-xs text-muted-foreground">Analyzing...</span>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatBottomRef} />
+              </div>
+              <div className="flex gap-2 pt-3 border-t border-border">
+                <input
+                  value={chatInput}
+                  onChange={e => setChatInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); } }}
+                  placeholder="Ask about your finances…"
+                  className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50"
+                />
+                <button onClick={handleChatSend} disabled={!chatInput.trim() || sending}
+                  className="gold-gradient text-primary-foreground px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 disabled:opacity-40 transition-opacity">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
         </AnimatePresence>
       </div>
       <MobileNav />

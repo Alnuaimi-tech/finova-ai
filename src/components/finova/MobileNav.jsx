@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, BookOpen, PiggyBank, MessageCircle } from 'lucide-react';
+import { Home, BarChart3, TrendingUp, BookOpen, User } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/', icon: Home, label: 'Home' },
+  { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
   { to: '/market', icon: TrendingUp, label: 'Market' },
-  { to: '/stocks', icon: PiggyBank, label: 'Stocks' },
-  { to: '/education', icon: BookOpen, label: 'Learn' },
-  { to: '/analyst', icon: MessageCircle, label: 'AI Chat' },
+  { to: '/learn', icon: BookOpen, label: 'Learn' },
+  { to: '/profile', icon: User, label: 'Profile' },
 ];
 
 export default function MobileNav() {
