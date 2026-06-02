@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, TrendingUp, BarChart3, PiggyBank, Plus } from 'lucide-react';
+import { Cpu, TrendingUp, BarChart3, PiggyBank, Plus, TrendingDown } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
 import MarketOverview from '../components/market/MarketOverview';
 import CandlestickChart from '../components/market/CandlestickChart';
@@ -22,6 +22,52 @@ const BASE_PRICES = {
 function getSimPrice(ticker) {
   const base = BASE_PRICES[ticker] || 10;
   return parseFloat((base * (1 + Math.sin(Date.now() / 10000 + ticker.charCodeAt(0)) * 0.03)).toFixed(3));
+}
+
+const TICKER_STOCKS = [
+  { symbol: 'EMAAR', price: 7.85, change: 1.2 },
+  { symbol: 'FAB', price: 13.50, change: -0.4 },
+  { symbol: 'ETISALAT', price: 22.40, change: 2.1 },
+  { symbol: 'ADNOCGAS', price: 3.21, change: 0.8 },
+  { symbol: 'EMIRATESNBD', price: 17.20, change: -1.1 },
+  { symbol: 'ALDAR', price: 5.34, change: 1.5 },
+  { symbol: 'DIB', price: 6.10, change: -0.6 },
+  { symbol: 'DPWORLD', price: 18.60, change: 0.3 },
+  { symbol: 'ADNOCDIST', price: 3.82, change: 1.9 },
+];
+
+function TickerTape() {
+  const [tickers, setTickers] = useState(TICKER_STOCKS);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTickers(prev => prev.map(t => ({
+        ...t,
+        price: parseFloat((t.price * (1 + (Math.random() - 0.49) * 0.006)).toFixed(3)),
+        change: parseFloat((t.change + (Math.random() - 0.5) * 0.1).toFixed(2)),
+      })));
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const items = [...tickers, ...tickers];
+
+  return (
+    <div className="border-b border-border/40 bg-secondary/20 overflow-hidden py-2">
+      <div className="flex animate-marquee gap-8 w-max">
+        {items.map((t, i) => (
+          <div key={i} className="flex items-center gap-1.5 text-xs whitespace-nowrap">
+            <span className="font-semibold text-foreground font-space">{t.symbol}</span>
+            <span className="text-muted-foreground">AED {t.price.toFixed(2)}</span>
+            <span className={`flex items-center gap-0.5 font-medium ${t.change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {t.change >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              {t.change >= 0 ? '+' : ''}{t.change.toFixed(2)}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const TABS = [
@@ -94,6 +140,8 @@ export default function Market() {
           )}
         </div>
       </header>
+
+      <TickerTape />
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-5">
         {/* Tabs */}
