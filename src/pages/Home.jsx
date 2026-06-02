@@ -1,7 +1,10 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, ArrowRight, Brain, BarChart3, TrendingUp, BookOpen, Zap, Star } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
+import TryDemoForm from '../components/finova/TryDemoForm';
+import DemoPreview from '../components/finova/DemoPreview';
 
 const features = [
   { icon: BarChart3, title: 'Financial Score', desc: 'See your money health in one clear number — 0 to 100', color: 'text-gold', bg: 'bg-yellow-500/10' },
@@ -14,6 +17,18 @@ const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Za
 
 export default function Home() {
   const navigate = useNavigate();
+  const [demoMode, setDemoMode] = useState(false); // 'form' | 'result' | false
+  const [demoResult, setDemoResult] = useState(null);
+
+  const handleDemoResult = (result) => {
+    setDemoResult(result);
+    setDemoMode('result');
+  };
+
+  const handleReset = () => {
+    setDemoResult(null);
+    setDemoMode('form');
+  };
 
   return (
     <div className="min-h-screen bg-background overflow-hidden pb-24 md:pb-0">
@@ -73,11 +88,11 @@ export default function Home() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/analyze')}
+              onClick={() => setDemoMode('form')}
               className="w-full sm:w-auto gold-gradient text-primary-foreground px-8 py-4 rounded-2xl font-space font-bold text-base flex items-center justify-center gap-3 shadow-xl"
             >
               <Cpu className="w-5 h-5" />
-              Get My Financial Score
+              Try FINOVA AI
               <ArrowRight className="w-4 h-4" />
             </motion.button>
             <button
@@ -105,6 +120,31 @@ export default function Home() {
           <p className="text-xs text-muted-foreground">Used by students at <span className="text-foreground font-medium">{universities.slice(0,3).join(', ')}</span> & more</p>
         </motion.div>
       </div>
+
+      {/* Demo Section */}
+      <AnimatePresence>
+        {demoMode && (
+          <motion.div
+            key="demo"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="relative max-w-5xl mx-auto px-4 md:px-6 pb-8"
+          >
+            {demoMode === 'form' && <TryDemoForm onResult={handleDemoResult} />}
+            {demoMode === 'result' && demoResult && (
+              <DemoPreview
+                data={demoResult.data}
+                metrics={demoResult.metrics}
+                riskLevel={demoResult.riskLevel}
+                riskColor={demoResult.riskColor}
+                insights={demoResult.insights}
+                onReset={handleReset}
+              />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Features */}
       <div className="relative max-w-5xl mx-auto px-4 md:px-6 pb-10">
@@ -157,11 +197,11 @@ export default function Home() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
           className="mt-6 text-center">
           <button
-            onClick={() => navigate('/analyze')}
+            onClick={() => { setDemoMode('form'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="gold-gradient text-primary-foreground px-8 py-3.5 rounded-2xl font-space font-bold text-sm inline-flex items-center gap-2 shadow-lg hover:opacity-90 transition-opacity"
           >
             <Star className="w-4 h-4" />
-            Start for Free — Takes 2 Minutes
+            Try FINOVA AI — Takes 2 Minutes
           </button>
           <p className="text-xs text-muted-foreground mt-3">🇦🇪 {universities.join(' · ')}</p>
         </motion.div>
