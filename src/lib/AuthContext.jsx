@@ -98,6 +98,11 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
       setAuthChecked(true);
+      // Track login event
+      try {
+        const sessionId = sessionStorage.getItem('finova_session') || (() => { const id = Math.random().toString(36).slice(2); sessionStorage.setItem('finova_session', id); return id; })();
+        await base44.entities.AppEvent.create({ event_type: 'user_login', user_email: currentUser.email, user_name: currentUser.full_name, session_id: sessionId });
+      } catch(_) {}
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);

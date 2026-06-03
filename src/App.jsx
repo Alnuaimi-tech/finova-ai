@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Learn from './pages/Learn';
 import Market from './pages/Market';
 import Profile from './pages/Profile';
+import Analytics from './pages/Analytics';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,6 +44,7 @@ const AuthenticatedApp = () => {
       <Route path="/learn" element={<Learn />} />
       <Route path="/market" element={<Market />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/analytics" element={<Analytics />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

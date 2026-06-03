@@ -1,0 +1,29 @@
+{
+  "name": "AppEvent",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "app_open",
+        "user_login"
+      ],
+      "description": "Type of event"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user (if logged in)"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of the user (if logged in)"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Browser session ID"
+    }
+  },
+  "required": [
+    "event_type"
+  ]
+}

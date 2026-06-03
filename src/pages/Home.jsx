@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, ArrowRight, Brain, BarChart3, TrendingUp, BookOpen, Zap, Star } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
 import TryDemoForm from '../components/finova/TryDemoForm';
 import DemoPreview from '../components/finova/DemoPreview';
+import { base44 } from '@/api/base44Client';
 
 const features = [
   { icon: BarChart3, title: 'Financial Score', desc: 'See your money health in one clear number — 0 to 100', color: 'text-gold', bg: 'bg-yellow-500/10' },
@@ -17,7 +18,17 @@ const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Za
 
 export default function Home() {
   const navigate = useNavigate();
-  const [demoMode, setDemoMode] = useState(false); // 'form' | 'result' | false
+  const [demoMode, setDemoMode] = useState(false);
+
+  useEffect(() => {
+    // Track app open once per session
+    const key = 'finova_opened';
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, '1');
+      const sessionId = sessionStorage.getItem('finova_session') || (() => { const id = Math.random().toString(36).slice(2); sessionStorage.setItem('finova_session', id); return id; })();
+      base44.entities.AppEvent.create({ event_type: 'app_open', session_id: sessionId }).catch(() => {});
+    }
+  }, []); // 'form' | 'result' | false
   const [demoResult, setDemoResult] = useState(null);
 
   const handleDemoResult = (result) => {
