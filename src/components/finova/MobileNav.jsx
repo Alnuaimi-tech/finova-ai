@@ -11,6 +11,9 @@ const NAV_ITEMS = [
 
 export default function MobileNav() {
   const { pathname } = useLocation();
+  // Track page visits for badge system
+  if (pathname === '/market') sessionStorage.setItem('visited_market', '1');
+  if (pathname === '/learn') sessionStorage.setItem('visited_learn', '1');
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/60">
