@@ -6,27 +6,30 @@ import MobileNav from '../components/finova/MobileNav';
 import TryDemoForm from '../components/finova/TryDemoForm';
 import DemoPreview from '../components/finova/DemoPreview';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '@/lib/LanguageContext';
 
-const features = [
-  { icon: BarChart3, title: 'Financial Score', titleAr: 'النتيجة المالية', desc: 'Your money health in one clear number — 0 to 100', color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-  { icon: Brain, title: 'AI Coach', titleAr: 'مستشار ذكي', desc: 'Personalized advice based on your real UAE spending patterns', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-  { icon: TrendingUp, title: 'Market Tracker', titleAr: 'تتبع السوق', desc: 'Follow ADX & DFM stocks. Learn investing the smart way', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-  { icon: BookOpen, title: 'Money Lessons', titleAr: 'دروس مالية', desc: 'Short, practical guides made for UAE students & young adults', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-  { icon: Target, title: 'Goal Tracker', titleAr: 'متابعة الأهداف', desc: 'Set savings goals and track your progress every month', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
-  { icon: Shield, title: 'Emergency Fund', titleAr: 'صندوق الطوارئ', desc: 'Build a safety net — 3 months of expenses as a buffer', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+const FEATURES_CONFIG = [
+  { icon: BarChart3, tKey: 'feat1', color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+  { icon: Brain, tKey: 'feat2', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+  { icon: TrendingUp, tKey: 'feat3', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+  { icon: BookOpen, tKey: 'feat4', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+  { icon: Target, tKey: 'feat5', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+  { icon: Shield, tKey: 'feat6', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
 ];
 
-const stats = [
-  { value: '10,000+', label: 'UAE Students', sub: 'Using FINOVA AI' },
-  { value: 'AED', label: 'Currency', sub: 'Fully localized' },
-  { value: '2 min', label: 'Analysis', sub: 'Get your score fast' },
-  { value: '100%', label: 'Free', sub: 'No credit card' },
+const STATS_VALUES = ['10,000+', 'AED', '2 min', '100%'];
+const STATS_TKEYS = [
+  { label: 'stat1Label', sub: 'stat1Sub' },
+  { label: 'stat2Label', sub: 'stat2Sub' },
+  { label: 'stat3Label', sub: 'stat3Sub' },
+  { label: 'stat4Label', sub: 'stat4Sub' },
 ];
 
 const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Zayed Univ', 'HCT', 'BITS Pilani Dubai'];
 
 export default function Home() {
   const navigate = useNavigate();
+  const { lang, toggle, t } = useLanguage();
   const [demoMode, setDemoMode] = useState(false);
   const [demoResult, setDemoResult] = useState(null);
 
@@ -73,24 +76,34 @@ export default function Home() {
           </div>
           <nav className="hidden md:flex items-center gap-1.5">
             {[
-              { label: 'Market', to: '/market' },
-              { label: 'Learn', to: '/learn' },
-              { label: 'Profile', to: '/profile' },
+              { label: t.market, to: '/market' },
+              { label: t.learn, to: '/learn' },
+              { label: t.profile, to: '/profile' },
             ].map(n => (
               <button key={n.to} onClick={() => navigate(n.to)}
                 className="text-xs text-muted-foreground hover:text-foreground border border-transparent hover:border-border rounded-lg px-3 py-2 transition-all">
                 {n.label}
               </button>
             ))}
+            <button onClick={toggle}
+              className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-3 py-2 transition-all font-medium">
+              {lang === 'en' ? 'العربية' : 'English'}
+            </button>
             <button onClick={() => setDemoMode('form')}
-              className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg font-space font-semibold text-xs ml-2 hover:opacity-90 transition-opacity">
-              Try Free
+              className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg font-space font-semibold text-xs ml-1 hover:opacity-90 transition-opacity">
+              {t.tryFree}
             </button>
           </nav>
-          <button onClick={() => navigate('/analyze')}
-            className="md:hidden gold-gradient text-primary-foreground px-4 py-2 rounded-xl font-space font-bold text-sm">
-            Start
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <button onClick={toggle}
+              className="text-xs text-muted-foreground border border-border rounded-lg px-2.5 py-2 transition-all font-medium">
+              {lang === 'en' ? 'ع' : 'EN'}
+            </button>
+            <button onClick={() => navigate('/analyze')}
+              className="gold-gradient text-primary-foreground px-4 py-2 rounded-xl font-space font-bold text-sm">
+              {lang === 'en' ? 'Start' : 'ابدأ'}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -99,20 +112,19 @@ export default function Home() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6">
             <Zap className="w-3 h-3" />
-            #1 Financial App for UAE Students
+            {t.tagline}
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-space font-bold text-foreground mb-5 leading-[1.1] tracking-tight">
-            Your personal
+            {t.heroTitle1}
             <span className="block text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, hsl(43,96%,56%), hsl(38,92%,45%))' }}>
-              money coach
+              {t.heroTitle2}
             </span>
-            powered by AI
+            {t.heroTitle3}
           </h1>
 
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-            Get your <strong className="text-foreground">Financial Health Score</strong> in 2 minutes. 
-            FINOVA AI analyzes your income, spending, and savings to give you a clear action plan — all in AED, built for UAE students and young professionals.
+            {t.heroDesc}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
@@ -122,24 +134,24 @@ export default function Home() {
               className="w-full sm:w-auto gold-gradient text-primary-foreground px-8 py-4 rounded-2xl font-space font-bold text-base flex items-center justify-center gap-3 shadow-xl"
             >
               <Sparkles className="w-5 h-5" />
-              Check My Financial Score
+              {t.ctaPrimary}
               <ArrowRight className="w-4 h-4" />
             </motion.button>
             <button onClick={() => navigate('/learn')}
               className="w-full sm:w-auto glass-card border border-border px-8 py-4 rounded-2xl font-medium text-sm text-muted-foreground hover:text-foreground hover:border-white/10 transition-all flex items-center justify-center gap-2">
               <BookOpen className="w-4 h-4" />
-              Learn First
+              {t.ctaSecondary}
             </button>
           </div>
 
           {/* Stats row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-8">
-            {stats.map((s, i) => (
+            {STATS_VALUES.map((val, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.08 }}
                 className="glass-card rounded-xl border border-border p-3 text-center">
-                <p className="text-lg font-space font-bold text-primary">{s.value}</p>
-                <p className="text-xs font-semibold text-foreground">{s.label}</p>
-                <p className="text-[10px] text-muted-foreground">{s.sub}</p>
+                <p className="text-lg font-space font-bold text-primary">{val}</p>
+                <p className="text-xs font-semibold text-foreground">{t[STATS_TKEYS[i].label]}</p>
+                <p className="text-[10px] text-muted-foreground">{t[STATS_TKEYS[i].sub]}</p>
               </motion.div>
             ))}
           </div>
@@ -167,8 +179,8 @@ export default function Home() {
             initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
             className="relative max-w-6xl mx-auto px-4 md:px-6 pb-10">
             <div className="text-center mb-6">
-              <h2 className="text-xl font-space font-bold text-foreground">Get Your Financial Score — Free</h2>
-              <p className="text-sm text-muted-foreground mt-1">No account needed. Takes 2 minutes.</p>
+              <h2 className="text-xl font-space font-bold text-foreground">{t.demoTitle}</h2>
+              <p className="text-sm text-muted-foreground mt-1">{t.demoSubtitle}</p>
             </div>
             {demoMode === 'form' && <TryDemoForm onResult={handleDemoResult} />}
             {demoMode === 'result' && demoResult && (
@@ -186,12 +198,12 @@ export default function Home() {
       <section className="relative max-w-6xl mx-auto px-4 md:px-6 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
           className="glass-card rounded-2xl border border-border p-6 md:p-8 mb-8">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium text-center mb-6">How FINOVA AI Works</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium text-center mb-6">{t.howItWorks}</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { step: '01', title: 'Enter Your Numbers', desc: 'Income, rent, food, transport — takes 2 minutes', color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { step: '02', title: 'AI Analyzes Your Data', desc: 'Our engine scores your finances 0–100 using UAE benchmarks', color: 'text-gold', bg: 'bg-yellow-500/10' },
-              { step: '03', title: 'Get Your Action Plan', desc: 'Personalized tips, predictions, and goals to improve your score', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { step: '01', title: t.step1Title, desc: t.step1Desc, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { step: '02', title: t.step2Title, desc: t.step2Desc, color: 'text-gold', bg: 'bg-yellow-500/10' },
+              { step: '03', title: t.step3Title, desc: t.step3Desc, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center text-center gap-3">
                 <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center`}>
@@ -208,8 +220,10 @@ export default function Home() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {features.map((feat, i) => {
+          {FEATURES_CONFIG.map((feat, i) => {
             const Icon = feat.icon;
+            const title = t[`${feat.tKey}Title`];
+            const desc = t[`${feat.tKey}Desc`];
             return (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.08 }}
                 className={`glass-card rounded-2xl border ${feat.border} p-5 flex gap-4 items-start hover:bg-white/2 transition-all duration-300`}>
@@ -217,11 +231,8 @@ export default function Home() {
                   <Icon className={`w-5 h-5 ${feat.color}`} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-sm font-semibold text-foreground font-space">{feat.title}</h3>
-                    <span className="text-[10px] text-muted-foreground font-medium">{feat.titleAr}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{feat.desc}</p>
+                  <h3 className="text-sm font-semibold text-foreground font-space mb-0.5">{title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
                 </div>
               </motion.div>
             );
@@ -234,12 +245,12 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
             <div className="text-4xl">🇦🇪</div>
             <div className="flex-1">
-              <h3 className="text-base font-space font-bold text-foreground mb-1">Built for the UAE</h3>
-              <p className="text-sm text-muted-foreground">AED currency · UAE university expenses · Metro & Salik transport · Etisalat/du mobile plans · ADX & DFM investing education · UAE banking guide</p>
-            </div>
-            <button onClick={() => { setDemoMode('form'); setTimeout(() => window.scrollTo({ top: 400, behavior: 'smooth' }), 100); }}
+              <h3 className="text-base font-space font-bold text-foreground mb-1">{t.uaeTitle}</h3>
+              <p className="text-sm text-muted-foreground">{t.uaeDesc}</p>
+              </div>
+              <button onClick={() => { setDemoMode('form'); setTimeout(() => window.scrollTo({ top: 400, behavior: 'smooth' }), 100); }}
               className="flex-shrink-0 gold-gradient text-primary-foreground px-5 py-2.5 rounded-xl font-space font-semibold text-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
-              Get My Score
+              {t.getMyScore}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -250,7 +261,7 @@ export default function Home() {
           <button onClick={() => { setDemoMode('form'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="gold-gradient text-primary-foreground px-10 py-4 rounded-2xl font-space font-bold text-sm inline-flex items-center gap-3 shadow-lg hover:opacity-90 transition-opacity">
             <Star className="w-4 h-4" />
-            Try FINOVA AI — 100% Free
+            {t.bottomCta}
             <ArrowRight className="w-4 h-4" />
           </button>
           <p className="text-xs text-muted-foreground mt-4">🏛️ {universities.join(' · ')}</p>

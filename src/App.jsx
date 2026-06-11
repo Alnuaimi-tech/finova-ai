@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { LanguageProvider } from '@/lib/LanguageContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import InputForm from './pages/InputForm';
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
 
 function App() {
   return (
+    <LanguageProvider>
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
@@ -60,6 +62,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
+    </LanguageProvider>
   );
 }
 
