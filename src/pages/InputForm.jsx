@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import MobileNav from '../components/finova/MobileNav';
+import { base44 } from '@/api/base44Client';
+import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
 
 const fields = [
   { key: 'rent', label: 'Rent / Housing', icon: Home, placeholder: '3,500', color: 'text-indigo-400', bg: 'bg-indigo-500/10', desc: 'Monthly rent or accommodation' },
@@ -49,6 +51,30 @@ export default function InputForm() {
     if (!isValid) return;
     setIsAnalyzing(true);
     await new Promise(r => setTimeout(r, 1800));
+    const numericData = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, parseFloat(v) || 0]));
+    const m = calculateFinancialScore(numericData);
+    const riskLevel = classifyRisk(m.score);
+    const insightList = generateAIExplanations(numericData, m);
+    const predictionData = generatePredictions(numericData, m);
+    const aiAnalysisText = insightList.map(i => `${i.title}: ${i.text}`).join('\n\n');
+    const predictionSummaryText = predictionData.narrative;
+    try {
+      await base44.entities.FinancialProfile.create({
+        monthly_income: numericData.monthly_income,
+        rent: numericData.rent,
+        food: numericData.food,
+        transport: numericData.transport,
+        shopping: numericData.shopping,
+        other: numericData.other,
+        current_savings: numericData.current_savings,
+        stability_score: m.score,
+        risk_level: riskLevel,
+        ai_analysis: aiAnalysisText,
+        prediction_summary: predictionSummaryText,
+      });
+    } catch (e) {
+      // persistence failure should not block the dashboard experience
+    }
     sessionStorage.setItem('finova_data', JSON.stringify(formData));
     navigate('/dashboard');
   };

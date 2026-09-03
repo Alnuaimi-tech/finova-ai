@@ -51,11 +51,7 @@ export default function Dashboard() {
   const [sending, setSending] = useState(false);
   const chatBottomRef = useRef(null);
 
-  useEffect(() => {
-    const raw = sessionStorage.getItem('finova_data');
-    if (!raw) { navigate('/'); return; }
-    const parsed = JSON.parse(raw);
-    const numericData = Object.fromEntries(Object.entries(parsed).map(([k, v]) => [k, parseFloat(v) || 0]));
+  const hydrate = (numericData) => {
     setData(numericData);
     const m = calculateFinancialScore(numericData);
     const rl = classifyRisk(m.score);
@@ -65,6 +61,35 @@ export default function Dashboard() {
     setPredictionData(generatePredictions(numericData, m));
     setRecommendations(generateRecommendations(numericData, m, rl));
     setRiskTrend(getRiskTrend(m));
+  };
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem('finova_data');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const numericData = Object.fromEntries(Object.entries(parsed).map(([k, v]) => [k, parseFloat(v) || 0]));
+      hydrate(numericData);
+      return;
+    }
+    // Fallback: load the most recent saved FinancialProfile
+    (async () => {
+      try {
+        const profiles = await base44.entities.FinancialProfile.list('-created_date', 1);
+        if (!profiles.length) { navigate('/'); return; }
+        const p = profiles[0];
+        hydrate({
+          monthly_income: p.monthly_income || 0,
+          rent: p.rent || 0,
+          food: p.food || 0,
+          transport: p.transport || 0,
+          shopping: p.shopping || 0,
+          other: p.other || 0,
+          current_savings: p.current_savings || 0,
+        });
+      } catch {
+        navigate('/');
+      }
+    })();
   }, [navigate]);
 
   useEffect(() => {
