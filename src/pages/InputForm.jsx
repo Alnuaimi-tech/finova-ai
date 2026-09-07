@@ -1,11 +1,40 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import MobileNav from '../components/finova/MobileNav';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
+
+const PROFESSIONS = [
+  'Student / Part-time',
+  'Retail & Hospitality',
+  'Administrative / Office',
+  'Teacher',
+  'Engineer',
+  'IT / Software',
+  'Healthcare',
+  'Government',
+  'Finance / Banking',
+  'Freelancer / Self-employed',
+  'Other',
+];
+
+// Typical gross monthly salary ranges in the UAE (AED), per profession — reference only.
+const PROFESSION_INCOME_RANGES = {
+  'Student / Part-time': '1,500 – 4,000',
+  'Retail & Hospitality': '3,000 – 7,000',
+  'Administrative / Office': '5,000 – 9,000',
+  'Teacher': '8,000 – 16,000',
+  'Engineer': '10,000 – 25,000',
+  'IT / Software': '12,000 – 30,000',
+  'Healthcare': '8,000 – 28,000',
+  'Government': '10,000 – 30,000',
+  'Finance / Banking': '12,000 – 35,000',
+  'Freelancer / Self-employed': '5,000 – 20,000',
+  'Other': '—',
+};
 
 const fields = [
   { key: 'rent', label: 'Rent / Housing', icon: Home, placeholder: '3,500', color: 'text-indigo-400', bg: 'bg-indigo-500/10', desc: 'Monthly rent or accommodation' },
@@ -35,9 +64,13 @@ function AEDInput({ value, onChange, placeholder, large = false }) {
 export default function InputForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    profession: 'Student / Part-time',
     monthly_income: '', rent: '', food: '', transport: '', shopping: '', other: '', current_savings: '',
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const incomeRange = PROFESSION_INCOME_RANGES[formData.profession] || '—';
+  const userTypedIncome = formData.monthly_income !== '';
 
   const totalExpenses = fields.reduce((sum, f) => sum + (parseFloat(formData[f.key]) || 0), 0);
   const income = parseFloat(formData.monthly_income) || 0;
@@ -60,6 +93,7 @@ export default function InputForm() {
     const predictionSummaryText = predictionData.narrative;
     try {
       await base44.entities.FinancialProfile.create({
+        profession: formData.profession,
         monthly_income: numericData.monthly_income,
         rent: numericData.rent,
         food: numericData.food,
@@ -121,6 +155,34 @@ export default function InputForm() {
           </p>
         </motion.div>
 
+        {/* Profession Card */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="glass-card rounded-3xl border border-blue-500/20 bg-blue-500/5 p-6 md:p-8 mb-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-11 h-11 rounded-2xl bg-blue-500/15 flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-base font-bold text-foreground font-space">Your Profession</p>
+              <p className="text-xs text-muted-foreground">Helps us suggest a realistic UAE income range</p>
+            </div>
+          </div>
+          <div className="relative">
+            <select
+              value={formData.profession}
+              onChange={e => handleChange('profession', e.target.value)}
+              className="w-full bg-secondary/40 border border-border hover:border-border/80 rounded-2xl px-4 py-4 text-base font-semibold text-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
+            >
+              {PROFESSIONS.map(p => (
+                <option key={p} value={p} className="bg-card text-foreground">{p}</option>
+              ))}
+            </select>
+            <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </motion.div>
+
         {/* Income Card */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
           className="glass-card rounded-3xl border border-yellow-500/20 bg-yellow-500/5 p-6 md:p-8 mb-5">
@@ -134,6 +196,19 @@ export default function InputForm() {
             </div>
           </div>
           <AEDInput value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large />
+          <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
+            <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <span className="text-foreground font-medium">Typical {formData.profession} income in UAE:</span>{' '}
+              <span className="text-blue-400 font-semibold">AED {incomeRange}</span>/month
+              {userTypedIncome && (
+                <span className="text-muted-foreground"> — just a reference, enter your actual income above.</span>
+              )}
+              {!userTypedIncome && incomeRange !== '—' && (
+                <span className="text-muted-foreground"> — not sure? Use this as a starting estimate.</span>
+              )}
+            </p>
+          </div>
           <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
             Required to calculate your FINOVA score

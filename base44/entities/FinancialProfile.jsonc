@@ -2,6 +2,23 @@
   "name": "FinancialProfile",
   "type": "object",
   "properties": {
+    "profession": {
+      "type": "string",
+      "enum": [
+        "Student / Part-time",
+        "Retail & Hospitality",
+        "Administrative / Office",
+        "Teacher",
+        "Engineer",
+        "IT / Software",
+        "Healthcare",
+        "Government",
+        "Finance / Banking",
+        "Freelancer / Self-employed",
+        "Other"
+      ],
+      "description": "User's profession / job category"
+    },
     "monthly_income": {
       "type": "number",
       "description": "Monthly income in AED"
