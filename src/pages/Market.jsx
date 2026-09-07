@@ -3,10 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, TrendingUp, BarChart3, PiggyBank, Plus, TrendingDown } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
-import MarketOverview from '../components/market/MarketOverview';
-import CandlestickChart from '../components/market/CandlestickChart';
-import TrendingStocks from '../components/market/TrendingStocks';
-import WatchlistCrypto from '../components/market/WatchlistCrypto';
+import LiveMarketOverview from '../components/market/LiveMarketOverview';
 import UAEStocksPanel from '../components/finova/UAEStocksPanel';
 import PortfolioSummaryCard from '../components/portfolio/PortfolioSummaryCard';
 import PortfolioGrowthChart from '../components/portfolio/PortfolioGrowthChart';
@@ -167,16 +164,7 @@ export default function Market() {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="space-y-5">
-              <MarketOverview />
-              <CandlestickChart />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <TrendingStocks />
-                <WatchlistCrypto />
-              </div>
-              <p className="text-center text-xs text-muted-foreground pb-2">
-                ⚠️ All prices are <strong className="text-foreground">simulated for education</strong>. Not a trading platform.
-                Real data: <a href="https://www.adx.ae" target="_blank" rel="noopener noreferrer" className="underline text-primary">adx.ae</a> / <a href="https://www.dfm.ae" target="_blank" rel="noopener noreferrer" className="underline text-primary">dfm.ae</a>
-              </p>
+              <LiveMarketOverview />
             </motion.div>
           )}
 
