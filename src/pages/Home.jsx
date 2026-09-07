@@ -5,6 +5,7 @@ import { Cpu, ArrowRight, Brain, BarChart3, TrendingUp, BookOpen, Zap, Star, Shi
 import MobileNav from '../components/finova/MobileNav';
 import TryDemoForm from '../components/finova/TryDemoForm';
 import DemoPreview from '../components/finova/DemoPreview';
+import HubQuickAccess from '../components/finova/HubQuickAccess';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/lib/LanguageContext';
 
@@ -171,6 +172,9 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </section>
+
+      {/* Quick Hub Access */}
+      <HubQuickAccess />
 
       {/* Demo Section */}
       <AnimatePresence>
