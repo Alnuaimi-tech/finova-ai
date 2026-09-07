@@ -4,11 +4,10 @@ import { RefreshCw, TrendingUp, TrendingDown, Activity, Globe } from 'lucide-rea
 import { base44 } from '@/api/base44Client';
 
 const GROUPS = [
-  { title: 'Global Indices', subtitle: 'Via ETF proxies', symbols: ['SPY', 'QQQ', 'IWM', 'VTI'] },
-  { title: 'Major Stocks', subtitle: 'US large-cap', symbols: ['AAPL', 'MSFT', 'NVDA', 'TSLA'] },
+  { title: 'Global Indices', subtitle: 'Via ETF proxies', symbols: ['SPY', 'QQQ'] },
+  { title: 'Major Stocks', subtitle: 'US large-cap', symbols: ['AAPL', 'NVDA'] },
   { title: 'Cryptocurrency', subtitle: 'Live', symbols: ['BTC/USD', 'ETH/USD'] },
-  { title: 'Forex', subtitle: 'Currency pairs', symbols: ['USD/AED', 'EUR/USD', 'GBP/USD'] },
-  { title: 'Commodities', subtitle: 'Via ETF proxies', symbols: ['GLD', 'USO'] },
+  { title: 'Forex', subtitle: 'Currency pairs', symbols: ['USD/AED', 'EUR/USD'] },
 ];
 
 const isForex = (s) => /^[A-Z]{3}\/[A-Z]{3}$/.test(s);
@@ -81,7 +80,7 @@ export default function LiveMarketOverview() {
 
   // Auto-refresh every 60s
   useEffect(() => {
-    const id = setInterval(fetchMarketData, 60000);
+    const id = setInterval(fetchMarketData, 180000);
     return () => clearInterval(id);
   }, [fetchMarketData]);
 
@@ -141,7 +140,7 @@ export default function LiveMarketOverview() {
       })}
 
       <p className="text-center text-xs text-muted-foreground pb-1">
-        ✅ Live data via Twelve Data · auto-refreshes every 60s · prices in USD (forex as rate)
+        ✅ Live data via Twelve Data · auto-refreshes every 3 min · prices in USD (forex as rate)
       </p>
     </div>
   );
