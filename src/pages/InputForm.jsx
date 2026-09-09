@@ -3,24 +3,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
+import ProfessionSelect from '../components/finova/ProfessionSelect';
 import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
-
-const PROFESSIONS = [
-  'Student / Part-time',
-  'Retail & Hospitality',
-  'Administrative / Office',
-  'Teacher',
-  'Engineer',
-  'IT / Software',
-  'Healthcare',
-  'Government',
-  'Finance / Banking',
-  'Freelancer / Self-employed',
-  'Other',
-];
 
 // Research-based monthly income ranges in the UAE (AED), entry-to-early-career level — reference only.
 const PROFESSION_INCOME_RANGES = {
@@ -200,20 +187,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">Helps us suggest a realistic UAE income range</p>
             </div>
           </div>
-          <div className="relative">
-            <select
-              value={formData.profession}
-              onChange={e => handleProfessionChange(e.target.value)}
-              className="w-full bg-secondary/40 border border-border hover:border-border/80 rounded-2xl px-4 py-4 text-base font-semibold text-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
-            >
-              {PROFESSIONS.map(p => (
-                <option key={p} value={p} className="bg-card text-foreground">{p}</option>
-              ))}
-            </select>
-            <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+          <ProfessionSelect value={formData.profession} onChange={handleProfessionChange} />
         </motion.div>
 
         {/* Income Card */}
