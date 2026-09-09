@@ -78,8 +78,8 @@ export default function ProfessionSelect({ value, onChange }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 glass-card rounded-2xl border border-border p-1.5 max-h-72 overflow-y-auto scrollbar-none shadow-2xl"
-            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,162,39,0.12)' }}
+            className="absolute left-0 right-0 top-[calc(100%+0.6rem)] z-50 bg-card backdrop-blur-xl rounded-2xl border border-border/80 p-1.5 max-h-72 overflow-y-auto scrollbar-none"
+            style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,162,39,0.14)' }}
           >
             {OPTIONS.map((opt) => {
               const Icon = opt.icon;

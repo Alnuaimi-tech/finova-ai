@@ -177,7 +177,7 @@ export default function InputForm() {
 
         {/* Profession Card */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="glass-card rounded-3xl border border-blue-500/20 bg-blue-500/5 p-6 md:p-8 mb-5">
+          className="glass-card rounded-3xl border border-blue-500/20 bg-blue-500/5 p-6 md:p-8 mb-5 relative z-30">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-11 h-11 rounded-2xl bg-blue-500/15 flex items-center justify-center">
               <Briefcase className="w-5 h-5 text-blue-400" />
