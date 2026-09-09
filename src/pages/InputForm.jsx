@@ -22,19 +22,19 @@ const PROFESSIONS = [
   'Other',
 ];
 
-// Typical gross monthly salary ranges in the UAE (AED), per profession — reference only.
+// Research-based monthly income ranges in the UAE (AED), entry-to-early-career level — reference only.
 const PROFESSION_INCOME_RANGES = {
-  'Student / Part-time': '1,500 – 4,000',
-  'Retail & Hospitality': '3,000 – 7,000',
-  'Administrative / Office': '5,000 – 9,000',
-  'Teacher': '8,000 – 16,000',
-  'Engineer': '10,000 – 25,000',
-  'IT / Software': '12,000 – 30,000',
-  'Healthcare': '8,000 – 28,000',
-  'Government': '10,000 – 30,000',
-  'Finance / Banking': '12,000 – 35,000',
-  'Freelancer / Self-employed': '5,000 – 20,000',
-  'Other': '—',
+  'Student / Part-time': '1,000-4,000',
+  'Retail & Hospitality': '3,000-6,000',
+  'Administrative / Office': '4,000-9,000',
+  'Teacher': '8,000-15,000',
+  'Engineer': '8,000-18,000',
+  'IT / Software': '10,000-25,000',
+  'Healthcare': '8,000-20,000',
+  'Government': '8,000-18,000',
+  'Finance / Banking': '10,000-30,000',
+  'Freelancer / Self-employed': '2,000-15,000+ (highly variable)',
+  'Other': '5,000-15,000',
 };
 
 // Realistic UAE-based default estimates per profession (AED/month).
@@ -232,12 +232,12 @@ export default function InputForm() {
           <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-foreground font-medium">Typical {formData.profession} income in UAE:</span>{' '}
-              <span className="text-blue-400 font-semibold">AED {incomeRange}</span>/month
+              <span className="text-foreground font-medium">Typical range for this role:</span>{' '}
+              <span className="text-blue-400 font-semibold">{incomeRange} AED/month</span>
               {userTypedIncome && (
                 <span className="text-muted-foreground"> — just a reference, enter your actual income above.</span>
               )}
-              {!userTypedIncome && incomeRange !== '—' && (
+              {!userTypedIncome && (
                 <span className="text-muted-foreground"> — not sure? Use this as a starting estimate.</span>
               )}
             </p>
