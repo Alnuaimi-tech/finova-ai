@@ -44,6 +44,13 @@ export default function Home() {
     setDemoMode('form');
   };
 
+  const openDemo = () => {
+    setDemoMode('form');
+    setTimeout(() => {
+      document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-hidden pb-24 md:pb-0">
       {/* Ambient glows */}
@@ -81,7 +88,7 @@ export default function Home() {
               className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-3 py-2 transition-all font-medium">
               {lang === 'en' ? 'العربية' : 'English'}
             </button>
-            <button onClick={() => setDemoMode('form')}
+            <button onClick={openDemo}
               className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg font-space font-semibold text-xs ml-1 hover:opacity-90 transition-opacity">
               {t.tryFree}
             </button>
@@ -122,7 +129,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
             <motion.button
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              onClick={() => { setDemoMode('form'); setTimeout(() => window.scrollTo({ top: 400, behavior: 'smooth' }), 100); }}
+              onClick={openDemo}
               className="w-full sm:w-auto gold-gradient text-primary-foreground px-8 py-4 rounded-2xl font-space font-bold text-base flex items-center justify-center gap-3 shadow-xl"
             >
               <Sparkles className="w-5 h-5" />
@@ -210,7 +217,7 @@ export default function Home() {
 
         {/* Bottom CTA */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="text-center">
-          <button onClick={() => { setDemoMode('form'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          <button onClick={openDemo}
             className="gold-gradient text-primary-foreground px-10 py-4 rounded-2xl font-space font-bold text-sm inline-flex items-center gap-3 shadow-lg hover:opacity-90 transition-opacity">
             <Star className="w-4 h-4" />
             {t.bottomCta}
