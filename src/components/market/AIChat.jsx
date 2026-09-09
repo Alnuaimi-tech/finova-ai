@@ -29,19 +29,17 @@ export default function AIChat() {
     setMessages(prev => [...prev, { role: 'user', content: msg }]);
     setLoading(true);
 
-    const context = messages.slice(-6).map(m => `${m.role === 'user' ? 'Student' : 'FINOVA AI'}: ${m.content}`).join('\n');
-    const prompt = `You are FINOVA AI, a friendly financial education assistant for UAE university students. Keep responses concise, clear, and educational. Use simple language. Always include a UAE-relevant angle when possible. Never give direct investment advice — frame everything as education.
-
-Recent conversation:
-${context}
-
-Student: ${msg}
-
-FINOVA AI:`;
-
-    const reply = await base44.integrations.Core.InvokeLLM({ prompt });
-    setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
-    setLoading(false);
+    try {
+      const response = await base44.functions.invoke('askFinanceQuestion', {
+        question: msg,
+        history: messages.slice(-6),
+      });
+      setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'I could not answer that right now. Please try again.' }]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
