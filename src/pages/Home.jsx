@@ -1,22 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, ArrowRight, Brain, BarChart3, TrendingUp, BookOpen, Zap, Star, Shield, Target, ChevronRight, Sparkles } from 'lucide-react';
+import { Cpu, ArrowRight, BookOpen, Zap, Star, ChevronRight, Sparkles } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
 import TryDemoForm from '../components/finova/TryDemoForm';
 import DemoPreview from '../components/finova/DemoPreview';
 import HubQuickAccess from '../components/finova/HubQuickAccess';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/lib/LanguageContext';
-
-const FEATURES_CONFIG = [
-  { icon: BarChart3, tKey: 'feat1', color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-  { icon: Brain, tKey: 'feat2', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-  { icon: TrendingUp, tKey: 'feat3', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-  { icon: BookOpen, tKey: 'feat4', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-  { icon: Target, tKey: 'feat5', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
-  { icon: Shield, tKey: 'feat6', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
-];
 
 const STATS_VALUES = ['10,000+', 'AED', '2 min', '100%'];
 const STATS_TKEYS = [
@@ -200,49 +191,6 @@ export default function Home() {
 
       {/* How it works */}
       <section className="relative max-w-6xl mx-auto px-4 md:px-6 pb-10">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="glass-card rounded-2xl border border-border p-6 md:p-8 mb-8">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium text-center mb-6">{t.howItWorks}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              { step: '01', title: t.step1Title, desc: t.step1Desc, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { step: '02', title: t.step2Title, desc: t.step2Desc, color: 'text-gold', bg: 'bg-yellow-500/10' },
-              { step: '03', title: t.step3Title, desc: t.step3Desc, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-            ].map((s, i) => (
-              <div key={i} className="flex flex-col items-center text-center gap-3">
-                <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center`}>
-                  <span className={`text-xl font-space font-bold ${s.color}`}>{s.step}</span>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-1">{s.title}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {FEATURES_CONFIG.map((feat, i) => {
-            const Icon = feat.icon;
-            const title = t[`${feat.tKey}Title`];
-            const desc = t[`${feat.tKey}Desc`];
-            return (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.08 }}
-                className={`glass-card rounded-2xl border ${feat.border} p-5 flex gap-4 items-start hover:bg-white/2 transition-all duration-300`}>
-                <div className={`w-11 h-11 rounded-xl ${feat.bg} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-5 h-5 ${feat.color}`} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground font-space mb-0.5">{title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
         {/* UAE Localization Banner */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
           className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-6 mb-8">
