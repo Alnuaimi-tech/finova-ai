@@ -36,6 +36,22 @@ const PROFESSION_INCOME_RANGES = {
   'Other': '—',
 };
 
+// Realistic UAE-based default estimates per profession (AED/month).
+// Income = typical midpoint; expenses scaled to local cost of living; savings ≈ 2× monthly income.
+const PROFESSION_DEFAULTS = {
+  'Student / Part-time': { monthly_income: 2750, rent: 1200, food: 600, transport: 300, shopping: 400, other: 250, current_savings: 3000 },
+  'Retail & Hospitality': { monthly_income: 5000, rent: 2000, food: 800, transport: 400, shopping: 600, other: 400, current_savings: 8000 },
+  'Administrative / Office': { monthly_income: 7000, rent: 2800, food: 900, transport: 500, shopping: 700, other: 500, current_savings: 14000 },
+  'Teacher': { monthly_income: 12000, rent: 4500, food: 1200, transport: 700, shopping: 900, other: 600, current_savings: 24000 },
+  'Engineer': { monthly_income: 17500, rent: 6000, food: 1500, transport: 900, shopping: 1200, other: 800, current_savings: 35000 },
+  'IT / Software': { monthly_income: 21000, rent: 7000, food: 1600, transport: 1000, shopping: 1400, other: 900, current_savings: 45000 },
+  'Healthcare': { monthly_income: 18000, rent: 6000, food: 1400, transport: 900, shopping: 1100, other: 700, current_savings: 36000 },
+  'Government': { monthly_income: 20000, rent: 6500, food: 1500, transport: 950, shopping: 1200, other: 800, current_savings: 40000 },
+  'Finance / Banking': { monthly_income: 23500, rent: 7500, food: 1700, transport: 1100, shopping: 1500, other: 1000, current_savings: 50000 },
+  'Freelancer / Self-employed': { monthly_income: 12500, rent: 4500, food: 1200, transport: 700, shopping: 900, other: 600, current_savings: 25000 },
+  'Other': { monthly_income: 10000, rent: 4000, food: 1200, transport: 800, shopping: 1000, other: 700, current_savings: 20000 },
+};
+
 const fields = [
   { key: 'rent', label: 'Rent / Housing', icon: Home, placeholder: '3,500', color: 'text-indigo-400', bg: 'bg-indigo-500/10', desc: 'Monthly rent or accommodation' },
   { key: 'food', label: 'Food & Dining', icon: Utensils, placeholder: '800', color: 'text-amber-400', bg: 'bg-amber-500/10', desc: 'Groceries + meals out' },
@@ -63,11 +79,27 @@ function AEDInput({ value, onChange, placeholder, large = false }) {
 
 export default function InputForm() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    profession: 'Student / Part-time',
-    monthly_income: '', rent: '', food: '', transport: '', shopping: '', other: '', current_savings: '',
+  const [formData, setFormData] = useState(() => {
+    const d = PROFESSION_DEFAULTS['Student / Part-time'];
+    return {
+      profession: 'Student / Part-time',
+      monthly_income: String(d.monthly_income),
+      rent: String(d.rent), food: String(d.food), transport: String(d.transport),
+      shopping: String(d.shopping), other: String(d.other), current_savings: String(d.current_savings),
+    };
   });
+  const [dirty, setDirty] = useState({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Fill non-dirty fields with profession-based estimates so the form stays completable after switching profession.
+  const applyDefaults = (profession, current, currentDirty) => {
+    const d = PROFESSION_DEFAULTS[profession] || PROFESSION_DEFAULTS['Other'];
+    const next = { ...current };
+    ['monthly_income', 'rent', 'food', 'transport', 'shopping', 'other', 'current_savings'].forEach(k => {
+      if (!currentDirty[k]) next[k] = String(d[k]);
+    });
+    return next;
+  };
 
   const incomeRange = PROFESSION_INCOME_RANGES[formData.profession] || '—';
   const userTypedIncome = formData.monthly_income !== '';
@@ -78,7 +110,15 @@ export default function InputForm() {
   const expensePct = income > 0 ? Math.round((totalExpenses / income) * 100) : 0;
   const isValid = income > 0;
 
-  const handleChange = (key, value) => setFormData(prev => ({ ...prev, [key]: value }));
+  const handleChange = (key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+    setDirty(prev => ({ ...prev, [key]: true }));
+  };
+
+  const handleProfessionChange = (value) => {
+    setDirty(prev => ({ ...prev, profession: true }));
+    setFormData(prev => applyDefaults(value, { ...prev, profession: value }, dirty));
+  };
 
   const handleAnalyze = async () => {
     if (!isValid) return;
@@ -170,7 +210,7 @@ export default function InputForm() {
           <div className="relative">
             <select
               value={formData.profession}
-              onChange={e => handleChange('profession', e.target.value)}
+              onChange={e => handleProfessionChange(e.target.value)}
               className="w-full bg-secondary/40 border border-border hover:border-border/80 rounded-2xl px-4 py-4 text-base font-semibold text-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
             >
               {PROFESSIONS.map(p => (
