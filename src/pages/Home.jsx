@@ -227,6 +227,12 @@ export default function Home() {
         </motion.div>
       </section>
 
+      <footer className="relative border-t border-border/50 px-4 md:px-6 py-8 mb-16 md:mb-0">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-6">
+          <button onClick={() => navigate('/about')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</button>
+          <button onClick={() => navigate('/contact')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</button>
+        </div>
+      </footer>
       <MobileNav />
     </div>
   );
