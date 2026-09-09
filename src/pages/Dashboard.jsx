@@ -5,6 +5,7 @@ import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, Pigg
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
 import MobileNav from '../components/finova/MobileNav';
+import BrandLogo from '../components/finova/BrandLogo';
 import { generatePDFReport } from '../lib/generatePDFReport';
 import ScoreGauge from '../components/finova/ScoreGauge';
 import ExpenseChart from '../components/finova/ExpenseChart';
@@ -137,9 +138,7 @@ export default function Dashboard() {
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
-              <Cpu className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <BrandLogo />
             <span className="font-space font-bold text-base text-foreground tracking-tight">FINOVA AI</span>
           </div>
           <div className="flex items-center gap-2">

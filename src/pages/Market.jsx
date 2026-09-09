@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cpu, TrendingUp, BarChart3, PiggyBank, Plus, TrendingDown } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
+import BrandLogo from '../components/finova/BrandLogo';
 import LiveMarketOverview from '../components/market/LiveMarketOverview';
 import UAEStocksPanel from '../components/finova/UAEStocksPanel';
 import PortfolioSummaryCard from '../components/portfolio/PortfolioSummaryCard';
@@ -130,9 +131,7 @@ export default function Market() {
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
-              <Cpu className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <BrandLogo />
             <span className="font-space font-bold text-base text-foreground tracking-tight">Market</span>
           </div>
           {activeTab === 'portfolio' && (

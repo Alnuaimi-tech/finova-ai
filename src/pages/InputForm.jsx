@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import MobileNav from '../components/finova/MobileNav';
+import BrandLogo from '../components/finova/BrandLogo';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
 
@@ -158,15 +159,7 @@ export default function InputForm() {
       {/* Header */}
       <header className="border-b border-border/50 px-4 md:px-6 py-4 sticky top-0 z-20 bg-background/90 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 gold-gradient rounded-xl flex items-center justify-center shadow-lg">
-              <Cpu className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <div>
-              <span className="font-space font-bold text-base text-foreground tracking-tight">FINOVA AI</span>
-              <span className="hidden sm:inline text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 ml-2">UAE 🇦🇪</span>
-            </div>
-          </div>
+          <BrandLogo size="lg" showWordmark showBadge />
           <span className="text-xs text-muted-foreground bg-secondary/50 border border-border px-3 py-1.5 rounded-full font-medium">
             Step 1 of 1
           </span>

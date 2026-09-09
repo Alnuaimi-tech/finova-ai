@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import MobileNav from '../components/finova/MobileNav';
+import BrandLogo from '../components/finova/BrandLogo';
 
 const modules = [
   {
@@ -182,9 +183,7 @@ export default function Learn() {
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
-              <Cpu className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <BrandLogo />
             <span className="font-space font-bold text-base text-foreground tracking-tight">Learn</span>
             <span className="text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 hidden sm:inline">UAE Financial Literacy</span>
           </div>
