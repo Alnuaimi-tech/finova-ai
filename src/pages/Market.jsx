@@ -9,6 +9,7 @@ import PortfolioSummaryCard from '../components/portfolio/PortfolioSummaryCard';
 import PortfolioGrowthChart from '../components/portfolio/PortfolioGrowthChart';
 import HoldingRow from '../components/portfolio/HoldingRow';
 import AddHoldingModal from '../components/portfolio/AddHoldingModal';
+import EditHoldingModal from '../components/portfolio/EditHoldingModal';
 import { base44 } from '@/api/base44Client';
 
 const BASE_PRICES = {
@@ -81,6 +82,7 @@ export default function Market() {
   const [holdings, setHoldings] = useState([]);
   const [currentPrices, setCurrentPrices] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchHoldings = useCallback(async () => {
@@ -112,6 +114,11 @@ export default function Market() {
   const handleDelete = async (id) => {
     await base44.entities.VirtualHolding.delete(id);
     setHoldings(prev => prev.filter(h => h.id !== id));
+  };
+
+  const handleEditSubmit = async (id, data) => {
+    await base44.entities.VirtualHolding.update(id, data);
+    fetchHoldings();
   };
 
   const totalInvested = holdings.reduce((s, h) => s + h.purchase_price * h.quantity, 0);
@@ -206,7 +213,7 @@ export default function Market() {
                   <PortfolioGrowthChart holdings={holdings} currentPrices={currentPrices} />
                   <div className="space-y-2">
                     {holdings.map((h, i) => (
-                      <HoldingRow key={h.id} holding={h} currentPrice={currentPrices[h.ticker] || h.purchase_price} onDelete={handleDelete} index={i} />
+                      <HoldingRow key={h.id} holding={h} currentPrice={currentPrices[h.ticker] || h.purchase_price} onDelete={handleDelete} onEdit={setEditTarget} index={i} />
                     ))}
                   </div>
                   <p className="text-xs text-muted-foreground text-center">⚠️ Simulated for education only. Not a real investment platform.</p>
@@ -219,6 +226,7 @@ export default function Market() {
       </div>
 
       {showModal && <AddHoldingModal onClose={() => setShowModal(false)} onAdd={handleAdd} />}
+      {editTarget && <EditHoldingModal holding={editTarget} onClose={() => setEditTarget(null)} onSubmit={handleEditSubmit} />}
       <MobileNav />
     </div>
   );

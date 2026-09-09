@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Trash2, Pencil } from 'lucide-react';
 
-export default function HoldingRow({ holding, currentPrice, onDelete, index }) {
+export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, index }) {
   const invested = holding.purchase_price * holding.quantity;
   const currentValue = currentPrice * holding.quantity;
   const pnl = currentValue - invested;
@@ -40,8 +40,14 @@ export default function HoldingRow({ holding, currentPrice, onDelete, index }) {
         </div>
 
         <button
+          onClick={() => onEdit?.(holding)}
+          className="ml-1 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0"
+        >
+          <Pencil className="w-3.5 h-3.5" />
+        </button>
+        <button
           onClick={() => onDelete(holding.id)}
-          className="ml-1 p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all flex-shrink-0"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all flex-shrink-0"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
