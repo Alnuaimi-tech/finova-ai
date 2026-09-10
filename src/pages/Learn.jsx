@@ -34,18 +34,7 @@ const modules = [
     ],
     tip: '💡 UAE Tip: Many UAE banks offer zero-fee savings accounts. Check ADCB iSave or FAB iSave.',
   },
-  {
-    icon: TrendingUp, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', tag: 'Investing',
-    title: 'Compound Interest',
-    desc: "The most powerful financial concept. Starting early — even with AED 200/month — makes a huge difference.",
-    points: [
-      'AED 200/month at 7% return = AED 121,000 in 20 years',
-      'UAE platforms: Sarwa, StashAway, National Bonds',
-      'ADX and DFM for UAE stock market investing',
-      'Time in market > timing the market',
-    ],
-    tip: '💡 UAE Tip: National Bonds is a Sharia-compliant savings tool with prizes — popular with UAE students.',
-  },
+
   {
     icon: CreditCard, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', tag: 'Debt Trap',
     title: 'BNPL & Credit Cards',
@@ -199,7 +188,7 @@ export default function Learn() {
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">UAE Financial Literacy Hub</p>
-            <p className="text-xs text-muted-foreground">9 modules · AED-based examples · Built for UAE students & young professionals</p>
+            <p className="text-xs text-muted-foreground">{modules.length} modules · AED-based examples · Built for UAE students & young professionals</p>
           </div>
         </motion.div>
 
