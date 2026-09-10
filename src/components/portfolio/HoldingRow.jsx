@@ -3,7 +3,8 @@ import { TrendingUp, TrendingDown, Trash2, Pencil } from 'lucide-react';
 
 export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, index }) {
   const invested = holding.purchase_price * holding.quantity;
-  const currentValue = currentPrice * holding.quantity;
+  const hasPrice = Number.isFinite(currentPrice);
+  const currentValue = hasPrice ? currentPrice * holding.quantity : null;
   const pnl = currentValue - invested;
   const pnlPct = ((pnl / invested) * 100).toFixed(2);
   const isUp = pnl >= 0;
@@ -26,17 +27,14 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
 
         <div className="text-right hidden sm:block">
           <p className="text-xs text-muted-foreground">Value</p>
-          <p className="text-sm font-bold text-foreground font-space">AED {currentValue.toFixed(2)}</p>
+          <p className="text-sm font-bold text-foreground font-space">{hasPrice ? `AED ${currentValue.toFixed(2)}` : 'Price unavailable'}</p>
         </div>
 
         <div className="text-right flex-shrink-0">
-          <div className={`flex items-center justify-end gap-1 text-xs font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-            {isUp ? '+' : ''}{pnlPct}%
-          </div>
-          <p className={`text-xs md:text-sm font-bold font-space ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isUp ? '+' : ''}AED {pnl.toFixed(2)}
-          </p>
+          {hasPrice ? <>
+            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}{pnlPct}%</p>
+            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}AED {pnl.toFixed(2)}</p>
+          </> : <p className="text-xs text-muted-foreground">Return unavailable</p>}
         </div>
 
         <button

@@ -65,6 +65,8 @@ module.exports = {
   				ring: 'hsl(var(--sidebar-ring))'
   			},
   			gold: 'hsl(var(--gold))',
+            'market-up': 'hsl(var(--market-up))',
+            'market-down': 'hsl(var(--market-down))',
   		},
   		keyframes: {
   			'accordion-down': {

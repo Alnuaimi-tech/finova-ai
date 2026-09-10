@@ -32,6 +32,8 @@
     --emerald: 158 64% 42%;
     --amber: 38 92% 50%;
     --rose: 347 77% 50%;
+    --market-up: 158 64% 52%;
+    --market-down: 350 89% 60%;
   }
 }
 
@@ -44,6 +46,8 @@
     @apply bg-background text-foreground font-inter antialiased;
   }
 }
+
+.dark { --market-up: 158 64% 52%; --market-down: 350 89% 60%; }
 
 .font-space { font-family: 'Space Grotesk', sans-serif; }
 .font-inter { font-family: 'Inter', sans-serif; }

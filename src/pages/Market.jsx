@@ -12,62 +12,9 @@ import HoldingRow from '../components/portfolio/HoldingRow';
 import AddHoldingModal from '../components/portfolio/AddHoldingModal';
 import EditHoldingModal from '../components/portfolio/EditHoldingModal';
 import { base44 } from '@/api/base44Client';
-
-const BASE_PRICES = {
-  ADNOCDIST: 3.82, ADNOCGAS: 3.21, EMIRATESNBD: 17.20, FAB: 13.50,
-  EMAAR: 7.85, ETISALAT: 22.40, DPWORLD: 18.60, ALDAR: 5.34, DIB: 6.10,
-};
-
-function getSimPrice(ticker) {
-  const base = BASE_PRICES[ticker] || 10;
-  return parseFloat((base * (1 + Math.sin(Date.now() / 10000 + ticker.charCodeAt(0)) * 0.03)).toFixed(3));
-}
-
-const TICKER_STOCKS = [
-  { symbol: 'EMAAR', price: 7.85, change: 1.2 },
-  { symbol: 'FAB', price: 13.50, change: -0.4 },
-  { symbol: 'ETISALAT', price: 22.40, change: 2.1 },
-  { symbol: 'ADNOCGAS', price: 3.21, change: 0.8 },
-  { symbol: 'EMIRATESNBD', price: 17.20, change: -1.1 },
-  { symbol: 'ALDAR', price: 5.34, change: 1.5 },
-  { symbol: 'DIB', price: 6.10, change: -0.6 },
-  { symbol: 'DPWORLD', price: 18.60, change: 0.3 },
-  { symbol: 'ADNOCDIST', price: 3.82, change: 1.9 },
-];
-
-function TickerTape() {
-  const [tickers, setTickers] = useState(TICKER_STOCKS);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTickers(prev => prev.map(t => ({
-        ...t,
-        price: parseFloat((t.price * (1 + (Math.random() - 0.49) * 0.006)).toFixed(3)),
-        change: parseFloat((t.change + (Math.random() - 0.5) * 0.1).toFixed(2)),
-      })));
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
-
-  const items = [...tickers, ...tickers];
-
-  return (
-    <div className="border-b border-border/40 bg-secondary/20 overflow-hidden py-2">
-      <div className="flex animate-marquee gap-8 w-max">
-        {items.map((t, i) => (
-          <div key={i} className="flex items-center gap-1.5 text-xs whitespace-nowrap">
-            <span className="font-semibold text-foreground font-space">{t.symbol}</span>
-            <span className="text-muted-foreground">AED {t.price.toFixed(2)}</span>
-            <span className={`flex items-center gap-0.5 font-medium ${t.change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {t.change >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {t.change >= 0 ? '+' : ''}{t.change.toFixed(2)}%
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import useMarketData from '@/components/market/useMarketData';
+import MarketDataStatus from '@/components/market/MarketDataStatus';
+import MarketTicker from '@/components/market/MarketTicker';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -81,7 +28,9 @@ export default function Market() {
 
   // Portfolio state
   const [holdings, setHoldings] = useState([]);
-  const [currentPrices, setCurrentPrices] = useState({});
+  const market = useMarketData();
+  const currentPrices = Object.fromEntries(Object.values(market.quotes).filter(q => q.exchange === 'ADX' || q.exchange === 'DFM').map(q => [q.symbol, q.price]));
+  const allPriced = holdings.every(h => Number.isFinite(currentPrices[h.ticker]));
   const [showModal, setShowModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -92,20 +41,9 @@ export default function Market() {
     setLoading(false);
   }, []);
 
-  const refreshPrices = useCallback(() => {
-    const prices = {};
-    Object.keys(BASE_PRICES).forEach(t => { prices[t] = getSimPrice(t); });
-    setCurrentPrices(prices);
-  }, []);
-
   useEffect(() => {
-    if (activeTab === 'portfolio') {
-      fetchHoldings();
-      refreshPrices();
-      const interval = setInterval(refreshPrices, 4000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, fetchHoldings, refreshPrices]);
+    if (activeTab === 'portfolio') fetchHoldings();
+  }, [activeTab, fetchHoldings]);
 
   const handleAdd = async (data) => {
     await base44.entities.VirtualHolding.create(data);
@@ -123,7 +61,7 @@ export default function Market() {
   };
 
   const totalInvested = holdings.reduce((s, h) => s + h.purchase_price * h.quantity, 0);
-  const totalCurrentValue = holdings.reduce((s, h) => s + (currentPrices[h.ticker] || h.purchase_price) * h.quantity, 0);
+  const totalCurrentValue = allPriced ? holdings.reduce((s, h) => s + currentPrices[h.ticker] * h.quantity, 0) : null;
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0">
@@ -144,9 +82,10 @@ export default function Market() {
         </div>
       </header>
 
-      <TickerTape />
+      <MarketTicker quotes={market.quotes} />
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-5">
+        <MarketDataStatus market={market} />
         {/* Tabs */}
         <div className="flex gap-1 p-1 bg-secondary/30 rounded-xl border border-border mb-6">
           {TABS.map(({ id, label, icon: Icon }) => (
@@ -170,14 +109,14 @@ export default function Market() {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="space-y-5">
-              <LiveMarketOverview />
+              <LiveMarketOverview market={market} />
             </motion.div>
           )}
 
           {/* ── UAE STOCKS ── */}
           {activeTab === 'uae' && (
             <motion.div key="uae" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <UAEStocksPanel />
+              <UAEStocksPanel quotes={market.quotes} issues={market.issues} />
             </motion.div>
           )}
 
@@ -187,7 +126,7 @@ export default function Market() {
               className="space-y-5">
               <div className="glass-card rounded-2xl border border-border p-4">
                 <p className="text-sm font-semibold text-foreground font-space mb-1">Virtual Portfolio</p>
-                <p className="text-xs text-muted-foreground">Practice investing with simulated prices — zero real money, 100% real learning.</p>
+                <p className="text-xs text-muted-foreground">Practice investing with real market quotes where available — no real money. Missing prices are never estimated; cached quotes may be outdated.</p>
               </div>
 
               {loading ? (
@@ -208,14 +147,16 @@ export default function Market() {
                 </motion.div>
               ) : (
                 <>
-                  <PortfolioSummaryCard totalInvested={totalInvested} totalCurrentValue={totalCurrentValue} />
-                  <PortfolioGrowthChart holdings={holdings} currentPrices={currentPrices} />
+                  {allPriced ? <>
+                    <PortfolioSummaryCard totalInvested={totalInvested} totalCurrentValue={totalCurrentValue} />
+                    <PortfolioGrowthChart holdings={holdings} currentPrices={currentPrices} />
+                  </> : <p className="text-sm text-muted-foreground">Invested: AED {totalInvested.toLocaleString()} · Current portfolio value and return are unavailable until every holding has a quote.</p>}
                   <div className="space-y-2">
                     {holdings.map((h, i) => (
-                      <HoldingRow key={h.id} holding={h} currentPrice={currentPrices[h.ticker] || h.purchase_price} onDelete={handleDelete} onEdit={setEditTarget} index={i} />
+                      <HoldingRow key={h.id} holding={h} currentPrice={currentPrices[h.ticker]} onDelete={handleDelete} onEdit={setEditTarget} index={i} />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">⚠️ Simulated for education only. Not a real investment platform.</p>
+                  <p className="text-xs text-muted-foreground text-center">Virtual holdings for education only. Quotes are the latest retrieved values, not guaranteed real-time prices.</p>
                 </>
               )}
             </motion.div>
@@ -224,7 +165,7 @@ export default function Market() {
         </AnimatePresence>
       </div>
 
-      {showModal && <AddHoldingModal onClose={() => setShowModal(false)} onAdd={handleAdd} />}
+      {showModal && <AddHoldingModal onClose={() => setShowModal(false)} onAdd={handleAdd} currentPrices={currentPrices} />}
       {editTarget && <EditHoldingModal holding={editTarget} onClose={() => setEditTarget(null)} onSubmit={handleEditSubmit} />}
       <MobileNav />
     </div>

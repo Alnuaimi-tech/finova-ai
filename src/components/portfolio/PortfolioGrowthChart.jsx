@@ -3,24 +3,11 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { motion } from 'framer-motion';
 
 function buildGrowthData(holdings, currentPrices) {
-  if (!holdings.length) return [];
-  // Simulate 30 days of growth for each holding
-  const days = 30;
-  const points = Array.from({ length: days + 1 }, (_, i) => {
-    const label = i === 0 ? 'Purchase' : `Day ${i}`;
-    let value = 0;
-    holdings.forEach(h => {
-      const current = currentPrices[h.ticker] || h.purchase_price;
-      // Linear interpolation with slight curve from purchase_price -> current
-      const progress = i / days;
-      const eased = progress * progress * (3 - 2 * progress); // smooth step
-      const noise = 1 + (Math.sin(i * 2.3 + h.ticker.charCodeAt(0)) * 0.012);
-      const price = h.purchase_price + (current - h.purchase_price) * eased * noise;
-      value += price * h.quantity;
-    });
-    return { label, value: parseFloat(value.toFixed(2)) };
-  });
-  return points;
+  if (!holdings.length || holdings.some(h => !Number.isFinite(currentPrices[h.ticker]))) return [];
+  return [
+    { label: 'Purchase cost', value: holdings.reduce((sum, h) => sum + h.purchase_price * h.quantity, 0) },
+    { label: 'Latest quotes', value: holdings.reduce((sum, h) => sum + currentPrices[h.ticker] * h.quantity, 0) },
+  ];
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -46,7 +33,7 @@ export default function PortfolioGrowthChart({ holdings, currentPrices }) {
       className="glass-card rounded-2xl border border-border p-5"
     >
       <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-4">
-        Portfolio Growth — Last 30 Days (Simulated)
+        Purchase Cost vs Latest Value — Not Historical Performance
       </p>
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>

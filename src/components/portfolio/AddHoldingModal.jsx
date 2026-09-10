@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
 
 const UAE_STOCKS_LIST = [
+  { ticker: 'DEWA', name: 'Dubai Electricity & Water Authority', exchange: 'DFM', emoji: '💡', sector: 'Utilities' },
   { ticker: 'ADNOCDIST', name: 'ADNOC Distribution', exchange: 'ADX', emoji: '⛽', sector: 'Energy', basePrice: 3.82 },
   { ticker: 'ADNOCGAS', name: 'ADNOC Gas', exchange: 'ADX', emoji: '🔵', sector: 'Energy', basePrice: 3.21 },
   { ticker: 'EMIRATESNBD', name: 'Emirates NBD', exchange: 'DFM', emoji: '🏦', sector: 'Banking', basePrice: 17.20 },
@@ -14,15 +15,15 @@ const UAE_STOCKS_LIST = [
   { ticker: 'DIB', name: 'Dubai Islamic Bank', exchange: 'DFM', emoji: '🕌', sector: 'Banking', basePrice: 6.10 },
 ];
 
-export default function AddHoldingModal({ onClose, onAdd }) {
+export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) {
   const [selected, setSelected] = useState(UAE_STOCKS_LIST[0]);
   const [quantity, setQuantity] = useState('10');
-  const [purchasePrice, setPurchasePrice] = useState(UAE_STOCKS_LIST[0].basePrice.toString());
+  const [purchasePrice, setPurchasePrice] = useState(currentPrices[UAE_STOCKS_LIST[0].ticker]?.toString() || '');
 
   const handleStockChange = (ticker) => {
     const stock = UAE_STOCKS_LIST.find(s => s.ticker === ticker);
     setSelected(stock);
-    setPurchasePrice(stock.basePrice.toString());
+    setPurchasePrice(currentPrices[stock.ticker]?.toString() || '');
   };
 
   const handleSubmit = (e) => {
@@ -82,7 +83,7 @@ export default function AddHoldingModal({ onClose, onAdd }) {
               <div>
                 <label className="text-xs text-muted-foreground font-medium block mb-2">Buy Price (AED)</label>
                 <input
-                  type="number" step="0.01" min="0.01" value={purchasePrice}
+                  type="number" required placeholder="Enter buy price" step="0.01" min="0.01" value={purchasePrice}
                   onChange={e => setPurchasePrice(e.target.value)}
                   className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary/50"
                 />
