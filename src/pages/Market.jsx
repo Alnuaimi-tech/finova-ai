@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, TrendingUp, BarChart3, PiggyBank, Plus, TrendingDown } from 'lucide-react';
+import { TrendingUp, BarChart3, PiggyBank, Plus } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
 import LiveMarketOverview from '../components/market/LiveMarketOverview';
@@ -116,7 +116,7 @@ export default function Market() {
           {/* ── UAE STOCKS ── */}
           {activeTab === 'uae' && (
             <motion.div key="uae" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <UAEStocksPanel quotes={market.quotes} issues={market.issues} />
+              <UAEStocksPanel quotes={market.quotes} />
             </motion.div>
           )}
 

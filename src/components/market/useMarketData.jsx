@@ -3,12 +3,20 @@ import { base44 } from '@/api/base44Client';
 
 export default function useMarketData() {
   const query = useQuery({
-    queryKey: ['twelve-data-market'],
-    queryFn: async () => (await base44.functions.invoke('getMarketData', {})).data,
-    staleTime: 60000,
-    refetchInterval: 65000,
+    queryKey: ['stored-market-data'],
+    queryFn: async () => {
+      const records = await base44.entities.MarketDataCache.filter({ key: 'twelve-data-v2' }, '-updated_date', 1);
+      return records[0] || null;
+    },
+    staleTime: 30000,
+    refetchInterval: 60000,
     refetchOnWindowFocus: false,
-    retry: false,
   });
-  return { ...query, quotes: query.data?.quotes || {}, assets: query.data?.assets || [], issues: query.data?.issues || {} };
+  const quotes = query.data?.quotes || {};
+  return {
+    ...query,
+    quotes,
+    assets: Object.values(quotes),
+    issues: query.data?.issues || {},
+  };
 }
