@@ -14,7 +14,7 @@ import EditHoldingModal from '../components/portfolio/EditHoldingModal';
 import { base44 } from '@/api/base44Client';
 import useMarketData from '@/components/market/useMarketData';
 import MarketDataStatus from '@/components/market/MarketDataStatus';
-import MarketTicker from '@/components/market/MarketTicker';
+import TradingViewTickerTape from '@/components/market/TradingViewTickerTape';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -82,7 +82,7 @@ export default function Market() {
         </div>
       </header>
 
-      <MarketTicker quotes={market.quotes} />
+      <TradingViewTickerTape />
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-5">
         <MarketDataStatus market={market} />
@@ -116,7 +116,7 @@ export default function Market() {
           {/* ── UAE STOCKS ── */}
           {activeTab === 'uae' && (
             <motion.div key="uae" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <UAEStocksPanel quotes={market.quotes} issues={market.issues} />
+              <UAEStocksPanel />
             </motion.div>
           )}
 

@@ -1,10 +1,28 @@
 {
   "name": "Refresh Market Prices",
+  "description": "Refresh the non-UAE market quotes used by FINOVA every ten minutes; UAE data is displayed through TradingView widgets.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/10 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
   "definition": {
     "document": {
       "dsl": "1.0.0",
       "name": "refresh_market_prices",
-      "version": "1.0",
+      "version": "1.1",
       "namespace": "base44"
     },
     "do": [
@@ -41,102 +59,12 @@
               "batch": 1
             }
           },
-          "then": "pause_two",
+          "then": "end",
           "x-base44": {
             "title": "Refresh forex and stocks"
           }
         }
-      },
-      {
-        "pause_two": {
-          "wait": "PT20S",
-          "then": "batch_two",
-          "x-base44": {
-            "title": "Provider cooldown"
-          }
-        }
-      },
-      {
-        "batch_two": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "getMarketData",
-            "args": {
-              "batch": 2
-            }
-          },
-          "then": "pause_three",
-          "x-base44": {
-            "title": "Refresh UAE stocks"
-          }
-        }
-      },
-      {
-        "pause_three": {
-          "wait": "PT20S",
-          "then": "batch_three",
-          "x-base44": {
-            "title": "Provider cooldown"
-          }
-        }
-      },
-      {
-        "batch_three": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "getMarketData",
-            "args": {
-              "batch": 3
-            }
-          },
-          "then": "pause_four",
-          "x-base44": {
-            "title": "Refresh more UAE stocks"
-          }
-        }
-      },
-      {
-        "pause_four": {
-          "wait": "PT20S",
-          "then": "batch_four",
-          "x-base44": {
-            "title": "Provider cooldown"
-          }
-        }
-      },
-      {
-        "batch_four": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "getMarketData",
-            "args": {
-              "batch": 4
-            }
-          },
-          "then": "end",
-          "x-base44": {
-            "title": "Refresh UAE stock and indices"
-          }
-        }
       }
     ]
-  },
-  "description": "Refresh all tracked symbols including UAE indices in paced batches every ten minutes; retain last-known quotes after any failure.",
-  "trigger": {
-    "condition": null,
-    "config": {
-      "trigger_type": "scheduled",
-      "events": [],
-      "schedule_mode": "recurring",
-      "cron_expression": "*/10 * * * *",
-      "one_time_date": null,
-      "timezone": "UTC",
-      "interval_value": null,
-      "interval_unit": null,
-      "interval_anchor": null,
-      "ends_type": "never",
-      "ends_on_date": null,
-      "ends_after_count": null
-    }
   }
 }

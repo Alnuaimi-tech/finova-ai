@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Trash2, Pencil } from 'lucide-react';
+import { Trash2, Pencil } from 'lucide-react';
+import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
 
 export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, index }) {
   const invested = holding.purchase_price * holding.quantity;
@@ -49,6 +50,9 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
+      </div>
+      <div className="mt-3 pt-3 border-t border-border/60">
+        <TradingViewMiniChart symbol={`${holding.exchange}:${holding.ticker}`} height={160} />
       </div>
     </motion.div>
   );

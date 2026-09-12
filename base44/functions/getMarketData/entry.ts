@@ -13,17 +13,6 @@ const assets = [
   { symbol: 'EUR/USD', name: 'Euro / US Dollar', group: 'forex', currency: 'USD' },
   { symbol: 'AAPL', name: 'Apple', group: 'stocks', exchange: 'NASDAQ', currency: 'USD' },
   { symbol: 'NVDA', name: 'NVIDIA', group: 'stocks', exchange: 'NASDAQ', currency: 'USD' },
-  { symbol: 'EMAAR', name: 'Emaar Properties', group: 'uae', exchange: 'DFM', currency: 'AED' },
-  { symbol: 'FAB', name: 'First Abu Dhabi Bank', group: 'uae', exchange: 'ADX', currency: 'AED' },
-  { symbol: 'ADNOCDIST', name: 'ADNOC Distribution', group: 'uae', exchange: 'ADX', currency: 'AED' },
-  { symbol: 'DEWA', name: 'Dubai Electricity & Water Authority', group: 'uae', exchange: 'DFM', currency: 'AED' },
-  { symbol: 'ADNOCGAS', name: 'ADNOC Gas', group: 'uae', exchange: 'ADX', currency: 'AED' },
-  { symbol: 'EMIRATESNBD', name: 'Emirates NBD', group: 'uae', exchange: 'DFM', currency: 'AED' },
-  { symbol: 'ETISALAT', name: 'e& (Etisalat)', group: 'uae', exchange: 'ADX', currency: 'AED' },
-  { symbol: 'ALDAR', name: 'Aldar Properties', group: 'uae', exchange: 'ADX', currency: 'AED' },
-  { symbol: 'DIB', name: 'Dubai Islamic Bank', group: 'uae', exchange: 'DFM', currency: 'AED' },
-  { symbol: 'ADI', name: 'ADX General Index', group: 'uae_indices', exchange: 'ADX', country: 'United Arab Emirates', type: 'Index', unit: 'pts' },
-  { symbol: 'DFMGI', name: 'DFM General Index', group: 'uae_indices', exchange: 'DFM', country: 'United Arab Emirates', type: 'Index', unit: 'pts' },
 ];
 
 const toNumber = value => value == null || value === '' || !Number.isFinite(Number(value)) ? null : Number(value);
@@ -39,13 +28,6 @@ async function fetchQuote(asset, apiKey) {
     if (!response.ok || raw.status === 'error') {
       const code = Number(raw.code || response.status);
       return { error: raw.message || `Twelve Data error ${code}`, retryable: code === 429 || code >= 500 };
-    }
-    if (asset.group === 'uae' && (raw.currency !== 'AED' || raw.exchange?.toUpperCase() !== asset.exchange)) {
-      return { error: 'This UAE listing is not covered by the connected plan.', retryable: false };
-    }
-    // ADI also names a US stock: never substitute that stock or an ETF for a UAE index.
-    if (asset.group === 'uae_indices' && (!/index/i.test(raw.type || '') || raw.exchange?.toUpperCase() !== asset.exchange)) {
-      return { error: 'The provider did not return the requested UAE index.', retryable: false };
     }
     const price = toNumber(raw.close ?? raw.price);
     if (!(price > 0)) return { error: 'No valid price returned' };
