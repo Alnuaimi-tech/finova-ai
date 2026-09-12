@@ -1,23 +1,5 @@
 {
   "name": "Refresh Market Prices",
-  "trigger": {
-    "condition": null,
-    "config": {
-      "trigger_type": "scheduled",
-      "events": [],
-      "schedule_mode": "recurring",
-      "cron_expression": "*/10 * * * *",
-      "one_time_date": null,
-      "timezone": "UTC",
-      "interval_value": null,
-      "interval_unit": null,
-      "interval_anchor": null,
-      "ends_type": "never",
-      "ends_on_date": null,
-      "ends_after_count": null
-    }
-  },
-  "description": "Refresh all tracked symbols in paced batches every ten minutes; retain last-known quotes after any failure.",
   "definition": {
     "document": {
       "dsl": "1.0.0",
@@ -133,10 +115,28 @@
           },
           "then": "end",
           "x-base44": {
-            "title": "Refresh final UAE stock"
+            "title": "Refresh UAE stock and indices"
           }
         }
       }
     ]
+  },
+  "description": "Refresh all tracked symbols including UAE indices in paced batches every ten minutes; retain last-known quotes after any failure.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/10 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
   }
 }

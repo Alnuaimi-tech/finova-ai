@@ -22,6 +22,8 @@ const assets = [
   { symbol: 'ETISALAT', name: 'e& (Etisalat)', group: 'uae', exchange: 'ADX', currency: 'AED' },
   { symbol: 'ALDAR', name: 'Aldar Properties', group: 'uae', exchange: 'ADX', currency: 'AED' },
   { symbol: 'DIB', name: 'Dubai Islamic Bank', group: 'uae', exchange: 'DFM', currency: 'AED' },
+  { symbol: 'ADI', name: 'ADX General Index', group: 'uae_indices', exchange: 'ADX', country: 'United Arab Emirates', type: 'Index', unit: 'pts' },
+  { symbol: 'DFMGI', name: 'DFM General Index', group: 'uae_indices', exchange: 'DFM', country: 'United Arab Emirates', type: 'Index', unit: 'pts' },
 ];
 
 const toNumber = value => value == null || value === '' || !Number.isFinite(Number(value)) ? null : Number(value);
@@ -29,6 +31,8 @@ const toNumber = value => value == null || value === '' || !Number.isFinite(Numb
 async function fetchQuote(asset, apiKey) {
   const params = new URLSearchParams({ symbol: asset.symbol, apikey: apiKey });
   if (asset.exchange) params.set('exchange', asset.exchange);
+  if (asset.type) params.set('type', asset.type);
+  if (asset.country) params.set('country', asset.country);
   try {
     const response = await fetch(`https://api.twelvedata.com/quote?${params}`, { signal: AbortSignal.timeout(8000) });
     const raw = await response.json();
@@ -39,13 +43,17 @@ async function fetchQuote(asset, apiKey) {
     if (asset.group === 'uae' && (raw.currency !== 'AED' || raw.exchange?.toUpperCase() !== asset.exchange)) {
       return { error: 'This UAE listing is not covered by the connected plan.', retryable: false };
     }
+    // ADI also names a US stock: never substitute that stock or an ETF for a UAE index.
+    if (asset.group === 'uae_indices' && (!/index/i.test(raw.type || '') || raw.exchange?.toUpperCase() !== asset.exchange)) {
+      return { error: 'The provider did not return the requested UAE index.', retryable: false };
+    }
     const price = toNumber(raw.close ?? raw.price);
     if (!(price > 0)) return { error: 'No valid price returned' };
     return {
       quote: {
         symbol: asset.symbol, name: asset.name, group: asset.group,
         exchange: asset.exchange || raw.exchange || null,
-        currency: raw.currency || asset.currency || null,
+        currency: asset.unit || raw.currency || asset.currency || null,
         price, open: toNumber(raw.open), change: toNumber(raw.change),
         changePercent: toNumber(raw.percent_change), datetime: raw.datetime || null,
         isMarketOpen: typeof raw.is_market_open === 'boolean' ? raw.is_market_open : null,
