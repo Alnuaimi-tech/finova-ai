@@ -1,5 +1,5 @@
 export default function MarketTicker({ quotes }) {
-  const items = Object.values(quotes).filter(q => !q.stale);
+  const items = Object.values(quotes).filter(q => Number.isFinite(q.price) && q.price > 0);
   return (
     <div className="border-b border-border/40 bg-secondary/20 overflow-hidden py-2">
       {!items.length ? <p className="text-xs text-muted-foreground text-center">Waiting for available market quotes — no simulated prices.</p> : (

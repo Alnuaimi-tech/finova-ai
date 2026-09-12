@@ -1,0 +1,142 @@
+{
+  "name": "Refresh Market Prices",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/10 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Refresh all tracked symbols in paced batches every ten minutes; retain last-known quotes after any failure.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "refresh_market_prices",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "batch_zero": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 0
+            }
+          },
+          "then": "pause_one",
+          "x-base44": {
+            "title": "Refresh ETFs and crypto"
+          }
+        }
+      },
+      {
+        "pause_one": {
+          "wait": "PT20S",
+          "then": "batch_one",
+          "x-base44": {
+            "title": "Provider cooldown"
+          }
+        }
+      },
+      {
+        "batch_one": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 1
+            }
+          },
+          "then": "pause_two",
+          "x-base44": {
+            "title": "Refresh forex and stocks"
+          }
+        }
+      },
+      {
+        "pause_two": {
+          "wait": "PT20S",
+          "then": "batch_two",
+          "x-base44": {
+            "title": "Provider cooldown"
+          }
+        }
+      },
+      {
+        "batch_two": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 2
+            }
+          },
+          "then": "pause_three",
+          "x-base44": {
+            "title": "Refresh UAE stocks"
+          }
+        }
+      },
+      {
+        "pause_three": {
+          "wait": "PT20S",
+          "then": "batch_three",
+          "x-base44": {
+            "title": "Provider cooldown"
+          }
+        }
+      },
+      {
+        "batch_three": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 3
+            }
+          },
+          "then": "pause_four",
+          "x-base44": {
+            "title": "Refresh more UAE stocks"
+          }
+        }
+      },
+      {
+        "pause_four": {
+          "wait": "PT20S",
+          "then": "batch_four",
+          "x-base44": {
+            "title": "Provider cooldown"
+          }
+        }
+      },
+      {
+        "batch_four": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 4
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Refresh final UAE stock"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -116,7 +116,7 @@ export default function Market() {
           {/* ── UAE STOCKS ── */}
           {activeTab === 'uae' && (
             <motion.div key="uae" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <UAEStocksPanel quotes={market.quotes} />
+              <UAEStocksPanel quotes={market.quotes} issues={market.issues} />
             </motion.div>
           )}
 

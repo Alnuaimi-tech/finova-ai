@@ -1,10 +1,11 @@
 import { secrets } from 'base44:runtime';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
-const refreshIntervalMs = 10 * 60 * 1000;
-const batchSize = 5;
+const batchSize = 4;
+const requestGapMs = 9000;
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const assets = [
-  { symbol: 'SPY', name: 'S&P 500 ETF', group: 'indices', exchange: 'NYSE', currency: 'USD' },
+  { symbol: 'SPY', name: 'S&P 500 ETF', group: 'indices', currency: 'USD' },
   { symbol: 'QQQ', name: 'Nasdaq-100 ETF', group: 'indices', exchange: 'NASDAQ', currency: 'USD' },
   { symbol: 'BTC/USD', name: 'Bitcoin', group: 'crypto', currency: 'USD' },
   { symbol: 'ETH/USD', name: 'Ethereum', group: 'crypto', currency: 'USD' },
@@ -31,7 +32,13 @@ async function fetchQuote(asset, apiKey) {
   try {
     const response = await fetch(`https://api.twelvedata.com/quote?${params}`, { signal: AbortSignal.timeout(8000) });
     const raw = await response.json();
-    if (!response.ok || raw.status === 'error') return { error: raw.message || `Twelve Data error ${response.status}` };
+    if (!response.ok || raw.status === 'error') {
+      const code = Number(raw.code || response.status);
+      return { error: raw.message || `Twelve Data error ${code}`, retryable: code === 429 || code >= 500 };
+    }
+    if (asset.group === 'uae' && (raw.currency !== 'AED' || raw.exchange?.toUpperCase() !== asset.exchange)) {
+      return { error: 'This UAE listing is not covered by the connected plan.', retryable: false };
+    }
     const price = toNumber(raw.close ?? raw.price);
     if (!(price > 0)) return { error: 'No valid price returned' };
     return {
@@ -46,44 +53,72 @@ async function fetchQuote(asset, apiKey) {
       },
     };
   } catch {
-    return { error: 'Twelve Data could not be reached' };
+    return { error: 'Twelve Data could not be reached', retryable: true };
   }
 }
 
 export default async function(req) {
   try {
     const client = createClientFromRequest(req);
+    const user = await client.auth.me();
+    if (!user || user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const { batch = 0, force = false } = await req.json();
+    if (!Number.isInteger(batch) || batch < 0 || batch >= Math.ceil(assets.length / batchSize)) return Response.json({ error: 'Invalid batch' }, { status: 400 });
     const store = client.asServiceRole.entities.MarketDataCache;
-    const [state] = await store.filter({ key: 'twelve-data-v2' }, 'created_date', 1);
+    let [state] = await store.filter({ key: 'twelve-data-v2' }, 'created_date', 1);
     if (!state) return Response.json({ error: 'Market cache is not initialized' }, { status: 500 });
     const apiKey = secrets.get('TWELVE_DATA_API_KEY');
     if (!apiKey) return Response.json({ error: 'TWELVE_DATA_API_KEY is not configured' }, { status: 500 });
-
+    // A short cooldown also spaces requests between separate invocations.
+    const cooldown = (state.lease_until || 0) - Date.now();
+    if (cooldown > 0 && cooldown <= requestGapMs) {
+      await sleep(cooldown);
+      state = await store.get(state.id);
+    }
     const now = Date.now();
-    if ((state.lease_until || 0) > now) return Response.json({ updated: 0, message: 'Refresh already completed for this interval' });
-    const attempts = { ...state.attempts };
-    const due = assets.sort((a, b) => (attempts[a.symbol] || 0) - (attempts[b.symbol] || 0)).slice(0, batchSize);
-    await store.update(state.id, { lease_until: now + refreshIntervalMs });
-
-    const responses = await Promise.all(due.map(asset => fetchQuote(asset, apiKey)));
-    const quotes = { ...state.quotes };
-    const issues = { ...state.issues };
-    responses.forEach((response, index) => {
-      const symbol = due[index].symbol;
-      attempts[symbol] = now;
-      if (response.quote) {
-        quotes[symbol] = response.quote;
-        delete issues[symbol];
-      } else {
-        issues[symbol] = response.error;
+    if (state.lease_until > now) return Response.json({ updated: 0, message: 'Another refresh is in progress; existing prices retained.' });
+    const due = assets.slice(batch * batchSize, (batch + 1) * batchSize)
+      .filter(asset => force || now - (state.attempts?.[asset.symbol] || 0) >= 9 * 60000);
+    if (!due.length) return Response.json({ updated: 0, message: 'This batch was already refreshed.' });
+    const day = new Date(now).toISOString().slice(0, 10);
+    const used = state.budget_day === day ? state.credits_used || 0 : 0;
+    const reservation = due.length * 2;
+    if (used + reservation > 780) return Response.json({ updated: 0, message: 'Daily provider budget reached; all last-known prices retained.' });
+    const token = crypto.randomUUID();
+    await store.updateMany({ id: state.id, lease_token: state.lease_token, lease_until: state.lease_until }, { $set: {
+      lease_token: token, lease_until: now + 180000, budget_day: day, credits_used: used + reservation,
+    } });
+    const locked = await store.get(state.id);
+    if (locked.lease_token !== token) return Response.json({ updated: 0, message: 'Refresh already running.' });
+    const quotes = { ...locked.quotes }, issues = { ...locked.issues }, attempts = { ...locked.attempts };
+    let lastRequestAt = 0, requestCount = 0, successful = 0;
+    for (const asset of due) {
+      let response;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        await sleep(Math.max(0, lastRequestAt + requestGapMs - Date.now()));
+        lastRequestAt = Date.now();
+        requestCount++;
+        response = await fetchQuote(asset, apiKey);
+        if (response.quote || !response.retryable) break;
       }
-    });
-    const successful = responses.filter(response => response.quote).length;
+      attempts[asset.symbol] = Date.now();
+      if (response.quote) {
+        quotes[asset.symbol] = response.quote;
+        issues[asset.symbol] = '';
+        successful++;
+      } else {
+        issues[asset.symbol] = response.error;
+      }
+      // Save each success immediately. Failures never overwrite a price or its timestamp.
+      await store.update(state.id, { quotes, issues, attempts });
+    }
     await store.update(state.id, {
-      quotes, attempts, issues,
-      message: successful ? '' : 'The latest scheduled refresh failed; previous real prices remain available.',
+      credits_used: used + requestCount,
+      lease_until: lastRequestAt + requestGapMs,
+      message: successful === due.length ? '' : 'Some prices could not refresh; last-known real values remain visible.',
     });
-    return Response.json({ updated: successful, attempted: due.map(asset => asset.symbol) });
+    return Response.json({ updated: successful, attempted: due.map(a => a.symbol), requests: requestCount,
+      stored: Object.keys(quotes), issues: Object.fromEntries(due.filter(a => issues[a.symbol]).map(a => [a.symbol, issues[a.symbol]])) });
   } catch (error) {
     return Response.json({ error: error.message || 'Scheduled market refresh failed' }, { status: 500 });
   }
