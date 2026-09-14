@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, Download, Send, Loader2, TrendingUp, Target, ChevronRight, Flame } from 'lucide-react';
+import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, Download, Send, Loader2, TrendingUp, Target, ChevronRight, Flame, AlertTriangle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
 import MobileNav from '../components/finova/MobileNav';
@@ -51,7 +51,9 @@ export default function Dashboard() {
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [chatError, setChatError] = useState(null);
   const chatBottomRef = useRef(null);
+  const awaitingResponseRef = useRef(false);
 
   const hydrate = (numericData) => {
     setData(numericData);
@@ -94,16 +96,54 @@ export default function Dashboard() {
     })();
   }, [navigate]);
 
+  // Create conversation once when the coach tab is first opened
   useEffect(() => {
     if (activeTab !== 'coach' || conversation) return;
-    async function initChat() {
-      const conv = await base44.agents.createConversation({ agent_name: 'finova_analyst', metadata: { name: 'AI Coach' } });
-      setConversation(conv);
-      setMessages(conv.messages || []);
-      return base44.agents.subscribeToConversation(conv.id, (d) => setMessages(d.messages || []));
-    }
-    const cleanup = initChat();
-    return () => { cleanup.then(fn => fn && fn()); };
+    let cancelled = false;
+    (async () => {
+      try {
+        const conv = await base44.agents.createConversation({ agent_name: 'finova_analyst', metadata: { name: 'AI Coach' } });
+        if (cancelled) return;
+        setConversation(conv);
+        setMessages(conv.messages || []);
+      } catch {
+        if (!cancelled) setChatError('Unable to start a chat session. Please refresh the page and try again.');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [activeTab, conversation]);
+
+  // Subscribe to conversation updates — re-subscribes whenever the conversation changes
+  useEffect(() => {
+    if (activeTab !== 'coach' || !conversation) return;
+    let unsubscribe;
+    let cancelled = false;
+    (async () => {
+      try {
+        const unsub = await base44.agents.subscribeToConversation(conversation.id, (d) => {
+          const msgs = d.messages || [];
+          // Clear the "Thinking…" spinner once the assistant's reply arrives
+          if (awaitingResponseRef.current && msgs.length > 0) {
+            const last = msgs[msgs.length - 1];
+            if (last.role === 'assistant' && last.content) {
+              awaitingResponseRef.current = false;
+              setSending(false);
+              setChatError(null);
+            }
+          }
+          setMessages(msgs);
+        });
+        if (cancelled) { if (typeof unsub === 'function') unsub(); else unsub?.then?.(fn => fn && fn()); return; }
+        unsubscribe = unsub;
+      } catch {
+        if (!cancelled) setChatError('Live updates are unavailable. Please refresh the page and try again.');
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (typeof unsubscribe === 'function') unsubscribe();
+      else if (unsubscribe?.then) unsubscribe.then(fn => fn && fn());
+    };
   }, [activeTab, conversation]);
 
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
@@ -113,10 +153,28 @@ export default function Dashboard() {
     const text = chatInput.trim();
     setChatInput('');
     setSending(true);
+    setChatError(null);
+    awaitingResponseRef.current = true;
     const ctx = buildFinancialContext(data, metrics, riskLevel);
     const content = (messages.filter(m => m.role === 'user').length === 0 && ctx) ? `${text}${ctx}` : text;
-    await base44.agents.addMessage(conversation, { role: 'user', content });
-    setSending(false);
+    let timeoutId;
+    try {
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('timeout')), 60000);
+      });
+      await Promise.race([
+        base44.agents.addMessage(conversation, { role: 'user', content }),
+        timeoutPromise,
+      ]);
+    } catch (err) {
+      awaitingResponseRef.current = false;
+      setSending(false);
+      setChatError(err.message === 'timeout'
+        ? 'The AI Coach is taking too long to respond. Please try sending your message again.'
+        : 'The AI Coach encountered an error. Please try again in a moment.');
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
   };
 
   const handleDownloadPDF = async () => {
@@ -370,6 +428,21 @@ export default function Dashboard() {
                     <div className="glass-card border border-border rounded-2xl px-4 py-3 flex items-center gap-2">
                       <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
                       <span className="text-xs text-muted-foreground">Thinking...</span>
+                    </div>
+                  </div>
+                )}
+                {chatError && (
+                  <div className="flex gap-2 justify-start">
+                    <div className="glass-card border border-rose-500/30 bg-rose-500/5 rounded-2xl px-4 py-3 flex items-start gap-2 max-w-[85%]">
+                      <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-rose-400 font-semibold mb-0.5">Something went wrong</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{chatError}</p>
+                        <button onClick={() => { setChatError(null); setSending(false); awaitingResponseRef.current = false; }}
+                          className="text-xs text-primary hover:underline mt-1.5">
+                          Dismiss
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
