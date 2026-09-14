@@ -14,6 +14,7 @@ import PredictionCard from '../components/finova/PredictionCard';
 import RecommendationCard from '../components/finova/RecommendationCard';
 import ScoreBreakdown from '../components/finova/ScoreBreakdown';
 import SavingsGoal from '../components/finova/SavingsGoal';
+import SavingsTargetCard from '../components/finova/SavingsTargetCard';
 import {
   calculateFinancialScore, classifyRisk, getRiskColor,
   generateAIExplanations, generatePredictions, generateRecommendations,
@@ -236,7 +237,10 @@ export default function Dashboard() {
 
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-              <SavingsGoal currentSavings={data.current_savings} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <SavingsGoal currentSavings={data.current_savings} />
+                <SavingsTargetCard data={data} metrics={metrics} />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {insights.slice(0, 4).map((insight, i) => <AIInsightCard key={i} insight={insight} index={i} />)}
               </div>
