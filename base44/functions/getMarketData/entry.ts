@@ -51,8 +51,9 @@ export default async function(req) {
   try {
     const client = createClientFromRequest(req);
     const user = await client.auth.me();
-    if (!user || user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     const { batch = 0, force = false } = await req.json();
+    if (force && user.role !== 'admin') return Response.json({ error: 'Forbidden — force refresh requires admin' }, { status: 403 });
     if (!Number.isInteger(batch) || batch < 0 || batch >= Math.ceil(assets.length / batchSize)) return Response.json({ error: 'Invalid batch' }, { status: 400 });
     const store = client.asServiceRole.entities.MarketDataCache;
     let [state] = await store.filter({ key: 'twelve-data-v2' }, 'created_date', 1);
