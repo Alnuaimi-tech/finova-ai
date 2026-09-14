@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
+import TradingViewDFMChart from '@/components/market/TradingViewDFMChart';
 
 const stocks = [
   { symbol: 'DFM:EMAAR', name: 'Emaar Properties', exchange: 'DFM', sector: 'Real Estate' },
@@ -21,6 +22,6 @@ export default function UAEStocksPanel() {
       <p className="text-xs text-muted-foreground mt-1">Official TradingView widgets show the latest available market data with no simulated prices.</p>
     </div>
     <div className="flex gap-1.5 flex-wrap">{sectors.map(sector => <button key={sector} onClick={() => setFilter(sector)} className={`text-xs px-3 py-1.5 rounded-full border ${filter === sector ? 'bg-primary/10 border-primary/30 text-primary font-semibold' : 'border-border text-muted-foreground'}`}>{sector}</button>)}</div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{filtered.map(stock => <article key={stock.symbol} className="glass-card rounded-2xl border border-border p-4"><div className="mb-3"><p className="text-sm font-bold">{stock.name}</p><p className="text-xs text-muted-foreground">{stock.exchange} · {stock.sector}</p></div><TradingViewMiniChart symbol={stock.symbol} /></article>)}</div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{filtered.map(stock => <article key={stock.symbol} className="glass-card rounded-2xl border border-border p-4"><div className="mb-3"><p className="text-sm font-bold">{stock.name}</p><p className="text-xs text-muted-foreground">{stock.exchange} · {stock.sector}</p></div>{stock.exchange === 'DFM' ? <TradingViewDFMChart key={stock.symbol} symbol={stock.symbol} /> : <TradingViewMiniChart symbol={stock.symbol} />}</article>)}</div>
   </div>;
 }
