@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
 import { Trash2, Pencil } from 'lucide-react';
 import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
-import TradingViewDFMChart from '@/components/market/TradingViewDFMChart';
+import DemoDFMCard from '@/components/market/DemoDFMCard';
+import { dfmDemoPrice } from '@/lib/dfmDemoData';
 
 export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, index }) {
+  const isDfm = holding.exchange === 'DFM';
+  const effectivePrice = isDfm ? dfmDemoPrice(`DFM:${holding.ticker}`) : currentPrice;
   const invested = holding.purchase_price * holding.quantity;
-  const hasPrice = Number.isFinite(currentPrice);
-  const currentValue = hasPrice ? currentPrice * holding.quantity : null;
+  const hasPrice = Number.isFinite(effectivePrice);
+  const currentValue = hasPrice ? effectivePrice * holding.quantity : null;
   const pnl = currentValue - invested;
   const pnlPct = ((pnl / invested) * 100).toFixed(2);
   const isUp = pnl >= 0;
@@ -28,7 +31,7 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
         </div>
 
         <div className="text-right hidden sm:block">
-          <p className="text-xs text-muted-foreground">Value</p>
+          <p className="text-xs text-muted-foreground">{isDfm ? 'Demo Value' : 'Value'}</p>
           <p className="text-sm font-bold text-foreground font-space">{hasPrice ? `AED ${currentValue.toFixed(2)}` : 'Price unavailable'}</p>
         </div>
 
@@ -36,6 +39,7 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
           {hasPrice ? <>
             <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}{pnlPct}%</p>
             <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}AED {pnl.toFixed(2)}</p>
+            {isDfm && <span className="inline-block text-[9px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-1.5 py-0.5 mt-0.5">Demo</span>}
           </> : <p className="text-xs text-muted-foreground">Return unavailable</p>}
         </div>
 
@@ -53,7 +57,7 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
         </button>
       </div>
       <div className="mt-3 pt-3 border-t border-border/60">
-        {holding.exchange === 'DFM' ? <TradingViewDFMChart key={holding.ticker} symbol={`DFM:${holding.ticker}`} /> : <TradingViewMiniChart symbol={`${holding.exchange}:${holding.ticker}`} height={160} />}
+        {isDfm ? <DemoDFMCard symbol={`DFM:${holding.ticker}`} height={160} compact /> : <TradingViewMiniChart symbol={`${holding.exchange}:${holding.ticker}`} height={160} />}
       </div>
     </motion.div>
   );
