@@ -1,6 +1,7 @@
 import BrandLogo from '@/components/finova/BrandLogo';
 import ContactForm from '@/components/finova/ContactForm';
 import MobileNav from '@/components/finova/MobileNav';
+import SiteFooter from '@/components/finova/SiteFooter';
 
 export default function Contact() {
   return (
@@ -13,6 +14,7 @@ export default function Contact() {
         <h1 className="text-3xl md:text-5xl font-space font-bold text-foreground tracking-tight mb-4">We’re here to help</h1>
         <p className="text-muted-foreground leading-relaxed mb-8">Send the FINOVA AI team a question, suggestion, or report. Include the email address where you would like us to reply.</p>
         <ContactForm />
+        <SiteFooter />
       </main>
       <MobileNav />
     </div>

@@ -182,6 +182,15 @@ export default function Profile() {
           </div>
           <p className="text-xs text-muted-foreground">Financial intelligence for UAE students · v3.0</p>
           <p className="text-xs text-muted-foreground/50 mt-1">For educational use only. Not financial advice. 🇦🇪</p>
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <button onClick={() => navigate('/terms')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms</button>
+            <span className="text-border text-xs">·</span>
+            <button onClick={() => navigate('/privacy')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy</button>
+            <span className="text-border text-xs">·</span>
+            <button onClick={() => navigate('/about')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">About</button>
+            <span className="text-border text-xs">·</span>
+            <button onClick={() => navigate('/contact')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</button>
+          </div>
         </motion.div>
       </div>
       <MobileNav />

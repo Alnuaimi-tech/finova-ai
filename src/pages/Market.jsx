@@ -15,6 +15,7 @@ import { base44 } from '@/api/base44Client';
 import useMarketData from '@/components/market/useMarketData';
 import MarketDataStatus from '@/components/market/MarketDataStatus';
 import TradingViewTickerTape from '@/components/market/TradingViewTickerTape';
+import EducationalDisclaimer from '@/components/finova/EducationalDisclaimer';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -102,6 +103,8 @@ export default function Market() {
             </button>
           ))}
         </div>
+
+        <EducationalDisclaimer />
 
         <AnimatePresence mode="wait">
 

@@ -1,5 +1,6 @@
 import BrandLogo from '@/components/finova/BrandLogo';
 import MobileNav from '@/components/finova/MobileNav';
+import SiteFooter from '@/components/finova/SiteFooter';
 
 export default function About() {
   return (
@@ -15,6 +16,7 @@ export default function About() {
           <p>The platform is built primarily for students and young professionals in the United Arab Emirates. Its examples use AED and reflect familiar local topics such as university life, rent, transport, emergency funds, UAE banks, ADX and DFM markets, and responsible investing. FINOVA AI also provides educational lessons, savings projections, market-learning tools, and a virtual portfolio so users can practise financial decision-making without risking real money.</p>
           <p>FINOVA AI is built and maintained by the FINOVA AI product team, with a focus on accessible technology, responsible financial education, privacy, and clear explanations. Artificial intelligence supports selected educational features, but it does not replace a licensed financial adviser. The app is intended to make financial concepts easier to understand, encourage thoughtful habits, and give young people a practical starting point for stronger long-term financial wellbeing.</p>
         </article>
+        <SiteFooter />
       </main>
       <MobileNav />
     </div>
