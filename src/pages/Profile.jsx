@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Cpu, User, RefreshCw, TrendingUp, Target, BookOpen, Brain, ChevronRight, LogOut, Trophy, Star, Flame, Award, Shield, Zap } from 'lucide-react';
+import { User, RefreshCw, TrendingUp, Target, BookOpen, Brain, ChevronRight, LogOut, Trophy, Star, Flame, Award, Shield, Zap } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
+import LogoMark from '@/components/finova/LogoMark';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, getRiskColor } from '../lib/financialEngine';
 
@@ -175,9 +176,7 @@ export default function Profile() {
         {/* App info */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-center py-2">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-7 h-7 gold-gradient rounded-lg flex items-center justify-center">
-              <Cpu className="w-3.5 h-3.5 text-primary-foreground" />
-            </div>
+            <LogoMark size={28} />
             <span className="font-space font-bold text-sm text-foreground">FINOVA AI</span>
           </div>
           <p className="text-xs text-muted-foreground">Financial intelligence for UAE students · v3.0</p>
