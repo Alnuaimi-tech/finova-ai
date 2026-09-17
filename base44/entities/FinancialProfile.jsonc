@@ -21,30 +21,44 @@
     },
     "monthly_income": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly income in AED"
     },
     "rent": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly rent expense in AED"
     },
     "food": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly food expense in AED"
     },
     "transport": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly transport expense in AED"
     },
     "shopping": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly shopping expense in AED"
     },
     "other": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Monthly other expenses in AED"
     },
     "current_savings": {
       "type": "number",
+      "minimum": 0,
+      "maximum": 10000000,
       "description": "Current savings in AED"
     },
     "stability_score": {

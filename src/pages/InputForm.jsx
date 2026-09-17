@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase } from 'lucide-react';
+import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase, AlertCircle } from 'lucide-react';
 import AIPipeline from '../components/finova/AIPipeline';
 import ProfessionSelect from '../components/finova/ProfessionSelect';
 import MobileNav from '../components/finova/MobileNav';
@@ -48,19 +48,44 @@ const fields = [
   { key: 'other', label: 'Other', icon: MoreHorizontal, placeholder: '300', color: 'text-purple-400', bg: 'bg-purple-500/10', desc: 'Entertainment, subscriptions' },
 ];
 
-function AEDInput({ value, onChange, placeholder, large = false }) {
+const MAX_AMOUNT = 10000000;
+const NUMERIC_KEYS = ['monthly_income', 'rent', 'food', 'transport', 'shopping', 'other', 'current_savings'];
+
+function validateField(key, raw) {
+  if (raw === '' || raw === null || raw === undefined) {
+    if (key === 'monthly_income') return 'Enter your monthly income.';
+    return null;
+  }
+  const num = Number(raw);
+  if (!Number.isFinite(num)) return 'Enter a valid number.';
+  if (num < 0) return "Enter 0 or more — negative amounts aren't allowed.";
+  if (num > MAX_AMOUNT) return `Enter ${MAX_AMOUNT.toLocaleString()} or less.`;
+  if (key === 'monthly_income' && num === 0) return 'Income must be greater than 0 to calculate your score.';
+  return null;
+}
+
+function AEDInput({ value, onChange, placeholder, large = false, error = null }) {
   return (
-    <div className="relative">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
-        <span className="text-xs font-bold text-muted-foreground tracking-wider">AED</span>
+    <div>
+      <div className="relative">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+          <span className="text-xs font-bold text-muted-foreground tracking-wider">AED</span>
+        </div>
+        <input
+          type="number"
+          min="0"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full bg-secondary/40 border rounded-2xl pl-14 pr-4 text-foreground font-semibold placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 transition-all ${error ? 'border-rose-500/60 focus:border-rose-500/60 focus:ring-rose-500/10' : 'border-border hover:border-border/80 focus:border-primary/60 focus:ring-primary/10'} ${large ? 'py-5 text-xl' : 'py-4 text-base'}`}
+        />
       </div>
-      <input
-        type="number"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={`w-full bg-secondary/40 border border-border hover:border-border/80 rounded-2xl pl-14 pr-4 text-foreground font-semibold placeholder:text-muted-foreground/30 focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all ${large ? 'py-5 text-xl' : 'py-4 text-base'}`}
-      />
+      {error && (
+        <p className="mt-1.5 text-xs text-rose-400 flex items-center gap-1.5">
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -78,6 +103,7 @@ export default function InputForm() {
   });
   const [dirty, setDirty] = useState({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   // Fill non-dirty fields with profession-based estimates so the form stays completable after switching profession.
   const applyDefaults = (profession, current, currentDirty) => {
@@ -96,7 +122,11 @@ export default function InputForm() {
   const income = parseFloat(formData.monthly_income) || 0;
   const surplus = income - totalExpenses;
   const expensePct = income > 0 ? Math.round((totalExpenses / income) * 100) : 0;
-  const isValid = income > 0;
+  const errors = {};
+  NUMERIC_KEYS.forEach(k => { const e = validateField(k, formData[k]); if (e) errors[k] = e; });
+  const hasErrors = Object.keys(errors).length > 0;
+  const isValid = !hasErrors;
+  const showFieldError = (key) => (dirty[key] || showErrors) ? errors[key] : null;
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -109,7 +139,7 @@ export default function InputForm() {
   };
 
   const handleAnalyze = async () => {
-    if (!isValid) return;
+    if (!isValid) { setShowErrors(true); return; }
     setIsAnalyzing(true);
     await new Promise(r => setTimeout(r, 1800));
     const numericData = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, parseFloat(v) || 0]));
@@ -202,7 +232,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">Salary, allowance, or any regular income</p>
             </div>
           </div>
-          <AEDInput value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large />
+          <AEDInput value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} />
           <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -248,7 +278,7 @@ export default function InputForm() {
                     <span className="text-sm font-semibold text-foreground">{field.label}</span>
                     <span className="text-xs text-muted-foreground ml-auto">{field.desc}</span>
                   </div>
-                  <AEDInput value={formData[field.key]} onChange={v => handleChange(field.key, v)} placeholder={field.placeholder} />
+                  <AEDInput value={formData[field.key]} onChange={v => handleChange(field.key, v)} placeholder={field.placeholder} error={showFieldError(field.key)} />
                 </motion.div>
               );
             })}
@@ -267,7 +297,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">Total savings or emergency fund balance</p>
             </div>
           </div>
-          <AEDInput value={formData.current_savings} onChange={v => handleChange('current_savings', v)} placeholder="10,000" large />
+          <AEDInput value={formData.current_savings} onChange={v => handleChange('current_savings', v)} placeholder="10,000" large error={showFieldError('current_savings')} />
           <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
             Used to assess your financial safety net
