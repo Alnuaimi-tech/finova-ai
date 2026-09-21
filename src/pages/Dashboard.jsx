@@ -15,6 +15,7 @@ import RecommendationCard from '../components/finova/RecommendationCard';
 import ScoreBreakdown from '../components/finova/ScoreBreakdown';
 import SavingsGoal from '../components/finova/SavingsGoal';
 import SavingsTargetCard from '../components/finova/SavingsTargetCard';
+import FutureProjection from '../components/finova/FutureProjection';
 import {
   calculateFinancialScore, classifyRisk, getRiskColor,
   generateAIExplanations, generatePredictions, generateRecommendations,
@@ -25,6 +26,7 @@ const TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'insights', label: 'AI Insights', icon: Brain },
   { id: 'plan', label: 'Action Plan', icon: Sparkles },
+  { id: 'future', label: 'Future', icon: TrendingUp },
   { id: 'scenarios', label: 'Scenarios', icon: Sliders },
   { id: 'coach', label: 'AI Coach', icon: MessageCircle },
 ];
@@ -335,6 +337,12 @@ export default function Dashboard() {
                 <PredictionCard predictions={predictionData.predictions} narrative={predictionData.narrative} currentSavings={data.current_savings} riskTrend={riskTrend} />
               )}
               {recommendations.map((rec, i) => <RecommendationCard key={i} rec={rec} index={i} />)}
+            </motion.div>
+          )}
+
+          {activeTab === 'future' && (
+            <motion.div key="future" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+              <FutureProjection data={data} metrics={metrics} />
             </motion.div>
           )}
 
