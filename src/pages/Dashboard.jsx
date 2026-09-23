@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, Download, Send, Loader2, TrendingUp, Target, ChevronRight, Flame, AlertTriangle } from 'lucide-react';
+import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, PiggyBank, ReceiptText, ShieldAlert, MessageCircle, Download, Send, Loader2, TrendingUp, Target, ChevronRight, Flame, AlertTriangle, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
 import MobileNav from '../components/finova/MobileNav';
@@ -16,6 +16,7 @@ import ScoreBreakdown from '../components/finova/ScoreBreakdown';
 import SavingsGoal from '../components/finova/SavingsGoal';
 import SavingsTargetCard from '../components/finova/SavingsTargetCard';
 import FutureProjection from '../components/finova/FutureProjection';
+import ScoreShareModal from '../components/finova/ScoreShareModal';
 import {
   calculateFinancialScore, classifyRisk, getRiskColor,
   generateAIExplanations, generatePredictions, generateRecommendations,
@@ -48,6 +49,7 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [riskTrend, setRiskTrend] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -203,6 +205,11 @@ export default function Dashboard() {
             <span className="font-space font-bold text-base text-foreground tracking-tight">FINOVA AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => setShowShare(true)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary-foreground gold-gradient hover:opacity-90 transition-opacity rounded-lg px-2.5 md:px-3 py-1.5">
+              <Share2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Share Score</span>
+            </button>
             <button onClick={handleDownloadPDF} disabled={downloading}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-2.5 md:px-3 py-1.5 disabled:opacity-60">
               <Download className="w-3.5 h-3.5" />
@@ -471,6 +478,7 @@ export default function Dashboard() {
 
         </AnimatePresence>
       </div>
+      <ScoreShareModal open={showShare} onClose={() => setShowShare(false)} score={metrics.score} riskLevel={riskLevel} />
       <MobileNav />
     </div>
   );
