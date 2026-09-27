@@ -13,6 +13,9 @@ export default function SiteFooter() {
         <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
       </div>
       <p className="text-center text-[11px] text-muted-foreground/60 mt-3">© {new Date().getFullYear()} FINOVA AI · Educational tool · Not financial advice</p>
+      <p className="text-center text-[11px] text-muted-foreground/60 mt-1">
+        <a href="mailto:finovaai.uae@gmail.com" className="hover:text-muted-foreground transition-colors">finovaai.uae@gmail.com</a>
+      </p>
     </footer>
   );
 }
