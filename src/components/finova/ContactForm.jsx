@@ -10,7 +10,8 @@ export default function ContactForm() {
     event.preventDefault();
     setStatus('sending');
     try {
-      await base44.entities.ContactMessage.create(form);
+      const response = await base44.functions.invoke('sendContactMessage', form);
+      if (response?.data?.error) throw new Error(response.data.error);
       setForm({ name: '', email: '', message: '' });
       setStatus('sent');
     } catch {
