@@ -9,6 +9,7 @@ import {
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const modules = [
   {
@@ -123,6 +124,8 @@ const TABS = [
 
 export default function Learn() {
   const navigate = useNavigate();
+  const { lang, toggle, t } = useLanguage();
+  const moduleTitle = (i) => (t.learnModules && t.learnModules[i]) || modules[i].title;
   const [activeTab, setActiveTab] = useState('lessons');
   const [expanded, setExpanded] = useState(null);
   const [monthly, setMonthly] = useState('200');
@@ -173,9 +176,13 @@ export default function Learn() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <BrandLogo />
-            <span className="font-space font-bold text-base text-foreground tracking-tight">Learn</span>
-            <span className="text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 hidden sm:inline">UAE Financial Literacy</span>
+            <span className="font-space font-bold text-base text-foreground tracking-tight">{t.learn}</span>
+            <span className="text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 hidden sm:inline">{t.learnBadge}</span>
           </div>
+          <button onClick={toggle}
+            className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 py-1.5 transition-all font-medium">
+            {lang === 'en' ? 'العربية' : 'English'}
+          </button>
         </div>
       </header>
 
@@ -225,7 +232,7 @@ export default function Learn() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${mod.bg} ${mod.color} border ${mod.border}`}>{mod.tag}</span>
                         </div>
-                        <p className="text-sm font-semibold text-foreground">{mod.title}</p>
+                        <p className="text-sm font-semibold text-foreground">{moduleTitle(i)}</p>
                       </div>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
                     </button>
