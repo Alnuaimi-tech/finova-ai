@@ -54,6 +54,18 @@ export const translations = {
     // Demo
     demoTitle: 'Get Your Financial Score — Free',
     demoSubtitle: 'No account needed. Takes 2 minutes.',
+    // Learn page
+    learnBadge: 'UAE Financial Literacy',
+    learnModules: [
+      'The 50/30/20 Rule',
+      'Emergency Fund',
+      'BNPL & Credit Cards',
+      'UAE Student Benefits',
+      'Earn Extra Income in UAE',
+      'Rent & Accommodation',
+      'Getting Around in UAE',
+      'Mobile & Subscriptions',
+    ],
   },
   ar: {
     dir: 'rtl',
@@ -106,6 +118,18 @@ export const translations = {
     // Demo
     demoTitle: 'احصل على نقاطك المالية — مجاناً',
     demoSubtitle: 'لا حاجة لحساب. يستغرق دقيقتين.',
+    // Learn page
+    learnBadge: 'الثقافة المالية في الإمارات',
+    learnModules: [
+      'قاعدة 50/30/20',
+      'صندوق الطوارئ',
+      'الدفع الآجل وبطاقات الائتمان',
+      'مزايا الطلاب في الإمارات',
+      'كسب دخل إضافي في الإمارات',
+      'الإيجار والسكن',
+      'التنقل في الإمارات',
+      'الهاتف والاشتراكات',
+    ],
   }
 };
 
