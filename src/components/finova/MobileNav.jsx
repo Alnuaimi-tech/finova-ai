@@ -1,16 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, BarChart3, TrendingUp, BookOpen, User } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const NAV_ITEMS = [
-  { to: '/', icon: Home, label: 'Home' },
-  { to: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-  { to: '/market', icon: TrendingUp, label: 'Market' },
-  { to: '/learn', icon: BookOpen, label: 'Learn' },
-  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/', icon: Home, tkey: 'home', fallback: 'Home' },
+  { to: '/dashboard', icon: BarChart3, tkey: 'dashboard', fallback: 'Dashboard' },
+  { to: '/market', icon: TrendingUp, tkey: 'market', fallback: 'Market' },
+  { to: '/learn', icon: BookOpen, tkey: 'learn', fallback: 'Learn' },
+  { to: '/profile', icon: User, tkey: 'profile', fallback: 'Profile' },
 ];
 
 export default function MobileNav() {
   const { pathname } = useLocation();
+  const { t } = useLanguage() || {};
   // Track page visits for badge system
   if (pathname === '/market') sessionStorage.setItem('visited_market', '1');
   if (pathname === '/learn') sessionStorage.setItem('visited_learn', '1');
@@ -18,8 +20,9 @@ export default function MobileNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/60">
       <div className="flex items-center justify-around px-2 py-2 pb-safe">
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => {
+        {NAV_ITEMS.map(({ to, icon: Icon, tkey, fallback }) => {
           const active = pathname === to;
+          const label = (t && t[tkey]) || fallback;
           return (
             <Link
               key={to}
