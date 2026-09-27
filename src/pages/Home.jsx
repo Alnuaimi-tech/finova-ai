@@ -8,8 +8,9 @@ import DemoPreview from '../components/finova/DemoPreview';
 import HubQuickAccess from '../components/finova/HubQuickAccess';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/lib/LanguageContext';
+import { SITE_CONFIG } from '@/lib/siteConfig';
 
-const STATS_VALUES = ['10,000+', 'AED', '2 min', '100%'];
+const STATS_VALUES = [SITE_CONFIG.activeStudentCount, 'AED', '2 min', '100%'];
 const STATS_TKEYS = [
   { label: 'stat1Label', sub: 'stat1Sub' },
   { label: 'stat2Label', sub: 'stat2Sub' },
@@ -17,7 +18,7 @@ const STATS_TKEYS = [
   { label: 'stat4Label', sub: 'stat4Sub' },
 ];
 
-const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Zayed Univ', 'HCT', 'BITS Pilani Dubai'];
+const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Zayed Univ', 'HCT', 'BITS Pilani Dubai', 'Sorbonne University Abu Dhabi'];
 
 export default function Home() {
   const navigate = useNavigate();
