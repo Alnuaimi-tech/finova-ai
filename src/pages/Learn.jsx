@@ -197,7 +197,7 @@ export default function Learn() {
           {TABS.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setActiveTab(id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground'
+                activeTab === id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`}>
               <Icon className="w-4 h-4" />
               {label}
@@ -209,7 +209,7 @@ export default function Learn() {
           {activeTab === 'lessons' && (
             <motion.div key="lessons" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="space-y-3">
-              <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">{modules.length} lessons available</p>
+              <p className="eyebrow">{modules.length} lessons available</p>
               {modules.map((mod, i) => {
                 const Icon = mod.icon;
                 const open = expanded === i;
@@ -301,7 +301,7 @@ export default function Learn() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Types of Investments</p>
+                <p className="eyebrow">Types of Investments</p>
                 {stockTypes.map((s, i) => (
                   <div key={i} className="glass-card rounded-2xl border border-border p-4 flex items-start gap-3">
                     <div>
@@ -395,7 +395,7 @@ export default function Learn() {
 
               {/* Quick presets */}
               <div className="glass-card rounded-2xl border border-border p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-3">Quick Presets</p>
+                <p className="eyebrow mb-3">Quick Presets</p>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { label: 'Coffee Savings', desc: 'Skip 1 coffee/day', monthly: '150', months: '24' },

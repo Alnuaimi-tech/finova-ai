@@ -94,7 +94,7 @@ export default function Market() {
               key={id}
               onClick={() => setActiveTab(id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground'
+                activeTab === id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -127,7 +127,7 @@ export default function Market() {
           {activeTab === 'portfolio' && (
             <motion.div key="portfolio" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="space-y-5">
-              <div className="glass-card rounded-2xl border border-border p-4">
+              <div className="glass-card rounded-2xl border border-border p-5">
                 <p className="text-sm font-semibold text-foreground font-space mb-1">Virtual Portfolio</p>
                 <p className="text-xs text-muted-foreground">Practice investing with real market quotes where available — no real money. Missing prices are never estimated; cached quotes may be outdated.</p>
               </div>

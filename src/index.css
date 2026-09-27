@@ -59,7 +59,40 @@
 .glass-card {
   background: rgba(15, 20, 35, 0.6);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.glass-card-hover {
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.glass-card-hover:hover {
+  border-color: rgba(245, 196, 65, 0.22);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.34);
+  transform: translateY(-2px);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+}
+
+.card-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.card-sub {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
 }
 
 .glow-gold {

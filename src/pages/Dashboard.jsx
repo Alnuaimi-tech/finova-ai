@@ -231,7 +231,7 @@ export default function Dashboard() {
           {/* Score Card */}
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="glass-card rounded-2xl border border-border p-6 flex flex-col items-center justify-center glow-gold">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-4">Financial Health Score</p>
+            <p className="eyebrow mb-4">Financial Health Score</p>
             <ScoreGauge score={metrics.score} riskLevel={riskLevel} riskColor={riskColor} />
             {riskTrend && (
               <div className={`mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${riskTrend.bg} ${riskTrend.color}`}>
@@ -247,14 +247,14 @@ export default function Dashboard() {
           {/* Score Breakdown */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="glass-card rounded-2xl border border-border p-6 space-y-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Score Breakdown</p>
+            <p className="eyebrow">Score Breakdown</p>
             <ScoreBreakdown metrics={metrics} />
           </motion.div>
 
           {/* Expense Chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="glass-card rounded-2xl border border-border p-6">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-1">Spending Breakdown</p>
+            <p className="eyebrow mb-1">Spending Breakdown</p>
             <p className="text-xs text-muted-foreground mb-2">% of AED {data.monthly_income.toLocaleString()} income</p>
             <ExpenseChart data={data} income={data.monthly_income} />
           </motion.div>
@@ -289,7 +289,7 @@ export default function Dashboard() {
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-1 justify-center ${
-                  activeTab === tab.id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground'
+                  activeTab === tab.id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
                 <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{tab.label}</span>
@@ -320,7 +320,7 @@ export default function Dashboard() {
 
           {activeTab === 'insights' && (
             <motion.div key="insights" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
-              <div className="glass-card rounded-xl border border-border p-4 flex items-center gap-3">
+              <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Brain className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">AI Financial Analysis</p>
@@ -333,7 +333,7 @@ export default function Dashboard() {
 
           {activeTab === 'plan' && (
             <motion.div key="plan" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
-              <div className="glass-card rounded-xl border border-border p-4 flex items-center gap-3">
+              <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Your Personalized Action Plan</p>
@@ -355,7 +355,7 @@ export default function Dashboard() {
 
           {activeTab === 'scenarios' && (
             <motion.div key="scenarios" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-              <div className="glass-card rounded-xl border border-border p-4 flex items-center gap-3">
+              <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Sliders className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">What-If Scenario Simulator</p>
