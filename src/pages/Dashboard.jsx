@@ -41,6 +41,7 @@ function buildFinancialContext(data, metrics, riskLevel, lang) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { lang, toggle, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('overview');
   const [data, setData] = useState(null);
   const [metrics, setMetrics] = useState(null);
@@ -67,11 +68,18 @@ export default function Dashboard() {
     const rl = classifyRisk(m.score);
     const rc = getRiskColor(rl);
     setMetrics(m); setRiskLevel(rl); setRiskColor(rc);
-    setInsights(generateAIExplanations(numericData, m));
-    setPredictionData(generatePredictions(numericData, m));
-    setRecommendations(generateRecommendations(numericData, m, rl));
     setRiskTrend(getRiskTrend(m));
   };
+
+  // Regenerate the AI-written insights/predictions/recommendations whenever the
+  // underlying numbers change OR the language toggle changes, so switching to
+  // Arabic re-renders this content in Arabic without needing to re-analyze.
+  useEffect(() => {
+    if (!data || !metrics || !riskLevel) return;
+    setInsights(generateAIExplanations(data, metrics, lang));
+    setPredictionData(generatePredictions(data, metrics, lang));
+    setRecommendations(generateRecommendations(data, metrics, riskLevel, lang));
+  }, [data, metrics, riskLevel, lang]);
 
   useEffect(() => {
     const raw = sessionStorage.getItem('finova_data');
