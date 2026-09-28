@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function ScoreGauge({ score, riskLevel, riskColor }) {
+  const { t } = useLanguage() || {};
+  const riskText = (t && t.dash && t.dash.risk[riskLevel]) || riskLevel;
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
@@ -79,7 +82,7 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
         transition={{ delay: 0.8 }}
         className={`px-5 py-1.5 rounded-full text-sm font-semibold border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}
       >
-        {riskLevel}
+        {riskText}
       </motion.div>
     </div>
   );
