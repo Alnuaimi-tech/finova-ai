@@ -245,31 +245,31 @@ export default function Dashboard() {
           {/* Score Card */}
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="glass-card rounded-2xl border border-border p-6 flex flex-col items-center justify-center glow-gold">
-            <p className="eyebrow mb-4">Financial Health Score</p>
+            <p className="eyebrow mb-4">{t.dash.healthScore}</p>
             <ScoreGauge score={metrics.score} riskLevel={riskLevel} riskColor={riskColor} />
             {riskTrend && (
               <div className={`mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${riskTrend.bg} ${riskTrend.color}`}>
                 <span>{riskTrend.arrow}</span>
-                <span>{riskTrend.label}</span>
+                <span>{t.dash.trend[riskTrend.label] || riskTrend.label}</span>
               </div>
             )}
             <p className="text-xs text-muted-foreground text-center mt-2 max-w-[200px] leading-relaxed">
-              Based on your UAE spending, savings rate & financial behavior
+              {t.dash.scoreCaption}
             </p>
           </motion.div>
 
           {/* Score Breakdown */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="glass-card rounded-2xl border border-border p-6 space-y-4">
-            <p className="eyebrow">Score Breakdown</p>
+            <p className="eyebrow">{t.dash.scoreBreakdownTitle}</p>
             <ScoreBreakdown metrics={metrics} />
           </motion.div>
 
           {/* Expense Chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="glass-card rounded-2xl border border-border p-6">
-            <p className="eyebrow mb-1">Spending Breakdown</p>
-            <p className="text-xs text-muted-foreground mb-2">% of AED {data.monthly_income.toLocaleString()} income</p>
+            <p className="eyebrow mb-1">{t.dash.spendingBreakdownTitle}</p>
+            <p className="text-xs text-muted-foreground mb-2">{t.dash.ofIncome(data.monthly_income.toLocaleString())}</p>
             <ExpenseChart data={data} income={data.monthly_income} />
           </motion.div>
         </div>
@@ -277,10 +277,10 @@ export default function Dashboard() {
         {/* Summary Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           {[
-            { icon: Wallet, label: 'Monthly Income', value: `AED ${data.monthly_income.toLocaleString()}`, color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-            { icon: ReceiptText, label: 'Total Expenses', value: `AED ${metrics.totalExpenses.toLocaleString()}`, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-            { icon: PiggyBank, label: 'Monthly Surplus', value: `${metrics.monthlySurplus >= 0 ? '+' : ''}AED ${metrics.monthlySurplus.toLocaleString()}`, color: metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400', bg: metrics.monthlySurplus >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10', border: metrics.monthlySurplus >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20' },
-            { icon: ShieldAlert, label: 'Savings Rate', value: `${metrics.savingsRate}%`, color: metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400', bg: metrics.savingsRate >= 20 ? 'bg-emerald-500/10' : metrics.savingsRate >= 10 ? 'bg-amber-500/10' : 'bg-rose-500/10', border: metrics.savingsRate >= 20 ? 'border-emerald-500/20' : metrics.savingsRate >= 10 ? 'border-amber-500/20' : 'border-rose-500/20' },
+            { icon: Wallet, label: t.dash.statIncome, value: `AED ${data.monthly_income.toLocaleString()}`, color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+            { icon: ReceiptText, label: t.dash.statExpenses, value: `AED ${metrics.totalExpenses.toLocaleString()}`, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+            { icon: PiggyBank, label: t.dash.statSurplus, value: `${metrics.monthlySurplus >= 0 ? '+' : ''}AED ${metrics.monthlySurplus.toLocaleString()}`, color: metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400', bg: metrics.monthlySurplus >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10', border: metrics.monthlySurplus >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20' },
+            { icon: ShieldAlert, label: t.dash.statSavingsRate, value: `${metrics.savingsRate}%`, color: metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400', bg: metrics.savingsRate >= 20 ? 'bg-emerald-500/10' : metrics.savingsRate >= 10 ? 'bg-amber-500/10' : 'bg-rose-500/10', border: metrics.savingsRate >= 20 ? 'border-emerald-500/20' : metrics.savingsRate >= 10 ? 'border-amber-500/20' : 'border-rose-500/20' },
           ].map((stat, i) => {
             const Icon = stat.icon;
             return (
