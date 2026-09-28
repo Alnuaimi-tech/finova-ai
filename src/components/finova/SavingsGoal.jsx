@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Pencil, CheckCircle2, X } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const STORAGE_KEY = 'finova_savings_goal';
 
 export default function SavingsGoal({ currentSavings }) {
+  const { t } = useLanguage();
+  const d = t.dash;
   const [goal, setGoal] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? parseFloat(saved) : null;
@@ -54,8 +57,8 @@ export default function SavingsGoal({ currentSavings }) {
             <Target className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">Savings Goal</p>
-            <p className="text-xs text-muted-foreground">Track progress toward your target</p>
+            <p className="text-sm font-semibold text-foreground">{d.savingsGoalTitle}</p>
+            <p className="text-xs text-muted-foreground">{d.savingsGoalDesc}</p>
           </div>
         </div>
         {goal && !editing && (
@@ -78,7 +81,7 @@ export default function SavingsGoal({ currentSavings }) {
               value={inputVal}
               onChange={e => setInputVal(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSave()}
-              placeholder="e.g. 10000"
+              placeholder={d.savingsGoalPlaceholder}
               className="w-full bg-white/5 border border-border rounded-xl pl-12 pr-3 py-2.5 text-foreground text-sm font-semibold placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
             />
           </div>
@@ -86,7 +89,7 @@ export default function SavingsGoal({ currentSavings }) {
             onClick={handleSave}
             className="gold-gradient text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
           >
-            Set Goal
+            {d.setGoalBtn}
           </button>
           {goal && (
             <button
@@ -105,11 +108,11 @@ export default function SavingsGoal({ currentSavings }) {
           {/* Amounts row */}
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-xs text-muted-foreground mb-0.5">Current Savings</p>
+              <p className="text-xs text-muted-foreground mb-0.5">{d.currentSavingsLabel}</p>
               <p className="text-lg font-bold font-space text-foreground">AED {current.toLocaleString()}</p>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground mb-0.5">Goal</p>
+            <div className="text-end">
+              <p className="text-xs text-muted-foreground mb-0.5">{d.goalLabel}</p>
               <p className="text-lg font-bold font-space text-foreground">AED {goal.toLocaleString()}</p>
             </div>
           </div>
@@ -133,25 +136,25 @@ export default function SavingsGoal({ currentSavings }) {
                 <span className={`text-sm font-bold font-space ${textColor}`}>{progress}%</span>
               )}
               <span className="text-xs text-muted-foreground">
-                {progress >= 100 ? 'Goal reached! 🎉' : `${progress}% complete`}
+                {progress >= 100 ? d.goalReached : d.percentComplete(progress)}
               </span>
             </div>
             {progress < 100 && (
               <p className="text-xs text-muted-foreground">
-                <span className="text-foreground font-semibold">AED {remaining.toLocaleString()}</span> remaining
+                <span className="text-foreground font-semibold">AED {remaining.toLocaleString()}</span> {d.remainingSuffix}
               </p>
             )}
           </div>
 
           {/* ETA hint using monthlySurplus from sessionStorage */}
-          <ETA remaining={remaining} goal={goal} />
+          <ETA remaining={remaining} goal={goal} d={d} />
 
           {/* Clear button */}
           <button
             onClick={handleClear}
             className="text-xs text-muted-foreground hover:text-rose-400 transition-colors mt-1"
           >
-            Clear goal
+            {d.clearGoal}
           </button>
         </div>
       )}
@@ -159,7 +162,7 @@ export default function SavingsGoal({ currentSavings }) {
   );
 }
 
-function ETA({ remaining, goal }) {
+function ETA({ remaining, goal, d }) {
   if (remaining <= 0) return null;
 
   const raw = sessionStorage.getItem('finova_data');
@@ -173,17 +176,17 @@ function ETA({ remaining, goal }) {
   if (monthlySurplus <= 0) {
     return (
       <p className="text-xs text-rose-400 bg-rose-500/10 rounded-lg px-3 py-2">
-        ⚠️ With your current surplus, reaching this goal requires reducing expenses first.
+        {d.etaWarning}
       </p>
     );
   }
 
   const months = Math.ceil(remaining / monthlySurplus);
-  const label = months === 1 ? '1 month' : months > 24 ? `${Math.round(months / 12)} years` : `${months} months`;
+  const label = months > 24 ? d.yearsUnit(Math.round(months / 12)) : d.monthsUnit(months);
 
   return (
     <p className="text-xs text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
-      📅 At your current surplus of <span className="text-foreground font-semibold">AED {monthlySurplus.toLocaleString()}/mo</span>, you'll reach your goal in approximately <span className="text-primary font-semibold">{label}</span>.
+      {d.etaPrefix} <span className="text-foreground font-semibold">AED {monthlySurplus.toLocaleString()}{d.perMonthSuffix}</span>{d.etaMiddle} <span className="text-primary font-semibold">{label}</span>.
     </p>
   );
 }
