@@ -121,7 +121,7 @@ export default function Dashboard() {
         setConversation(conv);
         setMessages(conv.messages || []);
       } catch {
-        if (!cancelled) setChatError('Unable to start a chat session. Please refresh the page and try again.');
+        if (!cancelled) setChatError(lang === 'ar' ? 'تعذّر بدء جلسة المحادثة. يرجى تحديث الصفحة والمحاولة مرة أخرى.' : 'Unable to start a chat session. Please refresh the page and try again.');
       }
     })();
     return () => { cancelled = true; };
@@ -150,7 +150,7 @@ export default function Dashboard() {
         if (cancelled) { if (typeof unsub === 'function') unsub(); else unsub?.then?.(fn => fn && fn()); return; }
         unsubscribe = unsub;
       } catch {
-        if (!cancelled) setChatError('Live updates are unavailable. Please refresh the page and try again.');
+        if (!cancelled) setChatError(lang === 'ar' ? 'التحديثات المباشرة غير متاحة. يرجى تحديث الصفحة والمحاولة مرة أخرى.' : 'Live updates are unavailable. Please refresh the page and try again.');
       }
     })();
     return () => {
@@ -184,8 +184,8 @@ export default function Dashboard() {
       awaitingResponseRef.current = false;
       setSending(false);
       setChatError(err.message === 'timeout'
-        ? 'The AI Coach is taking too long to respond. Please try sending your message again.'
-        : 'The AI Coach encountered an error. Please try again in a moment.');
+        ? (lang === 'ar' ? 'المستشار الذكي يستغرق وقتاً طويلاً للرد. يرجى إعادة إرسال رسالتك.' : 'The AI Coach is taking too long to respond. Please try sending your message again.')
+        : (lang === 'ar' ? 'حدث خطأ في المستشار الذكي. يرجى المحاولة مرة أخرى بعد لحظات.' : 'The AI Coach encountered an error. Please try again in a moment.'));
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
     }
