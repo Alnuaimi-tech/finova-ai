@@ -169,7 +169,7 @@ export default function Dashboard() {
     setSending(true);
     setChatError(null);
     awaitingResponseRef.current = true;
-    const ctx = buildFinancialContext(data, metrics, riskLevel);
+    const ctx = buildFinancialContext(data, metrics, riskLevel, lang);
     const content = (messages.filter(m => m.role === 'user').length === 0 && ctx) ? `${text}${ctx}` : text;
     let timeoutId;
     try {
@@ -215,20 +215,24 @@ export default function Dashboard() {
             <span className="font-space font-bold text-base text-foreground tracking-tight">FINOVA AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={toggle}
+              className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 py-1.5 transition-all font-medium">
+              {lang === 'en' ? 'العربية' : 'English'}
+            </button>
             <button onClick={() => setShowShare(true)}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary-foreground gold-gradient hover:opacity-90 transition-opacity rounded-lg px-2.5 md:px-3 py-1.5">
               <Share2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Share Score</span>
+              <span className="hidden sm:inline">{t.dash.shareScore}</span>
             </button>
             <button onClick={handleDownloadPDF} disabled={downloading}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-2.5 md:px-3 py-1.5 disabled:opacity-60">
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{downloading ? 'Generating...' : 'PDF Report'}</span>
+              <span className="hidden sm:inline">{downloading ? t.dash.generatingPdf : t.dash.pdfReport}</span>
             </button>
             <button onClick={() => navigate('/analyze')}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 md:px-3 py-1.5 transition-colors">
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Re-analyze</span>
+              <span className="hidden sm:inline">{t.dash.reanalyze}</span>
             </button>
           </div>
         </div>
