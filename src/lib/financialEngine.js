@@ -204,7 +204,7 @@ export function generateAIExplanations(data, metrics, lang = 'en') {
         icon: 'shield',
         title: isAr ? 'صندوق الطوارئ كافٍ' : 'Emergency Fund Adequate',
         text: isAr
-          ? `تو饧ر مدخراتك تغطية ${monthsOfRunway.toFixed(1)} شهر من المصاريف — وهو ما يفي بالحد الأدنى الموصى به وهو 3 أشهر.`
+          ? `توفر مدخراتك تغطية ${monthsOfRunway.toFixed(1)} شهر من المصاريف — وهو ما يفي بالحد الأدنى الموصى به وهو 3 أشهر.`
           : `Your savings provide ${monthsOfRunway.toFixed(1)} months of expense coverage — meeting the recommended 3-month minimum emergency buffer.`
       });
     }
