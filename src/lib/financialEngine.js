@@ -69,7 +69,8 @@ export function getRiskColor(riskLevel) {
   }
 }
 
-export function generateAIExplanations(data, metrics) {
+export function generateAIExplanations(data, metrics, lang = 'en') {
+  const isAr = lang === 'ar';
   const explanations = [];
   const { monthly_income, rent, food, transport, shopping, other, current_savings } = data;
   const { savingsRate, expenseRatio, shoppingRatio, rentRatio, totalExpenses, monthlySurplus } = metrics;
@@ -79,22 +80,28 @@ export function generateAIExplanations(data, metrics) {
     explanations.push({
       type: 'critical',
       icon: 'home',
-      title: 'Critical: Housing Cost Burden',
-      text: `Your rent consumes ${rentRatio.toFixed(0)}% of your income, which is significantly above the recommended 30% threshold. This severely limits your financial flexibility and savings potential.`
+      title: isAr ? 'حرج: عبء تكلفة السكن' : 'Critical: Housing Cost Burden',
+      text: isAr
+        ? `يستهلك إيجارك ${rentRatio.toFixed(0)}% من دخلك، وهي نسبة أعلى بكثير من الحد الموصى به وهو 30%. هذا يحد بشدة من مرونتك المالية وقدرتك على الادخار.`
+        : `Your rent consumes ${rentRatio.toFixed(0)}% of your income, which is significantly above the recommended 30% threshold. This severely limits your financial flexibility and savings potential.`
     });
   } else if (rentRatio > 30) {
     explanations.push({
       type: 'warning',
       icon: 'home',
-      title: 'Housing Cost Elevated',
-      text: `Your rent is ${rentRatio.toFixed(0)}% of your monthly income. The recommended maximum is 30%. Consider exploring shared accommodation or university housing options.`
+      title: isAr ? 'تكلفة السكن مرتفعة' : 'Housing Cost Elevated',
+      text: isAr
+        ? `يشكل إيجارك ${rentRatio.toFixed(0)}% من دخلك الشهري. الحد الأقصى الموصى به هو 30%. فكر في استكشاف السكن المشترك أو خيارات سكن الجامعة.`
+        : `Your rent is ${rentRatio.toFixed(0)}% of your monthly income. The recommended maximum is 30%. Consider exploring shared accommodation or university housing options.`
     });
   } else {
     explanations.push({
       type: 'positive',
       icon: 'home',
-      title: 'Housing Cost Healthy',
-      text: `Your rent at ${rentRatio.toFixed(0)}% of income is within a sustainable range. This gives you room to allocate more toward savings and investments.`
+      title: isAr ? 'تكلفة السكن صحية' : 'Housing Cost Healthy',
+      text: isAr
+        ? `إيجارك عند ${rentRatio.toFixed(0)}% من الدخل ضمن نطاق مستدام. هذا يمنحك مساحة أكبر لتخصيص المزيد للادخار والاستثمار.`
+        : `Your rent at ${rentRatio.toFixed(0)}% of income is within a sustainable range. This gives you room to allocate more toward savings and investments.`
     });
   }
 
@@ -103,29 +110,37 @@ export function generateAIExplanations(data, metrics) {
     explanations.push({
       type: 'critical',
       icon: 'piggy',
-      title: 'No Monthly Savings Detected',
-      text: `You are spending more than you earn (deficit of AED ${Math.abs(monthlySurplus).toLocaleString()} monthly). This pattern leads to debt accumulation and financial instability.`
+      title: isAr ? 'لا يوجد ادخار شهري' : 'No Monthly Savings Detected',
+      text: isAr
+        ? `أنت تنفق أكثر مما تكسب (عجز قدره ${Math.abs(monthlySurplus).toLocaleString()} درهم شهرياً). هذا النمط يؤدي إلى تراكم الديون وعدم الاستقرار المالي.`
+        : `You are spending more than you earn (deficit of AED ${Math.abs(monthlySurplus).toLocaleString()} monthly). This pattern leads to debt accumulation and financial instability.`
     });
   } else if (savingsRate < 10) {
     explanations.push({
       type: 'warning',
       icon: 'piggy',
-      title: 'Low Savings Rate',
-      text: `Your savings rate of ${savingsRate.toFixed(1)}% is below the recommended 20%. At this pace, you have minimal buffer for emergencies and limited long-term wealth building.`
+      title: isAr ? 'معدل ادخار منخفض' : 'Low Savings Rate',
+      text: isAr
+        ? `معدل ادخارك ${savingsRate.toFixed(1)}% أقل من النسبة الموصى بها وهي 20%. بهذا المعدل، لديك هامش ضئيل جداً للطوارئ وبناء الثروة على المدى الطويل.`
+        : `Your savings rate of ${savingsRate.toFixed(1)}% is below the recommended 20%. At this pace, you have minimal buffer for emergencies and limited long-term wealth building.`
     });
   } else if (savingsRate < 20) {
     explanations.push({
       type: 'neutral',
       icon: 'piggy',
-      title: 'Moderate Savings Rate',
-      text: `You are saving ${savingsRate.toFixed(1)}% of your income (AED ${monthlySurplus.toLocaleString()}/month). This is a positive start, but increasing to 20% would significantly improve your financial resilience.`
+      title: isAr ? 'معدل ادخار معتدل' : 'Moderate Savings Rate',
+      text: isAr
+        ? `أنت تدخر ${savingsRate.toFixed(1)}% من دخلك (${monthlySurplus.toLocaleString()} درهم/شهرياً). هذه بداية جيدة، لكن رفعها إلى 20% سيحسّن مرونتك المالية بشكل ملحوظ.`
+        : `You are saving ${savingsRate.toFixed(1)}% of your income (AED ${monthlySurplus.toLocaleString()}/month). This is a positive start, but increasing to 20% would significantly improve your financial resilience.`
     });
   } else {
     explanations.push({
       type: 'positive',
       icon: 'piggy',
-      title: 'Strong Savings Behavior',
-      text: `Excellent — you are saving ${savingsRate.toFixed(1)}% of your income monthly. This places you in a strong position for financial growth and emergency preparedness.`
+      title: isAr ? 'سلوك ادخار قوي' : 'Strong Savings Behavior',
+      text: isAr
+        ? `ممتاز — أنت تدخر ${savingsRate.toFixed(1)}% من دخلك شهرياً. هذا يضعك في موقع قوي للنمو المالي والاستعداد للطوارئ.`
+        : `Excellent — you are saving ${savingsRate.toFixed(1)}% of your income monthly. This places you in a strong position for financial growth and emergency preparedness.`
     });
   }
 
@@ -134,15 +149,19 @@ export function generateAIExplanations(data, metrics) {
     explanations.push({
       type: 'critical',
       icon: 'shopping',
-      title: 'Risky Discretionary Spending',
-      text: `Shopping accounts for ${shoppingRatio.toFixed(0)}% of your income, a significant risk factor. High discretionary spending is the leading cause of student financial instability in the UAE.`
+      title: isAr ? 'إنفاق استهلاكي محفوف بالمخاطر' : 'Risky Discretionary Spending',
+      text: isAr
+        ? `يشكل التسوق ${shoppingRatio.toFixed(0)}% من دخلك، وهو عامل خطر كبير. الإنفاق الاستهلاكي المرتفع هو السبب الرئيسي لعدم الاستقرار المالي لدى الطلاب في الإمارات.`
+        : `Shopping accounts for ${shoppingRatio.toFixed(0)}% of your income, a significant risk factor. High discretionary spending is the leading cause of student financial instability in the UAE.`
     });
   } else if (shoppingRatio > 15) {
     explanations.push({
       type: 'warning',
       icon: 'shopping',
-      title: 'Discretionary Spending Alert',
-      text: `You are allocating ${shoppingRatio.toFixed(0)}% of your income to shopping. Reducing this to under 10% could free up AED ${Math.round((shoppingRatio - 10) / 100 * monthly_income).toLocaleString()} monthly for savings.`
+      title: isAr ? 'تنبيه إنفاق استهلاكي' : 'Discretionary Spending Alert',
+      text: isAr
+        ? `أنت تخصص ${shoppingRatio.toFixed(0)}% من دخلك للتسوق. تقليل هذه النسبة إلى أقل من 10% يمكن أن يوفر ${Math.round((shoppingRatio - 10) / 100 * monthly_income).toLocaleString()} درهم شهرياً للادخار.`
+        : `You are allocating ${shoppingRatio.toFixed(0)}% of your income to shopping. Reducing this to under 10% could free up AED ${Math.round((shoppingRatio - 10) / 100 * monthly_income).toLocaleString()} monthly for savings.`
     });
   }
 
@@ -151,15 +170,19 @@ export function generateAIExplanations(data, metrics) {
     explanations.push({
       type: 'critical',
       icon: 'chart',
-      title: 'Expense-to-Income Ratio Critical',
-      text: `Total expenses consume ${expenseRatio.toFixed(0)}% of your income, leaving virtually no buffer. A single unexpected expense could push you into financial distress.`
+      title: isAr ? 'نسبة المصاريف إلى الدخل حرجة' : 'Expense-to-Income Ratio Critical',
+      text: isAr
+        ? `تستهلك المصاريف الإجمالية ${expenseRatio.toFixed(0)}% من دخلك، مما لا يترك لك هامشاً يذكر. أي مصروف غير متوقع قد يدخلك في ضائقة مالية.`
+        : `Total expenses consume ${expenseRatio.toFixed(0)}% of your income, leaving virtually no buffer. A single unexpected expense could push you into financial distress.`
     });
   } else if (expenseRatio > 75) {
     explanations.push({
       type: 'warning',
       icon: 'chart',
-      title: 'High Expense Ratio',
-      text: `Your expense-to-income ratio of ${expenseRatio.toFixed(0)}% leaves limited room for savings. Financial advisors recommend keeping total expenses below 70% of income.`
+      title: isAr ? 'نسبة مصاريف مرتفعة' : 'High Expense Ratio',
+      text: isAr
+        ? `نسبة مصاريفك إلى دخلك والبالغة ${expenseRatio.toFixed(0)}% تترك مساحة محدودة للادخار. ينصح المستشارون الماليون بإبقاء إجمالي المصاريف أقل من 70% من الدخل.`
+        : `Your expense-to-income ratio of ${expenseRatio.toFixed(0)}% leaves limited room for savings. Financial advisors recommend keeping total expenses below 70% of income.`
     });
   }
 
@@ -170,15 +193,19 @@ export function generateAIExplanations(data, metrics) {
       explanations.push({
         type: 'warning',
         icon: 'shield',
-        title: 'Emergency Fund Insufficient',
-        text: `Your current savings of AED ${current_savings.toLocaleString()} covers only ${monthsOfRunway.toFixed(1)} months of expenses. Financial experts recommend maintaining a 3–6 month emergency fund.`
+        title: isAr ? 'صندوق الطوارئ غير كافٍ' : 'Emergency Fund Insufficient',
+        text: isAr
+          ? `مدخراتك الحالية البالغة ${current_savings.toLocaleString()} درهم تغطي ${monthsOfRunway.toFixed(1)} شهر فقط من المصاريف. ينصح الخبراء الماليون بالحفاظ على صندوق طوارئ يغطي 3-6 أشهر.`
+          : `Your current savings of AED ${current_savings.toLocaleString()} covers only ${monthsOfRunway.toFixed(1)} months of expenses. Financial experts recommend maintaining a 3–6 month emergency fund.`
       });
     } else {
       explanations.push({
         type: 'positive',
         icon: 'shield',
-        title: 'Emergency Fund Adequate',
-        text: `Your savings provide ${monthsOfRunway.toFixed(1)} months of expense coverage — meeting the recommended 3-month minimum emergency buffer.`
+        title: isAr ? 'صندوق الطوارئ كافٍ' : 'Emergency Fund Adequate',
+        text: isAr
+          ? `تو饧ر مدخراتك تغطية ${monthsOfRunway.toFixed(1)} شهر من المصاريف — وهو ما يفي بالحد الأدنى الموصى به وهو 3 أشهر.`
+          : `Your savings provide ${monthsOfRunway.toFixed(1)} months of expense coverage — meeting the recommended 3-month minimum emergency buffer.`
       });
     }
   }
