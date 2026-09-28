@@ -265,14 +265,14 @@ export function simulateScenario(data, metrics, scenarioType, lang = 'en') {
   if (scenarioType === 'reduce_shopping_10pct') {
     const reduction = data.monthly_income * 0.10;
     modified.shopping = Math.max(0, (data.shopping || 0) - reduction);
-    label = isAr ? 'تقلّ إنفاقك بنسبة 10%' : 'Reduce spending by 10%';
+    label = isAr ? 'تقلّل إنفاقك بنسبة 10%' : 'Reduce spending by 10%';
   } else if (scenarioType === 'reduce_rent') {
     modified.rent = Math.round((data.rent || 0) * 0.85);
     label = isAr ? 'تخفض الإيجار بنسبة 15%' : 'Cut rent by 15%';
   } else if (scenarioType === 'boost_savings') {
     modified.shopping = Math.max(0, (data.shopping || 0) * 0.5);
     modified.other = Math.max(0, (data.other || 0) * 0.8);
-    label = isAr ? 'تقلّ الإنفاق الاستهلاكي إلى الحد الأدنى' : 'Minimize discretionary spending';
+    label = isAr ? 'تقلّل الإنفاق الاستهلاكي إلى الحد الأدنى' : 'Minimize discretionary spending';
   }
   const newMetrics = calculateFinancialScore(modified);
   const newRisk = classifyRisk(newMetrics.score);
@@ -343,7 +343,7 @@ export function generateRecommendations(data, metrics, riskLevel, lang = 'en') {
     priority: 'low',
     title: isAr ? 'ابدأ بالاستثمار الصغير' : 'Start Micro-Investing',
     description: isAr
-      ? 'منصات مثل StashAway وSarWa تقدّم للطلاب في الإمارات خيارات استثمار بحد أدنى منخفض. حتى 100 درهم شهرياً في صناديق المؤشرات يبني ثروة على المدى الطويل.'
+      ? 'منصات مثل StashAway وSarwa تقدّم للطلاب في الإمارات خيارات استثمار بحد أدنى منخفض. حتى 100 درهم شهرياً في صناديق المؤشرات يبني ثروة على المدى الطويل.'
       : 'Platforms like StashAway and Sarwa offer UAE-based students low-minimum investment options. Even AED 100/month in index funds creates long-term wealth.',
     impact: isAr ? 'منخفض' : 'Low',
   });
