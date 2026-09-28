@@ -3,40 +3,41 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Loader2, Info, PiggyBank } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '@/lib/LanguageContext';
 
-const MILESTONES = [
-  { months: 12, label: '1y', title: '1 Year' },
-  { months: 60, label: '5y', title: '5 Years' },
-  { months: 120, label: '10y', title: '10 Years' },
-];
+const MILESTONE_MONTHS = [12, 60, 120];
 
-function ProjTooltip({ active, payload }) {
+function ProjTooltip({ active, payload, todayLabel }) {
   if (!active || !payload?.length) return null;
-  const { label, value } = payload[0].payload;
+  const { label, value, month } = payload[0].payload;
   return (
     <div className="glass-card rounded-lg border border-border px-3 py-2 text-xs">
-      <p className="text-muted-foreground">{label === 'Now' ? 'Today' : label}</p>
+      <p className="text-muted-foreground">{month === 0 ? todayLabel : label}</p>
       <p className="font-bold text-foreground font-space">AED {value.toLocaleString()}</p>
     </div>
   );
 }
 
 export default function FutureProjection({ data, metrics }) {
+  const { lang, t } = useLanguage();
+  const fp = t.dash.fp;
   const monthlySavings = Math.max(0, metrics.monthlySurplus || 0);
   const startSavings = Math.max(0, data.current_savings || 0);
 
   const points = useMemo(() => {
     const arr = [];
     for (let m = 0; m <= 120; m += 12) {
-      arr.push({ month: m, label: m === 0 ? 'Now' : `${m / 12}y`, value: Math.round(startSavings + monthlySavings * m) });
+      arr.push({ month: m, label: m === 0 ? fp.now : fp.yearTick(m / 12), value: Math.round(startSavings + monthlySavings * m) });
     }
     return arr;
-  }, [startSavings, monthlySavings]);
+  }, [startSavings, monthlySavings, fp]);
 
-  const milestoneValues = MILESTONES.map(ms => ({
-    ...ms,
-    value: Math.round(startSavings + monthlySavings * ms.months),
-  }));
+  const milestoneValues = useMemo(() => MILESTONE_MONTHS.map(months => ({
+    months,
+    label: fp.yearTick(months / 12),
+    title: fp.yearTitle(months / 12),
+    value: Math.round(startSavings + monthlySavings * months),
+  })), [startSavings, monthlySavings, fp]);
 
   const [insight, setInsight] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,7 @@ Write two short, casual, plain-text sentences (no markdown, no headers):
 1. "insight": what these amounts could realistically cover in the UAE (e.g. car downpayment, home downpayment, emergency fund, wedding, masters degree) — be concrete with one or two examples.
 2. "suggestion": one encouraging, specific idea for how increasing their monthly savings rate would change the projection, with a quick AED example.
 
-Return JSON only.`;
+${lang === 'ar' ? 'Write both sentences in natural, friendly Arabic (keep numbers in Western digits). ' : ''}Return JSON only.`;
         const res = await base44.integrations.Core.InvokeLLM({
           prompt,
           response_json_schema: {
@@ -65,20 +66,20 @@ Return JSON only.`;
         });
         if (!cancelled) { setInsight(res); setLoading(false); }
       } catch {
-        if (!cancelled) { setError('Could not generate the AI insight right now.'); setLoading(false); }
+        if (!cancelled) { setError(fp.error); setLoading(false); }
       }
     })();
     return () => { cancelled = true; };
-  }, [monthlySavings, startSavings, milestoneValues]);
+  }, [monthlySavings, startSavings, milestoneValues, lang]);
 
   return (
     <div className="space-y-4">
       <div className="glass-card rounded-xl border border-border p-4 flex items-center gap-3">
         <TrendingUp className="w-5 h-5 text-primary flex-shrink-0" />
         <div>
-          <p className="text-sm font-semibold text-foreground">Future Savings Projection</p>
+          <p className="text-sm font-semibold text-foreground">{fp.title}</p>
           <p className="text-xs text-muted-foreground">
-            Where your current savings habit could take you — 1, 5, and 10 years from now.
+            {fp.subtitle}
           </p>
         </div>
       </div>
@@ -87,11 +88,11 @@ Return JSON only.`;
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
         className="glass-card rounded-2xl border border-border p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">Projected Total Savings</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">{fp.projectedTotal}</p>
           <div className="flex items-center gap-3 text-xs">
             <span className="flex items-center gap-1.5 text-muted-foreground">
               <span className="w-2 h-2 rounded-full bg-gold inline-block" />
-              Saving AED {monthlySavings.toLocaleString()}/mo
+              {fp.savingPerMonth(monthlySavings.toLocaleString())}
             </span>
           </div>
         </div>
@@ -99,9 +100,9 @@ Return JSON only.`;
         {monthlySavings <= 0 ? (
           <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-6 text-center">
             <PiggyBank className="w-8 h-8 text-amber-400 mx-auto mb-2" />
-            <p className="text-sm font-semibold text-foreground mb-1">You're not saving monthly yet</p>
+            <p className="text-sm font-semibold text-foreground mb-1">{fp.notSavingTitle}</p>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Your monthly surplus is AED 0 or less, so savings won't grow from here. Increasing your monthly savings is the first step — even AED 500/month adds up to AED 60,000 over 10 years.
+              {fp.notSavingDesc}
             </p>
           </div>
         ) : (
@@ -116,7 +117,7 @@ Return JSON only.`;
               <CartesianGrid stroke="hsl(222 30% 16%)" strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="label" tick={{ fill: 'hsl(215 20% 50%)', fontSize: 11 }} axisLine={{ stroke: 'hsl(222 30% 16%)' }} tickLine={false} />
               <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fill: 'hsl(215 20% 50%)', fontSize: 11 }} axisLine={false} tickLine={false} width={48} />
-              <Tooltip content={<ProjTooltip />} />
+              <Tooltip content={<ProjTooltip todayLabel={fp.today} />} />
               <Area type="monotone" dataKey="value" stroke="hsl(43 96% 56%)" strokeWidth={2.5} fill="url(#projGrad)" dot={false} />
               {milestoneValues.map(ms => (
                 <ReferenceDot key={ms.months} x={ms.label} y={ms.value} r={5} fill="hsl(43 96% 56%)" stroke="hsl(222 47% 6%)" strokeWidth={2} />
@@ -140,7 +141,7 @@ Return JSON only.`;
 
         <p className="text-[11px] text-muted-foreground mt-4 flex items-start gap-1.5 leading-relaxed">
           <Info className="w-3 h-3 flex-shrink-0 mt-0.5" />
-          Projection assumes your current monthly savings continue unchanged, with no investment returns or interest. This is an estimate based on today's habits, not a guarantee — your real results depend on your future choices and circumstances.
+          {fp.disclaimer}
         </p>
       </motion.div>
 
@@ -152,12 +153,12 @@ Return JSON only.`;
             <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-primary-foreground" />
             </div>
-            <p className="text-sm font-semibold text-foreground font-space">What this means for you</p>
+            <p className="text-sm font-semibold text-foreground font-space">{fp.meansTitle}</p>
           </div>
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              Generating your personalized insight…
+              {fp.generating}
             </div>
           ) : error ? (
             <p className="text-sm text-muted-foreground">{error}</p>
@@ -165,7 +166,7 @@ Return JSON only.`;
             <div className="space-y-3">
               <p className="text-sm text-foreground leading-relaxed">{insight.insight}</p>
               <div className="rounded-xl bg-secondary/30 border border-border p-3">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">💡 Boost your projection</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-1">{fp.boost}</p>
                 <p className="text-sm text-foreground leading-relaxed">{insight.suggestion}</p>
               </div>
             </div>
