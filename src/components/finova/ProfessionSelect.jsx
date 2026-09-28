@@ -5,6 +5,7 @@ import {
   GraduationCap, ShoppingBag, Briefcase, BookOpen, Wrench,
   Laptop, Stethoscope, Building2, LineChart, Compass, MoreHorizontal,
 } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const OPTIONS = [
   { value: 'Student / Part-time', icon: GraduationCap },
@@ -21,6 +22,10 @@ const OPTIONS = [
 ];
 
 export default function ProfessionSelect({ value, onChange }) {
+  const { t } = useLanguage() || {};
+  const inp = (t && t.inp) || null;
+  // Display label only — the stored value stays the English enum the FinancialProfile schema expects.
+  const labelFor = (v) => (inp && inp.professions[v]) || v;
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -40,7 +45,7 @@ export default function ProfessionSelect({ value, onChange }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`w-full bg-secondary/40 border rounded-2xl px-4 py-4 flex items-center gap-3.5 text-left transition-all duration-300 ${
+        className={`w-full bg-secondary/40 border rounded-2xl px-4 py-4 flex items-center gap-3.5 text-start transition-all duration-300 ${
           open
             ? 'border-primary/60 bg-secondary/60'
             : 'border-border hover:border-border/80'
@@ -60,10 +65,10 @@ export default function ProfessionSelect({ value, onChange }) {
         </span>
         <span className="flex-1 min-w-0">
           <span className="block text-[10px] text-muted-foreground uppercase tracking-wide font-semibold leading-none mb-1">
-            Profession
+            {inp ? inp.professionLabel : 'Profession'}
           </span>
           <span className="block text-base font-bold text-foreground font-space truncate">
-            {selected.value}
+            {labelFor(selected.value)}
           </span>
         </span>
         <ChevronDown
@@ -92,7 +97,7 @@ export default function ProfessionSelect({ value, onChange }) {
                     onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 group ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-start transition-all duration-200 group ${
                     active
                       ? 'bg-primary/10'
                       : 'hover:bg-white/5'
@@ -112,7 +117,7 @@ export default function ProfessionSelect({ value, onChange }) {
                       active ? 'text-primary' : 'text-foreground group-hover:text-foreground'
                     }`}
                   >
-                    {opt.value}
+                    {labelFor(opt.value)}
                   </span>
                   {active && <Check className="w-4 h-4 text-primary flex-shrink-0" />}
                 </button>
