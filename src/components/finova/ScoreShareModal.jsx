@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Share2, Download, Link2, Check, Loader2, Twitter, MessageCircle, Facebook } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import LogoMark from '@/components/finova/LogoMark';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const APP_URL = 'https://finova-ai.base44.app';
 
@@ -13,6 +14,9 @@ const RISK_STYLE = {
 };
 
 export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
+  const { t } = useLanguage();
+  const d = t.dash;
+  const riskText = d.risk[riskLevel] || riskLevel;
   const badgeRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -21,7 +25,7 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
   const safeScore = Math.max(0, Math.min(100, score || 0));
   const R = 52, C = 2 * Math.PI * R, offset = C * (1 - safeScore / 100);
 
-  const shareText = `My FINOVA Financial Health Score is ${safeScore}/100 — ${riskLevel}! 🎯 Find out yours at`;
+  const shareText = d.shareText(safeScore, riskText);
   const shareUrl = `${shareText} ${APP_URL}`;
   const enc = encodeURIComponent(shareUrl);
   const encUrl = encodeURIComponent(APP_URL);
@@ -90,7 +94,7 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Share2 className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-space font-bold text-foreground">Share Your Score</h3>
+                <h3 className="text-sm font-space font-bold text-foreground">{d.shareYourScore}</h3>
               </div>
               <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                 <X className="w-4 h-4" />
@@ -119,7 +123,7 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
                   </span>
                 </div>
                 <p style={{ fontSize: 11, color: '#7d8aa3', textTransform: 'uppercase', letterSpacing: '0.15em', textAlign: 'center', marginBottom: 12 }}>
-                  My Financial Health Score
+                  {d.myScoreLabel}
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
                   <svg viewBox="0 0 120 120" width="150" height="150">
@@ -131,11 +135,11 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                   <span style={{ fontSize: 13, fontWeight: 600, padding: '6px 14px', borderRadius: 999, background: rs.bg, color: rs.text, border: `1px solid ${rs.border}` }}>
-                    {riskLevel}
+                    {riskText}
                   </span>
                 </div>
                 <div style={{ borderTop: '1px solid #2a3450', paddingTop: 14, textAlign: 'center' }}>
-                  <p style={{ fontSize: 12, color: '#7d8aa3', marginBottom: 4 }}>Track your money. Grow your future.</p>
+                  <p style={{ fontSize: 12, color: '#7d8aa3', marginBottom: 4 }}>{d.tagline2}</p>
                   <p style={{ fontSize: 13, fontWeight: 600, color: '#f5c441', fontFamily: 'Space Grotesk, sans-serif' }}>finova-ai.base44.app</p>
                 </div>
               </div>
@@ -148,7 +152,7 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
                 className="w-full gold-gradient text-primary-foreground font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 mb-3 disabled:opacity-60"
               >
                 {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
-                {busy ? 'Preparing…' : 'Share Badge'}
+                {busy ? d.preparing : d.shareBadge}
               </button>
             )}
 
@@ -172,7 +176,7 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
               <button onClick={handleCopy}
                 className="flex flex-col items-center gap-1.5 py-3 rounded-xl border border-border bg-secondary/30 hover:border-primary/40 transition-colors">
                 {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Link2 className="w-4 h-4 text-foreground" />}
-                <span className="text-[10px] text-muted-foreground">{copied ? 'Copied' : 'Copy'}</span>
+                <span className="text-[10px] text-muted-foreground">{copied ? d.copied : d.copy}</span>
               </button>
             </div>
 
@@ -180,11 +184,11 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
             <button onClick={handleDownload} disabled={busy}
               className="w-full border border-border text-sm text-foreground hover:bg-secondary/40 rounded-xl py-2.5 flex items-center justify-center gap-2 transition-colors disabled:opacity-60">
               <Download className="w-4 h-4" />
-              Download Badge Image
+              {d.downloadBadge}
             </button>
 
             <p className="text-[11px] text-muted-foreground text-center mt-3 leading-relaxed">
-              Your badge shows your score and risk level only — no income or spending details are shared.
+              {d.shareDisclaimer}
             </p>
           </motion.div>
         </motion.div>
