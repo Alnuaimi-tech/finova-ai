@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Home, PiggyBank, ShoppingBag, BarChart3, Shield, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const iconMap = {
   home: Home,
@@ -49,7 +50,10 @@ const typeConfig = {
 };
 
 export default function AIInsightCard({ insight, index }) {
-  const config = typeConfig[insight.type] || typeConfig.neutral;
+  const { t } = useLanguage() || {};
+  const typeKey = typeConfig[insight.type] ? insight.type : 'neutral';
+  const config = typeConfig[typeKey];
+  const typeLabel = (t && t.dash && t.dash.insightTypeLabels[typeKey]) || config.label;
   const ContentIcon = iconMap[insight.icon] || BarChart3;
   const StatusIcon = config.icon;
 
@@ -69,7 +73,7 @@ export default function AIInsightCard({ insight, index }) {
         <div className="flex items-center gap-2 mb-1">
           <StatusIcon className={`w-3.5 h-3.5 ${config.iconColor}`} />
           <span className={`text-xs font-semibold uppercase tracking-wide ${config.labelColor}`}>
-            {config.label}
+            {typeLabel}
           </span>
         </div>
         <p className="text-sm font-semibold text-foreground mb-0.5">{insight.title}</p>
