@@ -423,10 +423,10 @@ export default function Dashboard() {
                     <div className="w-14 h-14 gold-gradient rounded-2xl flex items-center justify-center mx-auto mb-3">
                       <Brain className="w-7 h-7 text-primary-foreground" />
                     </div>
-                    <p className="text-base font-space font-bold text-foreground mb-1">FINOVA AI Coach</p>
-                    <p className="text-sm text-muted-foreground mb-4">Your personal UAE financial coach. Ask me anything about your money, score, or how to improve.</p>
+                    <p className="text-base font-space font-bold text-foreground mb-1">{t.dash.coachTitle}</p>
+                    <p className="text-sm text-muted-foreground mb-4">{t.dash.coachDesc}</p>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {['Explain my score', 'How can I save more?', 'Am I ready to invest?', 'What should I fix first?', 'Help me build an emergency fund'].map(q => (
+                      {t.dash.suggestedQuestions.map(q => (
                         <button key={q} onClick={() => setChatInput(q)}
                           className="text-xs px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-white/20 transition-all">
                           {q}
@@ -456,7 +456,7 @@ export default function Dashboard() {
                     </div>
                     <div className="glass-card border border-border rounded-2xl px-4 py-3 flex items-center gap-2">
                       <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
-                      <span className="text-xs text-muted-foreground">Thinking...</span>
+                      <span className="text-xs text-muted-foreground">{t.dash.thinking}</span>
                     </div>
                   </div>
                 )}
@@ -465,11 +465,11 @@ export default function Dashboard() {
                     <div className="glass-card border border-rose-500/30 bg-rose-500/5 rounded-2xl px-4 py-3 flex items-start gap-2 max-w-[85%]">
                       <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs text-rose-400 font-semibold mb-0.5">Something went wrong</p>
+                        <p className="text-xs text-rose-400 font-semibold mb-0.5">{t.dash.errorTitle}</p>
                         <p className="text-xs text-muted-foreground leading-relaxed">{chatError}</p>
                         <button onClick={() => { setChatError(null); setSending(false); awaitingResponseRef.current = false; }}
                           className="text-xs text-primary hover:underline mt-1.5">
-                          Dismiss
+                          {t.dash.dismiss}
                         </button>
                       </div>
                     </div>
@@ -480,11 +480,11 @@ export default function Dashboard() {
               <div className="flex gap-2 pt-3 border-t border-border">
                 <input value={chatInput} onChange={e => setChatInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); } }}
-                  placeholder="Ask your AI coach anything about your finances…"
+                  placeholder={t.dash.chatPlaceholder}
                   className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50" />
                 <button onClick={handleChatSend} disabled={!chatInput.trim() || sending}
                   className="gold-gradient text-primary-foreground px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 disabled:opacity-40 transition-opacity">
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 rtl:-scale-x-100" />
                 </button>
               </div>
             </motion.div>
