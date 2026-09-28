@@ -36,10 +36,9 @@ The result is clamped to 0–100: under 40 is High Risk, 40–69 is Medium Risk,
 
 ## Architecture
 
-Built on [Base44](https://base44.com):
-
 - **Frontend:** React + Vite + Tailwind, React Router, Recharts, Framer Motion (`src/`)
 - **Internationalization:** a custom `LanguageContext` (`src/lib/LanguageContext.jsx`) with matching English and Arabic dictionaries. Stored values (such as risk levels and professions) stay in English, and translation happens at the display layer, so the database stays consistent
+- **Backend platform:** managed database, auth and serverless (Deno) functions
 - **Backend functions** (`base44/functions/`):
   - `getMarketData`: authenticated market-data fetch (Twelve Data API)
   - `sendContactMessage`: validates and stores contact messages, then emails the support inbox
@@ -79,8 +78,6 @@ FINOVA AI is an educational tool. Scores, insights and market/portfolio data are
 
 ## Running this locally
 
-This project was built with [Base44](https://base44.com) and can also be run locally.
-
 1. Clone the repository
 2. Install dependencies: `npm install`
 3. Create an `.env.local` file with:
@@ -91,5 +88,3 @@ VITE_BASE44_APP_BASE_URL=your_backend_url
 ```
 
 4. Run the app: `npm run dev`
-
-Docs: [Using GitHub with Base44](https://docs.base44.com/Integrations/Using-GitHub)
