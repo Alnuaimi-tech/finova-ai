@@ -147,7 +147,7 @@ export default function SavingsGoal({ currentSavings }) {
           </div>
 
           {/* ETA hint using monthlySurplus from sessionStorage */}
-          <ETA remaining={remaining} goal={goal} d={d} />
+          <ETA remaining={remaining} goal={goal} tr={d} />
 
           {/* Clear button */}
           <button
@@ -162,7 +162,7 @@ export default function SavingsGoal({ currentSavings }) {
   );
 }
 
-function ETA({ remaining, goal, d }) {
+function ETA({ remaining, goal, tr }) {
   if (remaining <= 0) return null;
 
   const raw = sessionStorage.getItem('finova_data');
@@ -176,17 +176,17 @@ function ETA({ remaining, goal, d }) {
   if (monthlySurplus <= 0) {
     return (
       <p className="text-xs text-rose-400 bg-rose-500/10 rounded-lg px-3 py-2">
-        {d.etaWarning}
+        {tr.etaWarning}
       </p>
     );
   }
 
   const months = Math.ceil(remaining / monthlySurplus);
-  const label = months > 24 ? d.yearsUnit(Math.round(months / 12)) : d.monthsUnit(months);
+  const label = months > 24 ? tr.yearsUnit(Math.round(months / 12)) : tr.monthsUnit(months);
 
   return (
     <p className="text-xs text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
-      {d.etaPrefix} <span className="text-foreground font-semibold">AED {monthlySurplus.toLocaleString()}{d.perMonthSuffix}</span>{d.etaMiddle} <span className="text-primary font-semibold">{label}</span>.
+      {tr.etaPrefix} <span className="text-foreground font-semibold">AED {monthlySurplus.toLocaleString()}{tr.perMonthSuffix}</span>{tr.etaMiddle} <span className="text-primary font-semibold">{label}</span>.
     </p>
   );
 }
