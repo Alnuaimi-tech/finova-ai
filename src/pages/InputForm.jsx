@@ -8,6 +8,7 @@ import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
+import { useLanguage } from '@/lib/LanguageContext';
 
 // Research-based monthly income ranges in the UAE (AED), entry-to-early-career level — reference only.
 const PROFESSION_INCOME_RANGES = {
@@ -51,16 +52,16 @@ const fields = [
 const MAX_AMOUNT = 10000000;
 const NUMERIC_KEYS = ['monthly_income', 'rent', 'food', 'transport', 'shopping', 'other', 'current_savings'];
 
-function validateField(key, raw) {
+function validateField(key, raw, inp) {
   if (raw === '' || raw === null || raw === undefined) {
-    if (key === 'monthly_income') return 'Enter your monthly income.';
+    if (key === 'monthly_income') return inp.errIncomeRequired;
     return null;
   }
   const num = Number(raw);
-  if (!Number.isFinite(num)) return 'Enter a valid number.';
-  if (num < 0) return "Enter 0 or more — negative amounts aren't allowed.";
-  if (num > MAX_AMOUNT) return `Enter ${MAX_AMOUNT.toLocaleString()} or less.`;
-  if (key === 'monthly_income' && num === 0) return 'Income must be greater than 0 to calculate your score.';
+  if (!Number.isFinite(num)) return inp.errInvalid;
+  if (num < 0) return inp.errNegative;
+  if (num > MAX_AMOUNT) return inp.errMax(MAX_AMOUNT.toLocaleString());
+  if (key === 'monthly_income' && num === 0) return inp.errIncomeZero;
   return null;
 }
 
@@ -68,7 +69,7 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null })
   return (
     <div>
       <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+        <div className="absolute start-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
           <span className="text-xs font-bold text-muted-foreground tracking-wider">AED</span>
         </div>
         <input
@@ -77,7 +78,7 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null })
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-secondary/40 border rounded-2xl pl-14 pr-4 text-foreground font-semibold placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 transition-all ${error ? 'border-rose-500/60 focus:border-rose-500/60 focus:ring-rose-500/10' : 'border-border hover:border-border/80 focus:border-primary/60 focus:ring-primary/10'} ${large ? 'py-5 text-xl' : 'py-4 text-base'}`}
+          className={`w-full bg-secondary/40 border rounded-2xl ps-14 pe-4 text-foreground font-semibold placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 transition-all ${error ? 'border-rose-500/60 focus:border-rose-500/60 focus:ring-rose-500/10' : 'border-border hover:border-border/80 focus:border-primary/60 focus:ring-primary/10'} ${large ? 'py-5 text-xl' : 'py-4 text-base'}`}
         />
       </div>
       {error && (
@@ -92,6 +93,8 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null })
 
 export default function InputForm() {
   const navigate = useNavigate();
+  const { lang, t } = useLanguage();
+  const inp = t.inp;
   const [formData, setFormData] = useState(() => {
     const d = PROFESSION_DEFAULTS['Student / Part-time'];
     return {
@@ -115,7 +118,8 @@ export default function InputForm() {
     return next;
   };
 
-  const incomeRange = PROFESSION_INCOME_RANGES[formData.profession] || '—';
+  const incomeRangeRaw = PROFESSION_INCOME_RANGES[formData.profession] || '—';
+  const incomeRange = lang === 'ar' ? incomeRangeRaw.replace('(highly variable)', inp.highlyVariable) : incomeRangeRaw;
   const userTypedIncome = formData.monthly_income !== '';
 
   const totalExpenses = fields.reduce((sum, f) => sum + (parseFloat(formData[f.key]) || 0), 0);
@@ -123,7 +127,7 @@ export default function InputForm() {
   const surplus = income - totalExpenses;
   const expensePct = income > 0 ? Math.round((totalExpenses / income) * 100) : 0;
   const errors = {};
-  NUMERIC_KEYS.forEach(k => { const e = validateField(k, formData[k]); if (e) errors[k] = e; });
+  NUMERIC_KEYS.forEach(k => { const e = validateField(k, formData[k], inp); if (e) errors[k] = e; });
   const hasErrors = Object.keys(errors).length > 0;
   const isValid = !hasErrors;
   const showFieldError = (key) => (dirty[key] || showErrors) ? errors[key] : null;
@@ -178,7 +182,7 @@ export default function InputForm() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <BrandLogo size="lg" showWordmark showBadge />
           <span className="text-xs text-muted-foreground bg-secondary/50 border border-border px-3 py-1.5 rounded-full font-medium">
-            Step 1 of 1
+            {inp.stepOf}
           </span>
         </div>
       </header>
@@ -188,7 +192,7 @@ export default function InputForm() {
         {/* Pipeline */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="glass-card rounded-2xl border border-border p-4 overflow-x-auto">
-            <p className="text-[10px] text-muted-foreground text-center mb-3 uppercase tracking-widest font-semibold">AI Analysis Pipeline</p>
+            <p className="text-[10px] text-muted-foreground text-center mb-3 uppercase tracking-widest font-semibold">{inp.pipelineTitle}</p>
             <AIPipeline activeStep={0} />
           </div>
         </motion.div>
@@ -197,11 +201,11 @@ export default function InputForm() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-4">
             <Sparkles className="w-3 h-3" />
-            AI-Powered Financial Analysis
+            {t.aiAnalysis}
           </div>
-          <h1 className="text-3xl md:text-4xl font-space font-bold text-foreground mb-2 tracking-tight">Your Financial Profile</h1>
+          <h1 className="text-3xl md:text-4xl font-space font-bold text-foreground mb-2 tracking-tight">{inp.title}</h1>
           <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
-            Enter your monthly numbers — our AI will generate a personalized stability score in seconds.
+            {inp.desc}
           </p>
         </motion.div>
 
@@ -213,8 +217,8 @@ export default function InputForm() {
               <Briefcase className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-base font-bold text-foreground font-space">Your Profession</p>
-              <p className="text-xs text-muted-foreground">Helps us suggest a realistic UAE income range</p>
+              <p className="text-base font-bold text-foreground font-space">{inp.professionTitle}</p>
+              <p className="text-xs text-muted-foreground">{inp.professionDesc}</p>
             </div>
           </div>
           <ProfessionSelect value={formData.profession} onChange={handleProfessionChange} />
@@ -228,27 +232,27 @@ export default function InputForm() {
               <TrendingUp className="w-5 h-5 text-gold" />
             </div>
             <div>
-              <p className="text-base font-bold text-foreground font-space">Monthly Income</p>
-              <p className="text-xs text-muted-foreground">Salary, allowance, or any regular income</p>
+              <p className="text-base font-bold text-foreground font-space">{t.monthlyIncome}</p>
+              <p className="text-xs text-muted-foreground">{t.incomeDesc}</p>
             </div>
           </div>
           <AEDInput value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} />
           <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-foreground font-medium">Typical range for this role:</span>{' '}
-              <span className="text-blue-400 font-semibold">{incomeRange} AED/month</span>
+              <span className="text-foreground font-medium">{inp.typicalRange}</span>{' '}
+              <span className="text-blue-400 font-semibold">{incomeRange} {inp.aedPerMonth}</span>
               {userTypedIncome && (
-                <span className="text-muted-foreground"> — just a reference, enter your actual income above.</span>
+                <span className="text-muted-foreground">{inp.rangeTyped}</span>
               )}
               {!userTypedIncome && (
-                <span className="text-muted-foreground"> — not sure? Use this as a starting estimate.</span>
+                <span className="text-muted-foreground">{inp.rangeNotTyped}</span>
               )}
             </p>
           </div>
           <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
-            Required to calculate your FINOVA score
+            {inp.requiredScore}
           </p>
         </motion.div>
 
@@ -257,12 +261,12 @@ export default function InputForm() {
           className="glass-card rounded-3xl border border-border p-6 md:p-8 mb-5">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-base font-bold text-foreground font-space">Monthly Expenses</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Break down your spending by category</p>
+              <p className="text-base font-bold text-foreground font-space">{t.monthlyExpenses}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t.expensesDesc}</p>
             </div>
             {income > 0 && (
               <div className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${expensePct > 90 ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : expensePct > 70 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
-                {expensePct}% of income
+                {inp.pctOfIncome(expensePct)}
               </div>
             )}
           </div>
@@ -275,8 +279,8 @@ export default function InputForm() {
                     <div className={`w-7 h-7 rounded-lg ${field.bg} flex items-center justify-center`}>
                       <Icon className={`w-3.5 h-3.5 ${field.color}`} />
                     </div>
-                    <span className="text-sm font-semibold text-foreground">{field.label}</span>
-                    <span className="text-xs text-muted-foreground ml-auto">{field.desc}</span>
+                    <span className="text-sm font-semibold text-foreground">{inp.fields[field.key]?.[0] || field.label}</span>
+                    <span className="text-xs text-muted-foreground ms-auto">{inp.fields[field.key]?.[1] || field.desc}</span>
                   </div>
                   <AEDInput value={formData[field.key]} onChange={v => handleChange(field.key, v)} placeholder={field.placeholder} error={showFieldError(field.key)} />
                 </motion.div>
@@ -293,14 +297,14 @@ export default function InputForm() {
               <PiggyBank className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <p className="text-base font-bold text-foreground font-space">Current Savings</p>
-              <p className="text-xs text-muted-foreground">Total savings or emergency fund balance</p>
+              <p className="text-base font-bold text-foreground font-space">{t.currentSavings}</p>
+              <p className="text-xs text-muted-foreground">{t.savingsDesc}</p>
             </div>
           </div>
           <AEDInput value={formData.current_savings} onChange={v => handleChange('current_savings', v)} placeholder="10,000" large error={showFieldError('current_savings')} />
           <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-            Used to assess your financial safety net
+            {inp.safetyNet}
           </p>
         </motion.div>
 
@@ -308,12 +312,12 @@ export default function InputForm() {
         {income > 0 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             className="glass-card rounded-2xl border border-border p-5 mb-6">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-4">Live Summary</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-4">{inp.liveSummary}</p>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { label: 'Income', value: `AED ${income.toLocaleString()}`, color: 'text-gold' },
-                { label: 'Expenses', value: `AED ${totalExpenses.toLocaleString()}`, color: expensePct > 80 ? 'text-rose-400' : 'text-foreground' },
-                { label: 'Surplus', value: `${surplus >= 0 ? '+' : ''}AED ${surplus.toLocaleString()}`, color: surplus >= 0 ? 'text-emerald-400' : 'text-rose-400' },
+                { label: inp.sumIncome, value: `AED ${income.toLocaleString()}`, color: 'text-gold' },
+                { label: inp.sumExpenses, value: `AED ${totalExpenses.toLocaleString()}`, color: expensePct > 80 ? 'text-rose-400' : 'text-foreground' },
+                { label: inp.sumSurplus, value: `${surplus >= 0 ? '+' : ''}AED ${surplus.toLocaleString()}`, color: surplus >= 0 ? 'text-emerald-400' : 'text-rose-400' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-secondary/40 rounded-xl p-3 text-center">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
@@ -348,19 +352,19 @@ export default function InputForm() {
           {isAnalyzing ? (
             <>
               <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              AI is analyzing your data…
+              {t.analyzing}
             </>
           ) : (
             <>
               <Cpu className="w-5 h-5" />
-              Run AI Financial Analysis
-              <ArrowRight className="w-4 h-4" />
+              {t.runAnalysis}
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </>
           )}
         </motion.button>
 
         <p className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1.5">
-          <span>🔒</span> Your data is processed locally and never shared
+          {t.dataPrivate}
         </p>
       </div>
       <MobileNav />
