@@ -1,14 +1,15 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const COLORS = ['#6366f1', '#f59e0b', '#10b981', '#f43f5e', '#a78bfa'];
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, pctOfIncome }) => {
   if (active && payload && payload.length) {
     return (
       <div className="glass-card rounded-lg px-3 py-2 border border-white/10">
         <p className="text-sm font-medium text-foreground">{payload[0].name}</p>
         <p className="text-sm text-gold font-bold">AED {payload[0].value.toLocaleString()}</p>
-        <p className="text-xs text-muted-foreground">{payload[0].payload.pct}% of income</p>
+        <p className="text-xs text-muted-foreground">{pctOfIncome ? pctOfIncome(payload[0].payload.pct) : `${payload[0].payload.pct}% of income`}</p>
       </div>
     );
   }
@@ -16,12 +17,14 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function ExpenseChart({ data, income }) {
+  const { t } = useLanguage();
+  const cats = t.dash.expenseCats;
   const chartData = [
-    { name: 'Rent', value: data.rent || 0 },
-    { name: 'Food', value: data.food || 0 },
-    { name: 'Transport', value: data.transport || 0 },
-    { name: 'Shopping', value: data.shopping || 0 },
-    { name: 'Other', value: data.other || 0 },
+    { name: cats.rent, value: data.rent || 0 },
+    { name: cats.food, value: data.food || 0 },
+    { name: cats.transport, value: data.transport || 0 },
+    { name: cats.shopping, value: data.shopping || 0 },
+    { name: cats.other, value: data.other || 0 },
   ]
     .filter(d => d.value > 0)
     .map(d => ({
@@ -32,7 +35,7 @@ export default function ExpenseChart({ data, income }) {
   if (chartData.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">
-        No expense data to display
+        {t.dash.noExpenseData}
       </div>
     );
   }
@@ -57,7 +60,7 @@ export default function ExpenseChart({ data, income }) {
             />
           ))}
         </Pie>
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip pctOfIncome={t.dash.pctOfIncome} />} />
         <Legend
           formatter={(value) => (
             <span className="text-xs text-muted-foreground">{value}</span>
