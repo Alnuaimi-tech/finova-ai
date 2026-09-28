@@ -93,7 +93,7 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null })
 
 export default function InputForm() {
   const navigate = useNavigate();
-  const { lang, t } = useLanguage();
+  const { lang, toggle, t } = useLanguage();
   const inp = t.inp;
   const [formData, setFormData] = useState(() => {
     const d = PROFESSION_DEFAULTS['Student / Part-time'];
@@ -181,9 +181,15 @@ export default function InputForm() {
       <header className="border-b border-border/50 px-4 md:px-6 py-4 sticky top-0 z-20 bg-background/90 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <BrandLogo size="lg" showWordmark showBadge />
-          <span className="text-xs text-muted-foreground bg-secondary/50 border border-border px-3 py-1.5 rounded-full font-medium">
-            {inp.stepOf}
-          </span>
+          <div className="flex items-center gap-2">
+            <button onClick={toggle}
+              className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 py-1.5 transition-all font-medium">
+              {lang === 'en' ? 'العربية' : 'English'}
+            </button>
+            <span className="text-xs text-muted-foreground bg-secondary/50 border border-border px-3 py-1.5 rounded-full font-medium">
+              {inp.stepOf}
+            </span>
+          </div>
         </div>
       </header>
 
