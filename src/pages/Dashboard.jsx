@@ -384,9 +384,8 @@ export default function Dashboard() {
                   <motion.div key={scenarioType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                     className="glass-card rounded-2xl border border-border p-4 md:p-5">
                     <p className="text-sm font-semibold text-foreground mb-4">
-                      {t.dash.whatIf('')}
+                      {t.dash.whatIfPrefix} <span className="text-primary">{lang === 'en' ? sim.label.toLowerCase() : sim.label}</span>{t.dash.whatIfSuffix}
                     </p>
-                    <p className="text-sm font-semibold text-primary -mt-3 mb-4">{lang === 'en' ? sim.label.toLowerCase() : sim.label}</p>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className="rounded-xl bg-secondary/30 border border-border p-4 text-center">
                         <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">{t.dash.before}</p>
