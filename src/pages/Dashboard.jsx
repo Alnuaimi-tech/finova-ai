@@ -17,6 +17,7 @@ import SavingsGoal from '../components/finova/SavingsGoal';
 import SavingsTargetCard from '../components/finova/SavingsTargetCard';
 import FutureProjection from '../components/finova/FutureProjection';
 import ScoreShareModal from '../components/finova/ScoreShareModal';
+import { useLanguage } from '@/lib/LanguageContext';
 import {
   calculateFinancialScore, classifyRisk, getRiskColor,
   generateAIExplanations, generatePredictions, generateRecommendations,
@@ -24,17 +25,18 @@ import {
 } from '../lib/financialEngine';
 
 const TABS = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'insights', label: 'AI Insights', icon: Brain },
-  { id: 'plan', label: 'Action Plan', icon: Sparkles },
-  { id: 'future', label: 'Future', icon: TrendingUp },
-  { id: 'scenarios', label: 'Scenarios', icon: Sliders },
-  { id: 'coach', label: 'AI Coach', icon: MessageCircle },
+  { id: 'overview', icon: LayoutDashboard },
+  { id: 'insights', icon: Brain },
+  { id: 'plan', icon: Sparkles },
+  { id: 'future', icon: TrendingUp },
+  { id: 'scenarios', icon: Sliders },
+  { id: 'coach', icon: MessageCircle },
 ];
 
-function buildFinancialContext(data, metrics, riskLevel) {
+function buildFinancialContext(data, metrics, riskLevel, lang) {
   if (!data || !metrics) return '';
-  return `\n\n[USER FINANCIAL PROFILE]\nMonthly Income: AED ${data.monthly_income.toLocaleString()}\nTotal Expenses: AED ${metrics.totalExpenses.toLocaleString()}\nMonthly Surplus: AED ${metrics.monthlySurplus.toLocaleString()}\nSavings Rate: ${metrics.savingsRate}%\nFINOVA Score: ${metrics.score}/100 — ${riskLevel}\n[END PROFILE]\n\nYou are a friendly UAE financial coach for students and young professionals. Be encouraging, specific with AED numbers, and give practical UAE-focused advice.`;
+  const langLine = lang === 'ar' ? '\n\nRespond in Arabic.' : '\n\nRespond in English.';
+  return `\n\n[USER FINANCIAL PROFILE]\nMonthly Income: AED ${data.monthly_income.toLocaleString()}\nTotal Expenses: AED ${metrics.totalExpenses.toLocaleString()}\nMonthly Surplus: AED ${metrics.monthlySurplus.toLocaleString()}\nSavings Rate: ${metrics.savingsRate}%\nFINOVA Score: ${metrics.score}/100 — ${riskLevel}\n[END PROFILE]\n\nYou are a friendly UAE financial coach for students and young professionals. Be encouraging, specific with AED numbers, and give practical UAE-focused advice.${langLine}`;
 }
 
 export default function Dashboard() {
