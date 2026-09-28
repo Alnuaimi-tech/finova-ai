@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Database, Cpu, BarChart3, AlertTriangle, TrendingUp, Lightbulb, GraduationCap } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const steps = [
   { icon: Database, label: 'User Input', color: 'text-blue-400', bg: 'bg-blue-500/10' },
@@ -12,6 +13,8 @@ const steps = [
 ];
 
 export default function AIPipeline({ activeStep = -1 }) {
+  const { t } = useLanguage() || {};
+  const labels = (t && t.inp && t.inp.pipeline) || null;
   return (
     <div className="w-full overflow-x-auto pb-2">
       <div className="flex items-center gap-0 min-w-max mx-auto justify-center">
@@ -37,7 +40,7 @@ export default function AIPipeline({ activeStep = -1 }) {
                 <span className={`text-xs font-medium whitespace-nowrap ${
                   isActive ? step.color : 'text-muted-foreground'
                 }`}>
-                  {step.label}
+                  {(labels && labels[i]) || step.label}
                 </span>
               </motion.div>
               {i < steps.length - 1 && (
@@ -45,7 +48,7 @@ export default function AIPipeline({ activeStep = -1 }) {
                   <div className={`h-px w-6 transition-all duration-500 ${
                     i < activeStep ? 'bg-gold/60' : 'bg-border'
                   }`} />
-                  <div className={`text-xs transition-all duration-500 ${
+                  <div className={`text-xs transition-all duration-500 rtl:-scale-x-100 ${
                     i < activeStep ? 'text-gold/60' : 'text-border'
                   }`}>›</div>
                 </div>
