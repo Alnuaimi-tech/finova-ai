@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Zap, ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const priorityConfig = {
   urgent: { color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', label: 'Urgent' },
@@ -9,7 +10,11 @@ const priorityConfig = {
 };
 
 export default function RecommendationCard({ rec, index }) {
-  const config = priorityConfig[rec.priority] || priorityConfig.low;
+  const { t } = useLanguage() || {};
+  const priorityKey = priorityConfig[rec.priority] ? rec.priority : 'low';
+  const config = priorityConfig[priorityKey];
+  const priorityLabel = (t && t.dash && t.dash.priorityLabels[priorityKey]) || config.label;
+  const impactText = (t && t.dash) ? t.dash.impactLabel(rec.impact) : `Impact: ${rec.impact}`;
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -24,14 +29,14 @@ export default function RecommendationCard({ rec, index }) {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className={`text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${config.bg} ${config.color}`}>
-              {config.label}
+              {priorityLabel}
             </span>
-            <span className="text-xs text-muted-foreground">Impact: {rec.impact}</span>
+            <span className="text-xs text-muted-foreground">{impactText}</span>
           </div>
           <p className="text-sm font-semibold text-foreground mb-1">{rec.title}</p>
           <p className="text-xs text-muted-foreground leading-relaxed">{rec.description}</p>
         </div>
-        <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0 group-hover:text-gold transition-colors mt-0.5" />
+        <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0 group-hover:text-gold transition-colors mt-0.5 rtl:rotate-180" />
       </div>
     </motion.div>
   );
