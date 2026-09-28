@@ -213,7 +213,8 @@ export function generateAIExplanations(data, metrics, lang = 'en') {
   return explanations;
 }
 
-export function generatePredictions(data, metrics) {
+export function generatePredictions(data, metrics, lang = 'en') {
+  const isAr = lang === 'ar';
   const { current_savings } = data;
   const { monthlySurplus, savingsRate, expenseRatio } = metrics;
 
@@ -234,11 +235,17 @@ export function generatePredictions(data, metrics) {
   const month3Savings = predictions[2].projectedSavings;
 
   if (monthlySurplus <= 0) {
-    narrative = `⚠️ At your current spending pace, you will accumulate AED ${Math.abs(monthlySurplus * 3).toLocaleString()} in debt over the next 3 months. Immediate corrective action is strongly recommended.`;
+    narrative = isAr
+      ? `⚠️ بمعدل إنفاقك الحالي، ستتراكم عليك ديون بقيمة ${Math.abs(monthlySurplus * 3).toLocaleString()} درهم خلال الأشهر الثلاثة القادمة. يُنصح بشدة باتخاذ إجراء تصحيحي فوري.`
+      : `⚠️ At your current spending pace, you will accumulate AED ${Math.abs(monthlySurplus * 3).toLocaleString()} in debt over the next 3 months. Immediate corrective action is strongly recommended.`;
   } else if (savingsRate < 10) {
-    narrative = `📈 If current behavior continues, your savings will grow to AED ${month3Savings.toLocaleString()} in 3 months — a modest improvement. Optimizing one expense category could significantly accelerate this.`;
+    narrative = isAr
+      ? `📈 إذا استمر السلوك الحالي، ستنمو مدخراتك إلى ${month3Savings.toLocaleString()} درهم خلال 3 أشهر — تحسّن متواضع. تحسين فئة إنفاق واحدة يمكن أن يسرّع هذا بشكل ملحوظ.`
+      : `📈 If current behavior continues, your savings will grow to AED ${month3Savings.toLocaleString()} in 3 months — a modest improvement. Optimizing one expense category could significantly accelerate this.`;
   } else {
-    narrative = `🚀 Based on current trajectory, your savings are projected to reach AED ${month3Savings.toLocaleString()} in 3 months. Maintaining this discipline positions you for strong financial growth.`;
+    narrative = isAr
+      ? `🚀 بناءً على المسار الحالي، من المتوقع أن تصل مدخراتك إلى ${month3Savings.toLocaleString()} درهم خلال 3 أشهر. الحفاظ على هذا الانضباط يضعك في موقع نمو مالي قوي.`
+      : `🚀 Based on current trajectory, your savings are projected to reach AED ${month3Savings.toLocaleString()} in 3 months. Maintaining this discipline positions you for strong financial growth.`;
   }
 
   return { predictions, narrative };
@@ -251,27 +258,29 @@ export function getRiskTrend(metrics) {
   return { label: 'Worsening', color: 'text-rose-400', bg: 'bg-rose-500/10', arrow: '↓' };
 }
 
-export function simulateScenario(data, metrics, scenarioType) {
+export function simulateScenario(data, metrics, scenarioType, lang = 'en') {
+  const isAr = lang === 'ar';
   let modified = { ...data };
   let label = '';
   if (scenarioType === 'reduce_shopping_10pct') {
     const reduction = data.monthly_income * 0.10;
     modified.shopping = Math.max(0, (data.shopping || 0) - reduction);
-    label = 'Reduce spending by 10%';
+    label = isAr ? 'تقلّ إنفاقك بنسبة 10%' : 'Reduce spending by 10%';
   } else if (scenarioType === 'reduce_rent') {
     modified.rent = Math.round((data.rent || 0) * 0.85);
-    label = 'Cut rent by 15%';
+    label = isAr ? 'تخفض الإيجار بنسبة 15%' : 'Cut rent by 15%';
   } else if (scenarioType === 'boost_savings') {
     modified.shopping = Math.max(0, (data.shopping || 0) * 0.5);
     modified.other = Math.max(0, (data.other || 0) * 0.8);
-    label = 'Minimize discretionary spending';
+    label = isAr ? 'تقلّ الإنفاق الاستهلاكي إلى الحد الأدنى' : 'Minimize discretionary spending';
   }
   const newMetrics = calculateFinancialScore(modified);
   const newRisk = classifyRisk(newMetrics.score);
   return { label, newScore: newMetrics.score, newRisk, newMetrics, scoreDelta: newMetrics.score - metrics.score };
 }
 
-export function generateRecommendations(data, metrics, riskLevel) {
+export function generateRecommendations(data, metrics, riskLevel, lang = 'en') {
+  const isAr = lang === 'ar';
   const recommendations = [];
   const { shopping, rent, monthly_income } = data;
   const { savingsRate, shoppingRatio, rentRatio, expenseRatio } = metrics;
@@ -279,9 +288,11 @@ export function generateRecommendations(data, metrics, riskLevel) {
   if (riskLevel === 'High Risk') {
     recommendations.push({
       priority: 'urgent',
-      title: 'Create an Emergency Budget',
-      description: 'Immediately categorize expenses into essential vs. non-essential. Cut non-essential spending by at least 30% this month.',
-      impact: 'High',
+      title: isAr ? 'أنشئ ميزانية طوارئ' : 'Create an Emergency Budget',
+      description: isAr
+        ? 'صنّف مصاريفك فوراً إلى أساسية وغير أساسية. قلّل الإنفاق غير الأساسي بنسبة 30% على الأقل هذا الشهر.'
+        : 'Immediately categorize expenses into essential vs. non-essential. Cut non-essential spending by at least 30% this month.',
+      impact: isAr ? 'مرتفع' : 'High',
     });
   }
 
@@ -289,42 +300,52 @@ export function generateRecommendations(data, metrics, riskLevel) {
     const potentialSaving = Math.round((shoppingRatio - 10) / 100 * monthly_income);
     recommendations.push({
       priority: 'high',
-      title: 'Reduce Discretionary Spending',
-      description: `Cutting shopping budget to 10% of income could save you an additional AED ${potentialSaving.toLocaleString()} monthly.`,
-      impact: 'High',
+      title: isAr ? 'قلّل الإنفاق الاستهلاكي' : 'Reduce Discretionary Spending',
+      description: isAr
+        ? `خفض ميزانية التسوق إلى 10% من الدخل يمكن أن يوفر لك ${potentialSaving.toLocaleString()} درهم إضافية شهرياً.`
+        : `Cutting shopping budget to 10% of income could save you an additional AED ${potentialSaving.toLocaleString()} monthly.`,
+      impact: isAr ? 'مرتفع' : 'High',
     });
   }
 
   if (savingsRate < 20) {
     recommendations.push({
       priority: 'medium',
-      title: 'Apply the 50/30/20 Rule',
-      description: 'Allocate 50% to needs, 30% to wants, and 20% to savings. This structured approach improves stability scores by an average of 25 points.',
-      impact: 'Medium',
+      title: isAr ? 'طبّق قاعدة 50/30/20' : 'Apply the 50/30/20 Rule',
+      description: isAr
+        ? 'خصّص 50% للاحتياجات، و‒30% للرغبات، و‒20% للادخار. هذا النهج المنظّم يحسّن نقاط الاستقرار بمعدل 25 نقطة في المتوسط.'
+        : 'Allocate 50% to needs, 30% to wants, and 20% to savings. This structured approach improves stability scores by an average of 25 points.',
+      impact: isAr ? 'متوسط' : 'Medium',
     });
   }
 
   if (rentRatio > 35) {
     recommendations.push({
       priority: 'medium',
-      title: 'Explore Housing Alternatives',
-      description: 'Consider university dormitories or shared accommodation to reduce housing costs. A 10% reduction in rent can improve your stability score significantly.',
-      impact: 'High',
+      title: isAr ? 'استكشف بدائل السكن' : 'Explore Housing Alternatives',
+      description: isAr
+        ? 'فكّر في سكن الجامعة الداخلي أو السكن المشترك لتقليل تكاليف السكن. تخفيض الإيجار بنسبة 10% يمكن أن يحسّن نقاط استقرارك بشكل ملحوظ.'
+        : 'Consider university dormitories or shared accommodation to reduce housing costs. A 10% reduction in rent can improve your stability score significantly.',
+      impact: isAr ? 'مرتفع' : 'High',
     });
   }
 
   recommendations.push({
     priority: 'low',
-    title: 'Activate UAE Student Benefits',
-    description: 'Use your student ID for transport discounts (RTA), food discounts at campus canteens, and free access to financial literacy workshops at ADGM.',
-    impact: 'Medium',
+    title: isAr ? 'فعّل مزايا الطلاب في الإمارات' : 'Activate UAE Student Benefits',
+    description: isAr
+      ? 'استخدم بطاقة طالبك للحصول على خصومات النقل (RTA)، وخصومات الطعام في مقاصف الجامعة، والوصول المجاني لورش الثقافة المالية في ADGM.'
+      : 'Use your student ID for transport discounts (RTA), food discounts at campus canteens, and free access to financial literacy workshops at ADGM.',
+    impact: isAr ? 'متوسط' : 'Medium',
   });
 
   recommendations.push({
     priority: 'low',
-    title: 'Start Micro-Investing',
-    description: 'Platforms like StashAway and Sarwa offer UAE-based students low-minimum investment options. Even AED 100/month in index funds creates long-term wealth.',
-    impact: 'Low',
+    title: isAr ? 'ابدأ بالاستثمار الصغير' : 'Start Micro-Investing',
+    description: isAr
+      ? 'منصات مثل StashAway وSarWa تقدّم للطلاب في الإمارات خيارات استثمار بحد أدنى منخفض. حتى 100 درهم شهرياً في صناديق المؤشرات يبني ثروة على المدى الطويل.'
+      : 'Platforms like StashAway and Sarwa offer UAE-based students low-minimum investment options. Even AED 100/month in index funds creates long-term wealth.',
+    impact: isAr ? 'منخفض' : 'Low',
   });
 
   return recommendations;
