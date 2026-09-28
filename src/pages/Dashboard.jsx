@@ -306,8 +306,8 @@ export default function Dashboard() {
                   activeTab === tab.id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
                 <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                <span className="hidden sm:inline">{t.dash.tabs[tab.id]}</span>
+                <span className="sm:hidden">{t.dash.tabs[tab.id].split(' ')[0]}</span>
               </button>
             );
           })}
@@ -327,7 +327,7 @@ export default function Dashboard() {
               </div>
               <button onClick={() => setActiveTab('insights')}
                 className="w-full py-3 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-white/20 transition-all flex items-center justify-center gap-2">
-                View All AI Insights <ChevronRight className="w-4 h-4" />
+                {t.dash.viewAllInsights} <ChevronRight className="w-4 h-4 rtl:rotate-180" />
               </button>
             </motion.div>
           )}
@@ -337,8 +337,8 @@ export default function Dashboard() {
               <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Brain className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">AI Financial Analysis</p>
-                  <p className="text-xs text-muted-foreground">Personalized insights based on your UAE spending patterns and financial benchmarks.</p>
+                  <p className="text-sm font-semibold text-foreground">{t.dash.aiAnalysisTitle}</p>
+                  <p className="text-xs text-muted-foreground">{t.dash.aiAnalysisDesc}</p>
                 </div>
               </div>
               {insights.map((insight, i) => <AIInsightCard key={i} insight={insight} index={i} />)}
@@ -350,8 +350,8 @@ export default function Dashboard() {
               <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Your Personalized Action Plan</p>
-                  <p className="text-xs text-muted-foreground">AI-generated steps to improve your FINOVA score — specific to your situation.</p>
+                  <p className="text-sm font-semibold text-foreground">{t.dash.actionPlanTitle}</p>
+                  <p className="text-xs text-muted-foreground">{t.dash.actionPlanDesc}</p>
                 </div>
               </div>
               {predictionData && (
@@ -372,39 +372,40 @@ export default function Dashboard() {
               <div className="glass-card rounded-2xl border border-border p-5 flex items-center gap-3">
                 <Sliders className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">What-If Scenario Simulator</p>
-                  <p className="text-xs text-muted-foreground">See how targeted changes to your spending would affect your FINOVA score.</p>
+                  <p className="text-sm font-semibold text-foreground">{t.dash.scenarioTitle}</p>
+                  <p className="text-xs text-muted-foreground">{t.dash.scenarioDesc}</p>
                 </div>
               </div>
               {['reduce_shopping_10pct', 'reduce_rent', 'boost_savings'].map((scenarioType) => {
-                const sim = simulateScenario(data, metrics, scenarioType);
+                const sim = simulateScenario(data, metrics, scenarioType, lang);
                 const simRiskColor = getRiskColor(sim.newRisk);
                 const riskChanged = sim.newRisk !== riskLevel;
                 return (
                   <motion.div key={scenarioType} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                     className="glass-card rounded-2xl border border-border p-4 md:p-5">
                     <p className="text-sm font-semibold text-foreground mb-4">
-                      💡 What if you <span className="text-primary">{sim.label.toLowerCase()}</span>?
+                      {t.dash.whatIf('')}
                     </p>
+                    <p className="text-sm font-semibold text-primary -mt-3 mb-4">{lang === 'en' ? sim.label.toLowerCase() : sim.label}</p>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className="rounded-xl bg-secondary/30 border border-border p-4 text-center">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">BEFORE</p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">{t.dash.before}</p>
                         <p className="text-3xl font-bold font-space mb-1" style={{ color: riskColor.hex }}>{metrics.score}</p>
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}>{riskLevel}</span>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}>{t.dash.risk[riskLevel] || riskLevel}</span>
                       </div>
                       <div className={`rounded-xl border p-4 text-center ${simRiskColor.bg} ${simRiskColor.border}`}>
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">AFTER</p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">{t.dash.after}</p>
                         <p className="text-3xl font-bold font-space mb-1" style={{ color: simRiskColor.hex }}>{sim.newScore}</p>
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${simRiskColor.bg} ${simRiskColor.border} ${simRiskColor.text}`}>{sim.newRisk}</span>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${simRiskColor.bg} ${simRiskColor.border} ${simRiskColor.text}`}>{t.dash.risk[sim.newRisk] || sim.newRisk}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 flex-wrap">
                       <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${sim.scoreDelta > 0 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : sim.scoreDelta < 0 ? 'text-rose-400 bg-rose-500/10 border border-rose-500/20' : 'text-muted-foreground bg-secondary/30 border border-border'}`}>
-                        Score: {sim.scoreDelta > 0 ? '+' : ''}{sim.scoreDelta} pts
+                        {t.dash.scoreDeltaLabel(sim.scoreDelta)}
                       </div>
                       {riskChanged && (
                         <div className="text-xs font-medium bg-primary/10 border border-primary/20 text-primary px-3 py-1.5 rounded-full">
-                          Risk: {riskLevel} → {sim.newRisk}
+                          {t.dash.riskChangeLabel(t.dash.risk[riskLevel] || riskLevel, t.dash.risk[sim.newRisk] || sim.newRisk)}
                         </div>
                       )}
                     </div>
