@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 
+// Weights must match calculateFinancialScore() in src/lib/financialEngine.js
+// (0.35 / 0.28 / 0.27, plus an emergency-fund bonus of up to +10 points).
 const bars = [
-  { tkey: 'savingsRate', label: 'Savings Rate', weight: '40%', key: 'savingsScore', color: 'bg-emerald-500' },
-  { tkey: 'expenseRatio', label: 'Expense Ratio', weight: '30%', key: 'expenseScore', color: 'bg-blue-500' },
-  { tkey: 'spendingBehavior', label: 'Spending Behavior', weight: '30%', key: 'riskySpendScore', color: 'bg-amber-500' },
+  { tkey: 'savingsRate', label: 'Savings Rate', weight: '35%', key: 'savingsScore', color: 'bg-emerald-500' },
+  { tkey: 'expenseRatio', label: 'Expense Ratio', weight: '28%', key: 'expenseScore', color: 'bg-blue-500' },
+  { tkey: 'spendingBehavior', label: 'Spending Behavior', weight: '27%', key: 'riskySpendScore', color: 'bg-amber-500' },
 ];
 
 export default function ScoreBreakdown({ metrics }) {
@@ -33,6 +35,10 @@ export default function ScoreBreakdown({ metrics }) {
           </div>
         );
       })}
+      <div className="flex items-center justify-between pt-1 text-xs text-muted-foreground">
+        <span>{(t && t.dash && t.dash.scoreBars.emergencyBonus) || 'Emergency fund bonus'}</span>
+        <span className="font-semibold text-foreground">+{metrics.emergencyBonus ?? 0}/10</span>
+      </div>
     </div>
   );
 }
