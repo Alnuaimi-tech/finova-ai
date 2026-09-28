@@ -75,14 +75,14 @@ export default function SavingsGoal({ currentSavings }) {
       {editing && (
         <div className="flex gap-2 mb-4">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">AED</span>
+            <span className="absolute start-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">AED</span>
             <input
               type="number"
               value={inputVal}
               onChange={e => setInputVal(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSave()}
               placeholder={d.savingsGoalPlaceholder}
-              className="w-full bg-white/5 border border-border rounded-xl pl-12 pr-3 py-2.5 text-foreground text-sm font-semibold placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+              className="w-full bg-white/5 border border-border rounded-xl ps-12 pe-3 py-2.5 text-foreground text-sm font-semibold placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
             />
           </div>
           <button
