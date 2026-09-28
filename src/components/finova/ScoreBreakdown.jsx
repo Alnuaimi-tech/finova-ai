@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const bars = [
-  { label: 'Savings Rate', weight: '40%', key: 'savingsScore', color: 'bg-emerald-500' },
-  { label: 'Expense Ratio', weight: '30%', key: 'expenseScore', color: 'bg-blue-500' },
-  { label: 'Spending Behavior', weight: '30%', key: 'riskySpendScore', color: 'bg-amber-500' },
+  { tkey: 'savingsRate', label: 'Savings Rate', weight: '40%', key: 'savingsScore', color: 'bg-emerald-500' },
+  { tkey: 'expenseRatio', label: 'Expense Ratio', weight: '30%', key: 'expenseScore', color: 'bg-blue-500' },
+  { tkey: 'spendingBehavior', label: 'Spending Behavior', weight: '30%', key: 'riskySpendScore', color: 'bg-amber-500' },
 ];
 
 export default function ScoreBreakdown({ metrics }) {
+  const { t } = useLanguage() || {};
   return (
     <div className="space-y-3">
       {bars.map((bar, i) => {
@@ -15,7 +17,7 @@ export default function ScoreBreakdown({ metrics }) {
           <div key={bar.key}>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-foreground font-medium">{bar.label}</span>
+                <span className="text-sm text-foreground font-medium">{(t && t.dash && t.dash.scoreBars[bar.tkey]) || bar.label}</span>
                 <span className="text-xs text-muted-foreground">({bar.weight})</span>
               </div>
               <span className="text-sm font-bold text-foreground">{value}/100</span>
