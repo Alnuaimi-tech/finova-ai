@@ -10,6 +10,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
 import { useLanguage } from '@/lib/LanguageContext';
+import { calculateFinancialScore } from '@/lib/financialEngine';
 
 const modules = [
   {
@@ -141,17 +142,9 @@ export default function Learn() {
   const raw = sessionStorage.getItem('finova_data');
   let score = null;
   if (raw) {
+    // Use the same engine as the Dashboard so the score is identical everywhere.
     const d = Object.fromEntries(Object.entries(JSON.parse(raw)).map(([k, v]) => [k, parseFloat(v) || 0]));
-    const total = (d.rent||0)+(d.food||0)+(d.transport||0)+(d.shopping||0)+(d.other||0);
-    const surplus = d.monthly_income - total;
-    const savingsRate = d.monthly_income > 0 ? (surplus / d.monthly_income) * 100 : 0;
-    const expRatio = d.monthly_income > 0 ? (total / d.monthly_income) * 100 : 100;
-    const shopRatio = d.monthly_income > 0 ? (d.shopping||0) / d.monthly_income * 100 : 0;
-    score = Math.round(Math.max(0, Math.min(100,
-      Math.max(0, Math.min(100, (savingsRate/20)*100)) * 0.4 +
-      Math.max(0, Math.min(100, ((100-expRatio)/30)*100)) * 0.3 +
-      Math.max(0, Math.min(100, ((20-shopRatio)/20)*100)) * 0.3
-    )));
+    score = calculateFinancialScore(d).score;
   }
   const readiness = score !== null ? getReadiness(score) : null;
 
