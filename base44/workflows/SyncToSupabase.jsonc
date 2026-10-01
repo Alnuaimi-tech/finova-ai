@@ -1,0 +1,44 @@
+{
+  "name": "Sync to Supabase",
+  "description": "Every 15 minutes, copy users, visits, saved scores and contact messages into the private base44 schema of the FINOVA AI Supabase project.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/15 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sync_to_supabase",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncToSupabase",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Copy data to Supabase"
+          }
+        }
+      }
+    ]
+  }
+}
