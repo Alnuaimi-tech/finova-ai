@@ -17,7 +17,7 @@ export const translations = {
     ctaSecondary: 'Learn First',
     tryFree: 'Try Free',
     // Stats
-    stat1Label: 'UAE Students', stat1Sub: 'Using FINOVA AI',
+    stat1Label: 'Built for Students', stat1Sub: 'Made for UAE living costs',
     stat2Label: 'Currency', stat2Sub: 'Fully localized',
     stat3Label: 'Analysis', stat3Sub: 'Get your score fast',
     stat4Label: 'Free', stat4Sub: 'No credit card',
@@ -234,7 +234,7 @@ export const translations = {
     ctaSecondary: 'تعلم أولاً',
     tryFree: 'جرب مجاناً',
     // Stats
-    stat1Label: 'طالب إماراتي', stat1Sub: 'يستخدمون فينوفا',
+    stat1Label: 'مصمم للطلاب', stat1Sub: 'لتكاليف المعيشة في الإمارات',
     stat2Label: 'العملة', stat2Sub: 'درهم إماراتي',
     stat3Label: 'التحليل', stat3Sub: 'احصل على نقاطك بسرعة',
     stat4Label: '100%', stat4Sub: 'مجاني تماماً',
