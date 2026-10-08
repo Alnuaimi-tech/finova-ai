@@ -54,7 +54,6 @@ export const translations = {
     dataPrivate: '🔒 Your numbers are saved privately to your own account and never shared',
     // InputForm page
     inp: {
-      stepOf: 'Step 1 of 1',
       pipelineTitle: 'AI Analysis Pipeline',
       pipeline: ['User Input', 'Processing', 'AI Analysis', 'Risk Score', 'Prediction', 'Insights', 'Education'],
       title: 'Your Financial Profile',
@@ -274,7 +273,6 @@ export const translations = {
     dataPrivate: '🔒 تُحفظ أرقامك بشكل خاص في حسابك ولا تُشارك أبداً',
     // InputForm page
     inp: {
-      stepOf: 'الخطوة 1 من 1',
       pipelineTitle: 'مسار التحليل بالذكاء الاصطناعي',
       pipeline: ['إدخال البيانات', 'المعالجة', 'تحليل ذكي', 'درجة المخاطر', 'التوقعات', 'الرؤى', 'التعليم'],
       title: 'ملفك المالي',

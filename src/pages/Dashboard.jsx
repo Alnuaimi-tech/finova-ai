@@ -417,7 +417,8 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'coach' && (
-            (authChecked && !isAuthenticated) ? (
+            !isAuthenticated ? (
+              authChecked ? (
               <motion.div key="coach-signin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                 className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-8 text-center">
                 <div className="w-14 h-14 gold-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -431,6 +432,12 @@ export default function Dashboard() {
                   {t.dash.coachSignInBtn}
                 </button>
               </motion.div>
+              ) : (
+              <motion.div key="coach-loading" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                className="flex items-center justify-center" style={{ height: '60vh', minHeight: 380 }}>
+                <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
+              </motion.div>
+              )
             ) : (
             <motion.div key="coach" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="flex flex-col" style={{ height: '60vh', minHeight: 380 }}>

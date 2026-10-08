@@ -111,7 +111,10 @@ export default function InputForm() {
   const applyDefaults = (profession, current, currentDirty) => {
     const d = PROFESSION_DEFAULTS[profession] || PROFESSION_DEFAULTS['Other'];
     const next = { ...current };
-    ['monthly_income', 'rent', 'food', 'transport', 'shopping', 'other', 'current_savings'].forEach(k => {
+    // Monthly income is never auto-filled — the user must enter it so the score
+    // reflects their real situation, not a profession estimate. Expenses and
+    // savings still get helpful estimates the user can adjust.
+    ['rent', 'food', 'transport', 'shopping', 'other', 'current_savings'].forEach(k => {
       if (!currentDirty[k]) next[k] = String(d[k]);
     });
     return next;
