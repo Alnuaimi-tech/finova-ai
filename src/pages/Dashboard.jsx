@@ -18,6 +18,7 @@ import SavingsTargetCard from '../components/finova/SavingsTargetCard';
 import FutureProjection from '../components/finova/FutureProjection';
 import ScoreShareModal from '../components/finova/ScoreShareModal';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useAuth } from '@/lib/AuthContext';
 import {
   calculateFinancialScore, classifyRisk, getRiskColor,
   generateAIExplanations, generatePredictions, generateRecommendations,
@@ -42,6 +43,7 @@ function buildFinancialContext(data, metrics, riskLevel, lang) {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { lang, toggle, t } = useLanguage();
+  const { isAuthenticated, authChecked } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [data, setData] = useState(null);
   const [metrics, setMetrics] = useState(null);
@@ -112,7 +114,7 @@ export default function Dashboard() {
 
   // Create conversation once when the coach tab is first opened
   useEffect(() => {
-    if (activeTab !== 'coach' || conversation) return;
+    if (activeTab !== 'coach' || conversation || !isAuthenticated) return;
     let cancelled = false;
     (async () => {
       try {
@@ -129,7 +131,7 @@ export default function Dashboard() {
 
   // Subscribe to conversation updates — re-subscribes whenever the conversation changes
   useEffect(() => {
-    if (activeTab !== 'coach' || !conversation) return;
+    if (activeTab !== 'coach' || !conversation || !isAuthenticated) return;
     let unsubscribe;
     let cancelled = false;
     (async () => {
@@ -415,6 +417,21 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'coach' && (
+            (authChecked && !isAuthenticated) ? (
+              <motion.div key="coach-signin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-8 text-center">
+                <div className="w-14 h-14 gold-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <MessageCircle className="w-7 h-7 text-primary-foreground" />
+                </div>
+                <p className="text-base font-space font-bold text-foreground mb-1">{t.dash.coachSignInPrompt}</p>
+                <p className="text-sm text-muted-foreground mb-5 max-w-sm mx-auto">{t.dash.coachDesc}</p>
+                <button onClick={() => base44.auth.redirectToLogin('/dashboard')}
+                  className="gold-gradient text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm inline-flex items-center gap-2">
+                  <Cpu className="w-4 h-4" />
+                  {t.dash.coachSignInBtn}
+                </button>
+              </motion.div>
+            ) : (
             <motion.div key="coach" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="flex flex-col" style={{ height: '60vh', minHeight: 380 }}>
               <div className="flex-1 overflow-y-auto space-y-3 pb-4">
@@ -445,7 +462,7 @@ export default function Dashboard() {
                     <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user' ? 'bg-primary/15 border border-primary/20 text-foreground' : 'glass-card border border-border text-foreground'}`}>
                       {msg.role === 'assistant' ? (
                         <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">{msg.content}</ReactMarkdown>
-                      ) : msg.content}
+                      ) : msg.content.split('[USER FINANCIAL PROFILE]')[0].trim()}
                     </div>
                   </div>
                 ))}
@@ -488,6 +505,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </motion.div>
+            )
           )}
 
         </AnimatePresence>

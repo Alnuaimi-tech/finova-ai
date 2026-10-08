@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Home, Utensils, Car, ShoppingBag, MoreHorizontal, PiggyBank, Cpu, Sparkles, TrendingUp, Briefcase, AlertCircle } from 'lucide-react';
@@ -65,7 +65,7 @@ function validateField(key, raw, inp) {
   return null;
 }
 
-function AEDInput({ value, onChange, placeholder, large = false, error = null }) {
+function AEDInput({ value, onChange, placeholder, large = false, error = null, inputRef }) {
   return (
     <div>
       <div className="relative">
@@ -73,6 +73,7 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null })
           <span className="text-xs font-bold text-muted-foreground tracking-wider">AED</span>
         </div>
         <input
+          ref={inputRef}
           type="number"
           min="0"
           value={value}
@@ -95,15 +96,13 @@ export default function InputForm() {
   const navigate = useNavigate();
   const { lang, toggle, t } = useLanguage();
   const inp = t.inp;
-  const [formData, setFormData] = useState(() => {
-    const d = PROFESSION_DEFAULTS['Student / Part-time'];
-    return {
-      profession: 'Student / Part-time',
-      monthly_income: String(d.monthly_income),
-      rent: String(d.rent), food: String(d.food), transport: String(d.transport),
-      shopping: String(d.shopping), other: String(d.other), current_savings: String(d.current_savings),
-    };
+  const [formData, setFormData] = useState({
+    profession: 'Student / Part-time',
+    monthly_income: '',
+    rent: '', food: '', transport: '',
+    shopping: '', other: '', current_savings: '',
   });
+  const incomeRef = useRef(null);
   const [dirty, setDirty] = useState({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
@@ -143,7 +142,7 @@ export default function InputForm() {
   };
 
   const handleAnalyze = async () => {
-    if (!isValid) { setShowErrors(true); return; }
+    if (!isValid) { setShowErrors(true); incomeRef.current?.focus(); return; }
     setIsAnalyzing(true);
     await new Promise(r => setTimeout(r, 1800));
     const numericData = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, parseFloat(v) || 0]));
@@ -186,9 +185,6 @@ export default function InputForm() {
               className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 py-1.5 transition-all font-medium">
               {lang === 'en' ? 'العربية' : 'English'}
             </button>
-            <span className="text-xs text-muted-foreground bg-secondary/50 border border-border px-3 py-1.5 rounded-full font-medium">
-              {inp.stepOf}
-            </span>
           </div>
         </div>
       </header>
@@ -242,7 +238,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">{t.incomeDesc}</p>
             </div>
           </div>
-          <AEDInput value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} />
+          <AEDInput inputRef={incomeRef} value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} />
           <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -315,44 +311,42 @@ export default function InputForm() {
         </motion.div>
 
         {/* Live Summary */}
-        {income > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="glass-card rounded-2xl border border-border p-5 mb-6">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-4">{inp.liveSummary}</p>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: inp.sumIncome, value: `AED ${income.toLocaleString()}`, color: 'text-gold' },
-                { label: inp.sumExpenses, value: `AED ${totalExpenses.toLocaleString()}`, color: expensePct > 80 ? 'text-rose-400' : 'text-foreground' },
-                { label: inp.sumSurplus, value: `${surplus >= 0 ? '+' : ''}AED ${surplus.toLocaleString()}`, color: surplus >= 0 ? 'text-emerald-400' : 'text-rose-400' },
-              ].map(({ label, value, color }) => (
-                <div key={label} className="bg-secondary/40 rounded-xl p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
-                  <p className={`text-sm font-bold font-space ${color}`}>{value}</p>
-                </div>
-              ))}
-            </div>
-            {income > 0 && (
-              <div className="mt-3 h-1.5 rounded-full bg-secondary overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${expensePct > 90 ? 'bg-rose-400' : expensePct > 70 ? 'bg-amber-400' : 'bg-emerald-400'}`}
-                  style={{ width: `${Math.min(expensePct, 100)}%` }}
-                />
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-2xl border border-border p-5 mb-6">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-4">{inp.liveSummary}</p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: inp.sumIncome, value: income > 0 ? `AED ${income.toLocaleString()}` : 'AED —', color: income > 0 ? 'text-gold' : 'text-muted-foreground' },
+              { label: inp.sumExpenses, value: income > 0 ? `AED ${totalExpenses.toLocaleString()}` : 'AED —', color: income > 0 ? (expensePct > 80 ? 'text-rose-400' : 'text-foreground') : 'text-muted-foreground' },
+              { label: inp.sumSurplus, value: income > 0 ? `${surplus >= 0 ? '+' : ''}AED ${surplus.toLocaleString()}` : 'AED —', color: income > 0 ? (surplus >= 0 ? 'text-emerald-400' : 'text-rose-400') : 'text-muted-foreground' },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="bg-secondary/40 rounded-xl p-3 text-center">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
+                <p className={`text-sm font-bold font-space ${color}`}>{value}</p>
               </div>
-            )}
-          </motion.div>
-        )}
+            ))}
+          </div>
+          {income > 0 && (
+            <div className="mt-3 h-1.5 rounded-full bg-secondary overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${expensePct > 90 ? 'bg-rose-400' : expensePct > 70 ? 'bg-amber-400' : 'bg-emerald-400'}`}
+                style={{ width: `${Math.min(expensePct, 100)}%` }}
+              />
+            </div>
+          )}
+        </motion.div>
 
         {/* CTA Button */}
         <motion.button
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
           onClick={handleAnalyze}
-          disabled={!isValid || isAnalyzing}
+          disabled={isAnalyzing}
           whileHover={isValid && !isAnalyzing ? { scale: 1.01 } : {}}
           whileTap={isValid && !isAnalyzing ? { scale: 0.99 } : {}}
           className={`w-full py-5 rounded-2xl font-space font-bold text-base flex items-center justify-center gap-3 transition-all duration-300 ${
             isValid && !isAnalyzing
               ? 'gold-gradient text-primary-foreground shadow-xl'
-              : 'bg-secondary/50 text-muted-foreground cursor-not-allowed border border-border'
+              : 'bg-secondary/50 text-muted-foreground cursor-pointer border border-border'
           }`}
         >
           {isAnalyzing ? (

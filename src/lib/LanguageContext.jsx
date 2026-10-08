@@ -39,6 +39,7 @@ export const translations = {
     getMyScore: 'Get My Score',
     // Bottom CTA
     bottomCta: 'Try FINOVA AI — 100% Free',
+    unisLine: 'Built for students at UAE universities',
     // InputForm
     enterData: 'Enter Your Financial Data',
     aiAnalysis: 'AI-Powered Financial Analysis',
@@ -136,6 +137,8 @@ export const translations = {
       riskChangeLabel: (a, b) => `Risk: ${a} → ${b}`,
       coachTitle: 'FINOVA AI Coach',
       coachDesc: 'Your personal UAE financial coach. Ask me anything about your money, score, or how to improve.',
+      coachSignInPrompt: 'Sign in to chat with your AI coach',
+      coachSignInBtn: 'Sign in',
       suggestedQuestions: ['Explain my score', 'How can I save more?', 'Am I ready to invest?', 'What should I fix first?', 'Help me build an emergency fund'],
       chatPlaceholder: 'Ask your AI coach anything about your finances…',
       thinking: 'Thinking...',
@@ -256,6 +259,7 @@ export const translations = {
     getMyScore: 'احصل على نقاطي',
     // Bottom CTA
     bottomCta: 'جرب فينوفا AI — مجاناً 100%',
+    unisLine: 'مصمم لطلاب الجامعات في الإمارات',
     // InputForm
     enterData: 'أدخل بياناتك المالية',
     aiAnalysis: 'تحليل مالي بالذكاء الاصطناعي',
@@ -353,6 +357,8 @@ export const translations = {
       riskChangeLabel: (a, b) => `المخاطر: ${a} ← ${b}`,
       coachTitle: 'مستشار فينوفا الذكي',
       coachDesc: 'مستشارك المالي الشخصي في الإمارات. اسألني أي شيء عن أموالك أو نقاطك أو كيفية التحسين.',
+      coachSignInPrompt: 'سجّل الدخول للدردشة مع مستشارك الذكي',
+      coachSignInBtn: 'تسجيل الدخول',
       suggestedQuestions: ['اشرح نقاطي', 'كيف يمكنني ادخار المزيد؟', 'هل أنا جاهز للاستثمار؟', 'ما الذي يجب إصلاحه أولاً؟', 'ساعدني في بناء صندوق طوارئ'],
       chatPlaceholder: 'اسأل مستشارك الذكي أي شيء عن أموالك…',
       thinking: 'جارٍ التفكير...',

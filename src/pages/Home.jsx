@@ -18,8 +18,6 @@ const STATS_TKEYS = [
   { label: 'stat4Label', sub: 'stat4Sub' },
 ];
 
-const universities = ['UAEU', 'AUS', 'NYU Abu Dhabi', 'AUD', 'Khalifa Univ', 'Zayed Univ', 'HCT', 'BITS Pilani Dubai', 'Sorbonne University Abu Dhabi'];
-
 export default function Home() {
   const navigate = useNavigate();
   const { lang, toggle, t } = useLanguage();
@@ -156,18 +154,11 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Social proof */}
+          {/* Built for UAE universities */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-            className="flex items-center justify-center gap-3 flex-wrap">
-            <div className="flex -space-x-2">
-              {['🧑‍🎓', '👩‍🎓', '🧑‍💼', '👨‍🎓', '👩‍💼'].map((e, i) => (
-                <div key={i} className="w-8 h-8 rounded-full bg-secondary border border-border flex items-center justify-center text-sm">{e}</div>
-              ))}
-            </div>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 text-primary fill-primary" />)}
-              <span className="text-xs text-muted-foreground ml-1">Trusted by students at {universities.slice(0, 3).join(', ')} & more</span>
-            </div>
+            className="flex items-center justify-center gap-2 mt-2">
+            <span className="text-base">🎓</span>
+            <span className="text-xs text-muted-foreground font-medium">{t.unisLine}</span>
           </motion.div>
         </motion.div>
       </section>
@@ -224,7 +215,6 @@ export default function Home() {
             {t.bottomCta}
             <ArrowRight className="w-4 h-4" />
           </button>
-          <p className="text-xs text-muted-foreground mt-4">🏛️ {universities.join(' · ')}</p>
         </motion.div>
       </section>
 
