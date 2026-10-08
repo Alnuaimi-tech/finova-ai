@@ -6,9 +6,13 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
   const { t } = useLanguage() || {};
   const riskText = (t && t.dash && t.dash.risk[riskLevel]) || riskLevel;
   const [displayScore, setDisplayScore] = useState(0);
+  // The risk label only appears once the count-up finishes, so the gauge never
+  // shows a misleading "0 / 100 Medium Risk" combination mid-animation.
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    let start = 0;
+    setDone(false);
+    let raf;
     const duration = 1200;
     const startTime = performance.now();
 
@@ -17,10 +21,15 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplayScore(Math.round(eased * score));
-      if (progress < 1) requestAnimationFrame(animate);
+      if (progress < 1) {
+        raf = requestAnimationFrame(animate);
+      } else {
+        setDone(true);
+      }
     };
 
-    requestAnimationFrame(animate);
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
   }, [score]);
 
   const circumference = 2 * Math.PI * 52;
@@ -66,6 +75,7 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
           <span
             className="text-6xl font-bold font-space tabular-nums"
             style={{ color: getScoreColor() }}
+            aria-label={`${score} / 100, ${riskText}`}
           >
             {displayScore}
           </span>
@@ -75,15 +85,16 @@ export default function ScoreGauge({ score, riskLevel, riskColor }) {
         </div>
       </div>
 
-      {/* Risk badge */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8 }}
-        className={`px-5 py-1.5 rounded-full text-sm font-semibold border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}
-      >
-        {riskText}
-      </motion.div>
+      {/* Risk badge — only after the count-up animation completes */}
+      {done && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className={`px-5 py-1.5 rounded-full text-sm font-semibold border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}
+        >
+          {riskText}
+        </motion.div>
+      )}
     </div>
   );
 }

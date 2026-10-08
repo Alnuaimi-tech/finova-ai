@@ -16,6 +16,7 @@ import useMarketData from '@/components/market/useMarketData';
 import MarketDataStatus from '@/components/market/MarketDataStatus';
 import TradingViewTickerTape from '@/components/market/TradingViewTickerTape';
 import EducationalDisclaimer from '@/components/finova/EducationalDisclaimer';
+import SkipLink from '@/components/finova/SkipLink';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -66,6 +67,7 @@ export default function Market() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0">
+      <SkipLink />
       {/* Header */}
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
@@ -85,7 +87,7 @@ export default function Market() {
 
       <TradingViewTickerTape />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-5">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 md:px-6 py-5">
         <MarketDataStatus market={market} />
         {/* Tabs */}
         <div className="flex gap-1 p-1 bg-secondary/30 rounded-xl border border-border mb-6">
@@ -166,7 +168,7 @@ export default function Market() {
           )}
 
         </AnimatePresence>
-      </div>
+      </main>
 
       {showModal && <AddHoldingModal onClose={() => setShowModal(false)} onAdd={handleAdd} currentPrices={currentPrices} />}
       {editTarget && <EditHoldingModal holding={editTarget} onClose={() => setEditTarget(null)} onSubmit={handleEditSubmit} />}

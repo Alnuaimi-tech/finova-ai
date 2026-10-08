@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { format } from 'date-fns';
 import { BarChart3, Users, LogIn, RefreshCw, Download } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
+import SkipLink from '@/components/finova/SkipLink';
 
 export default function Analytics() {
   const { user, isAuthenticated } = useAuth();
@@ -57,6 +58,7 @@ export default function Analytics() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
+      <SkipLink />
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -75,7 +77,7 @@ export default function Analytics() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 space-y-6">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 md:px-6 py-6 space-y-6">
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           {[
@@ -142,7 +144,7 @@ export default function Analytics() {
             </table>
           </div>
         </div>
-      </div>
+      </main>
       <MobileNav />
     </div>
   );

@@ -2,14 +2,16 @@ import { Link } from 'react-router-dom';
 import BrandLogo from '@/components/finova/BrandLogo';
 import MobileNav from '@/components/finova/MobileNav';
 import SiteFooter from '@/components/finova/SiteFooter';
+import SkipLink from '@/components/finova/SkipLink';
 
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-10">
+      <SkipLink />
       <header className="border-b border-border/50 px-4 md:px-6 py-4">
         <div className="max-w-3xl mx-auto"><BrandLogo showWordmark showBadge /></div>
       </header>
-      <main className="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-16">
+      <main id="main-content" className="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-16">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Legal</p>
         <h1 className="text-3xl md:text-4xl font-space font-bold text-foreground tracking-tight mb-2">Privacy Policy</h1>
         <p className="text-xs text-muted-foreground mb-8">Last updated: September 2026</p>

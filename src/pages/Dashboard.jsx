@@ -5,6 +5,7 @@ import { Cpu, RefreshCw, Brain, Sparkles, LayoutDashboard, Sliders, Wallet, Pigg
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
 import MobileNav from '../components/finova/MobileNav';
+import SkipLink from '@/components/finova/SkipLink';
 import BrandLogo from '../components/finova/BrandLogo';
 import { generatePDFReport } from '../lib/generatePDFReport';
 import ScoreGauge from '../components/finova/ScoreGauge';
@@ -209,6 +210,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <SkipLink />
       {/* Header */}
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -240,7 +242,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8">
 
         {/* Hero Score Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
@@ -304,6 +306,8 @@ export default function Dashboard() {
             const Icon = tab.icon;
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                aria-label={t.dash.tabs[tab.id]}
+                aria-selected={activeTab === tab.id}
                 className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-1 justify-center ${
                   activeTab === tab.id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
@@ -516,7 +520,7 @@ export default function Dashboard() {
           )}
 
         </AnimatePresence>
-      </div>
+      </main>
       <ScoreShareModal open={showShare} onClose={() => setShowShare(false)} score={metrics.score} riskLevel={riskLevel} />
       <MobileNav />
     </div>

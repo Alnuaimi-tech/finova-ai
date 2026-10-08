@@ -9,6 +9,7 @@ import BrandLogo from '../components/finova/BrandLogo';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, generateAIExplanations, generatePredictions } from '../lib/financialEngine';
 import { useLanguage } from '@/lib/LanguageContext';
+import SkipLink from '@/components/finova/SkipLink';
 
 // Research-based monthly income ranges in the UAE (AED), entry-to-early-career level — reference only.
 const PROFESSION_INCOME_RANGES = {
@@ -65,7 +66,7 @@ function validateField(key, raw, inp) {
   return null;
 }
 
-function AEDInput({ value, onChange, placeholder, large = false, error = null, inputRef }) {
+function AEDInput({ value, onChange, placeholder, large = false, error = null, inputRef, ariaLabel }) {
   return (
     <div>
       <div className="relative">
@@ -76,6 +77,8 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null, i
           ref={inputRef}
           type="number"
           min="0"
+          aria-label={ariaLabel}
+          aria-invalid={!!error}
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
@@ -83,7 +86,7 @@ function AEDInput({ value, onChange, placeholder, large = false, error = null, i
         />
       </div>
       {error && (
-        <p className="mt-1.5 text-xs text-rose-400 flex items-center gap-1.5">
+        <p role="alert" className="mt-1.5 text-xs text-rose-400 flex items-center gap-1.5">
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
           {error}
         </p>
@@ -179,6 +182,7 @@ export default function InputForm() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0">
+      <SkipLink />
       {/* Header */}
       <header className="border-b border-border/50 px-4 md:px-6 py-4 sticky top-0 z-20 bg-background/90 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -192,7 +196,7 @@ export default function InputForm() {
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-12">
+      <main id="main-content" className="max-w-2xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
         {/* Pipeline */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -241,7 +245,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">{t.incomeDesc}</p>
             </div>
           </div>
-          <AEDInput inputRef={incomeRef} value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} />
+          <AEDInput inputRef={incomeRef} value={formData.monthly_income} onChange={v => handleChange('monthly_income', v)} placeholder="5,000" large error={showFieldError('monthly_income')} ariaLabel={t.monthlyIncome} />
           <div className="mt-3 flex items-start gap-2 rounded-xl bg-blue-500/10 border border-blue-500/20 px-3.5 py-2.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -287,7 +291,7 @@ export default function InputForm() {
                     <span className="text-sm font-semibold text-foreground">{inp.fields[field.key]?.[0] || field.label}</span>
                     <span className="text-xs text-muted-foreground ms-auto">{inp.fields[field.key]?.[1] || field.desc}</span>
                   </div>
-                  <AEDInput value={formData[field.key]} onChange={v => handleChange(field.key, v)} placeholder={field.placeholder} error={showFieldError(field.key)} />
+                  <AEDInput value={formData[field.key]} onChange={v => handleChange(field.key, v)} placeholder={field.placeholder} error={showFieldError(field.key)} ariaLabel={inp.fields[field.key]?.[0] || field.label} />
                 </motion.div>
               );
             })}
@@ -306,7 +310,7 @@ export default function InputForm() {
               <p className="text-xs text-muted-foreground">{t.savingsDesc}</p>
             </div>
           </div>
-          <AEDInput value={formData.current_savings} onChange={v => handleChange('current_savings', v)} placeholder="10,000" large error={showFieldError('current_savings')} />
+          <AEDInput value={formData.current_savings} onChange={v => handleChange('current_savings', v)} placeholder="10,000" large error={showFieldError('current_savings')} ariaLabel={t.currentSavings} />
           <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
             {inp.safetyNet}
@@ -369,7 +373,7 @@ export default function InputForm() {
         <p className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1.5">
           {t.dataPrivate}
         </p>
-      </div>
+      </main>
       <MobileNav />
     </div>
   );

@@ -44,6 +44,9 @@ export default function ProfessionSelect({ value, onChange }) {
     <div ref={ref} className="relative">
       <button
         type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={inp ? `${inp.professionLabel}: ${labelFor(selected.value)}` : 'Profession'}
         onClick={() => setOpen((o) => !o)}
         className={`w-full bg-secondary/40 border rounded-2xl px-4 py-4 flex items-center gap-3.5 text-start transition-all duration-300 ${
           open

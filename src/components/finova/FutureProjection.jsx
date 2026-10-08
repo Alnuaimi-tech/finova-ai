@@ -42,11 +42,14 @@ export default function FutureProjection({ data, metrics }) {
   const [insight, setInsight] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
     if (monthlySavings <= 0) return;
     let cancelled = false;
     setLoading(true);
+    setTimedOut(false);
+    const timer = setTimeout(() => { if (!cancelled) setTimedOut(true); }, 10000);
     (async () => {
       try {
         const prompt = `You are a friendly UAE financial coach for students and young professionals. The user currently saves AED ${monthlySavings.toLocaleString()} per month and has AED ${startSavings.toLocaleString()} saved. If they keep this habit, their total savings would reach about AED ${milestoneValues[0].value.toLocaleString()} in 1 year, AED ${milestoneValues[1].value.toLocaleString()} in 5 years, and AED ${milestoneValues[2].value.toLocaleString()} in 10 years (simple accumulation, no investment returns).
@@ -64,12 +67,12 @@ ${lang === 'ar' ? 'Write both sentences in natural, friendly Arabic (keep number
             required: ['insight', 'suggestion'],
           },
         });
-        if (!cancelled) { setInsight(res); setLoading(false); }
+        if (!cancelled) { clearTimeout(timer); setInsight(res); setLoading(false); }
       } catch {
-        if (!cancelled) { setError(fp.error); setLoading(false); }
+        if (!cancelled) { clearTimeout(timer); setError(fp.error); setLoading(false); }
       }
     })();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [monthlySavings, startSavings, milestoneValues, lang]);
 
   return (
@@ -156,10 +159,22 @@ ${lang === 'ar' ? 'Write both sentences in natural, friendly Arabic (keep number
             <p className="text-sm font-semibold text-foreground font-space">{fp.meansTitle}</p>
           </div>
           {loading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              {fp.generating}
+            timedOut ? (
+              <p className="text-sm text-foreground leading-relaxed">{lang === 'ar'
+                ? `ادخار ${monthlySavings.toLocaleString()} درهم شهرياً قد يرفع مدخراتك إلى حوالي ${milestoneValues[2].value.toLocaleString()} درهم خلال 10 سنوات. زيادة ما تدخره شهرياً سيوصلك إلى أهدافك أسرع.`
+                : `Saving AED ${monthlySavings.toLocaleString()}/month could grow your savings to about AED ${milestoneValues[2].value.toLocaleString()} over 10 years. Increasing what you set aside each month would reach your goals sooner.`}</p>
+            ) : (
+            <div aria-busy="true" aria-live="polite">
+              <div className="space-y-2 animate-pulse">
+                <div className="h-3 rounded bg-secondary/50" />
+                <div className="h-3 rounded bg-secondary/50 w-4/5" />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                {fp.generating}
+              </p>
             </div>
+            )
           ) : error ? (
             <p className="text-sm text-muted-foreground">{error}</p>
           ) : insight ? (

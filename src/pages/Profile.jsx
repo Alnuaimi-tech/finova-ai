@@ -7,6 +7,7 @@ import BrandLogo from '../components/finova/BrandLogo';
 import LogoMark from '@/components/finova/LogoMark';
 import { base44 } from '@/api/base44Client';
 import { calculateFinancialScore, classifyRisk, getRiskColor } from '../lib/financialEngine';
+import SkipLink from '@/components/finova/SkipLink';
 
 const BADGES = [
   { id: 'first_score', icon: '🎯', title: 'First Score', desc: 'Completed your first financial analysis', condition: (metrics) => !!metrics, color: 'text-gold', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
@@ -49,6 +50,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0">
+      <SkipLink />
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -63,7 +65,7 @@ export default function Profile() {
         </div>
       </header>
 
-      <div className="max-w-xl mx-auto px-4 md:px-6 py-6 space-y-5">
+      <main id="main-content" className="max-w-xl mx-auto px-4 md:px-6 py-6 space-y-5">
 
         {/* Avatar + Name */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
@@ -191,7 +193,7 @@ export default function Profile() {
             <button onClick={() => navigate('/contact')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</button>
           </div>
         </motion.div>
-      </div>
+      </main>
       <MobileNav />
     </div>
   );

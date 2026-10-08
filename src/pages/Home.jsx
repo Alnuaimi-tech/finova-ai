@@ -9,6 +9,7 @@ import HubQuickAccess from '../components/finova/HubQuickAccess';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/lib/LanguageContext';
 import { SITE_CONFIG } from '@/lib/siteConfig';
+import SkipLink from '@/components/finova/SkipLink';
 
 const STATS_VALUES = [SITE_CONFIG.activeStudentCount, 'AED', '2 min', '100%'];
 const STATS_TKEYS = [
@@ -52,6 +53,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden pb-24 md:pb-0">
+      <SkipLink />
       {/* Ambient glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-primary/5 rounded-full blur-3xl" />
@@ -105,6 +107,7 @@ export default function Home() {
         </div>
       </header>
 
+      <main id="main-content">
       {/* Hero */}
       <section className="relative max-w-6xl mx-auto px-4 md:px-6 pt-16 md:pt-24 pb-12 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -218,6 +221,7 @@ export default function Home() {
         </motion.div>
       </section>
 
+      </main>
       <footer className="relative border-t border-border/50 px-4 md:px-6 py-8 mb-16 md:mb-0">
         <div className="max-w-6xl mx-auto flex items-center justify-center gap-6">
           <button onClick={() => navigate('/about')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</button>

@@ -40,6 +40,7 @@ export const translations = {
     // Bottom CTA
     bottomCta: 'Try FINOVA AI — 100% Free',
     unisLine: 'Built for students at UAE universities',
+    skipToContent: 'Skip to content',
     // InputForm
     enterData: 'Enter Your Financial Data',
     aiAnalysis: 'AI-Powered Financial Analysis',
@@ -259,6 +260,7 @@ export const translations = {
     // Bottom CTA
     bottomCta: 'جرب فينوفا AI — مجاناً 100%',
     unisLine: 'مصمم لطلاب الجامعات في الإمارات',
+    skipToContent: 'تخطِّ إلى المحتوى',
     // InputForm
     enterData: 'أدخل بياناتك المالية',
     aiAnalysis: 'تحليل مالي بالذكاء الاصطناعي',

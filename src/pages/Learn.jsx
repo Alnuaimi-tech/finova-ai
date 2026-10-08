@@ -11,6 +11,7 @@ import MobileNav from '../components/finova/MobileNav';
 import BrandLogo from '../components/finova/BrandLogo';
 import { useLanguage } from '@/lib/LanguageContext';
 import { calculateFinancialScore } from '@/lib/financialEngine';
+import SkipLink from '@/components/finova/SkipLink';
 
 const modules = [
   {
@@ -165,6 +166,7 @@ export default function Learn() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0">
+      <SkipLink />
       <header className="border-b border-border/50 px-4 md:px-6 py-3 sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -179,7 +181,7 @@ export default function Learn() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 md:px-6 py-5">
+      <main id="main-content" className="max-w-3xl mx-auto px-4 md:px-6 py-5">
         {/* Welcome banner */}
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
           className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-4 mb-5 flex items-center gap-3">
@@ -415,7 +417,7 @@ export default function Learn() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </main>
       <MobileNav />
     </div>
   );
