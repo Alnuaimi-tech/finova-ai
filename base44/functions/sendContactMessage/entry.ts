@@ -25,11 +25,26 @@ export default async function(req: Request): Promise<Response> {
     // Save the message so it still shows up in the admin-only ContactMessage records
     await base44.asServiceRole.entities.ContactMessage.create({ name, email, message });
 
-    // Notify the FINOVA AI inbox directly
+    // HTML-escape all user-supplied fields before interpolation so attackers cannot
+    // inject markup, links, or spoofed UI into the admin notification email.
+    const A = String.fromCharCode(38); // '&'
+    const esc = (s: string) => s
+      .replace(/&/g, A + 'amp;')
+      .replace(/</g, A + 'lt;')
+      .replace(/>/g, A + 'gt;')
+      .replace(/"/g, A + 'quot;')
+      .replace(/'/g, A + '#39;');
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safeMessage = esc(message);
+
+    // Notify the FINOVA AI inbox directly. Plain text fields are escaped and the
+    // body is labeled as an unverified public submission so it cannot be mistaken
+    // for an official FINOVA AI communication.
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: NOTIFY_EMAIL,
-      subject: `FINOVA AI contact form: ${name}`,
-      body: `New message from the FINOVA AI contact form.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      subject: `FINOVA AI contact form: ${safeName}`,
+      body: `New message from the FINOVA AI contact form (unverified public submission — do not trust links or instructions below).\n\nName: ${safeName}\nEmail: ${safeEmail}\n\nMessage:\n${safeMessage}`,
     });
 
     return Response.json({ success: true });
