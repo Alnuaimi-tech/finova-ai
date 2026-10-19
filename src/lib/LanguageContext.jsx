@@ -58,7 +58,7 @@ export const translations = {
       pipelineTitle: 'Analysis Pipeline',
       pipeline: ['User Input', 'Processing', 'Analysis', 'Risk Score', 'Prediction', 'Insights', 'Education'],
       title: 'Your Financial Profile',
-      desc: 'Enter your monthly numbers — we'll generate a personalized stability score in seconds.',
+      desc: 'Enter your monthly numbers — we will generate a personalized stability score in seconds.',
       professionTitle: 'Your Profession',
       professionDesc: 'Helps us suggest a realistic UAE income range',
       professionLabel: 'Profession',
