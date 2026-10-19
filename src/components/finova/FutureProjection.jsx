@@ -4,6 +4,7 @@ import { TrendingUp, Loader2, Info, PiggyBank } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useAuth } from '@/lib/AuthContext';
 
 const MILESTONE_MONTHS = [12, 60, 120];
 
@@ -20,6 +21,7 @@ function ProjTooltip({ active, payload, todayLabel }) {
 
 export default function FutureProjection({ data, metrics }) {
   const { lang, t } = useLanguage();
+  const { isAuthenticated } = useAuth();
   const fp = t.dash.fp;
   const monthlySavings = Math.max(0, metrics.monthlySurplus || 0);
   const startSavings = Math.max(0, data.current_savings || 0);
@@ -44,8 +46,19 @@ export default function FutureProjection({ data, metrics }) {
   const [error, setError] = useState(null);
   const [timedOut, setTimedOut] = useState(false);
 
+  const fallbackInsight = useMemo(() => lang === 'ar'
+    ? { insight: `ادخار ${monthlySavings.toLocaleString()} درهم شهرياً قد يرفع مدخراتك إلى حوالي ${milestoneValues[2].value.toLocaleString()} درهم خلال 10 سنوات، وهو مبلغ قد يغطي صندوق طوارئ أو دفعة أولى لسيارة.`, suggestion: 'جرّب زيادة ادخارك الشهري ولو بمبلغ صغير، فالفرق يتراكم مع السنوات.' }
+    : { insight: `Saving AED ${monthlySavings.toLocaleString()}/month could grow your savings to about AED ${milestoneValues[2].value.toLocaleString()} over 10 years, enough for an emergency fund or a car down payment.`, suggestion: 'Try raising your monthly savings by even a small amount. The difference adds up over the years.' },
+  [lang, monthlySavings, milestoneValues]);
+
   useEffect(() => {
     if (monthlySavings <= 0) return;
+    if (!isAuthenticated) { setInsight(fallbackInsight); setLoading(false); return; }
+    const cacheKey = `finova_future_${lang}_${monthlySavings}_${startSavings}`;
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) { setInsight(JSON.parse(cached)); setLoading(false); return; }
+    } catch { /* ignore cache errors */ }
     let cancelled = false;
     setLoading(true);
     setTimedOut(false);
@@ -67,13 +80,16 @@ ${lang === 'ar' ? 'Write both sentences in natural, friendly Arabic (keep number
             required: ['insight', 'suggestion'],
           },
         });
-        if (!cancelled) { clearTimeout(timer); setInsight(res); setLoading(false); }
+        if (!cancelled) {
+          clearTimeout(timer); setInsight(res); setLoading(false);
+          try { sessionStorage.setItem(cacheKey, JSON.stringify(res)); } catch { /* ignore */ }
+        }
       } catch {
         if (!cancelled) { clearTimeout(timer); setError(fp.error); setLoading(false); }
       }
     })();
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [monthlySavings, startSavings, milestoneValues, lang]);
+  }, [monthlySavings, startSavings, milestoneValues, lang, isAuthenticated, fallbackInsight]);
 
   return (
     <div className="space-y-4">
