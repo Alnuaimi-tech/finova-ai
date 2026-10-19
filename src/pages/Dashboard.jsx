@@ -233,7 +233,7 @@ export default function Dashboard() {
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{downloading ? t.dash.generatingPdf : t.dash.pdfReport}</span>
             </button>
-            <button onClick={() => navigate('/analyze')}
+            <button onClick={() => navigate('/analyze')} aria-label={t.dash.reanalyze}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg px-2.5 md:px-3 py-1.5 transition-colors">
               <RefreshCw className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t.dash.reanalyze}</span>
