@@ -197,7 +197,7 @@ export default function Learn() {
         {/* Tabs */}
         <div className="flex gap-1 p-1 bg-secondary/30 rounded-xl border border-border mb-6">
           {TABS.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setActiveTab(id)}
+            <button key={id} onClick={() => setActiveTab(id)} role="tab" aria-selected={activeTab === id} aria-label={label}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 activeTab === id ? 'bg-card text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`}>
