@@ -66,7 +66,7 @@ export default function Analytics() {
             <span className="font-space font-bold text-base text-foreground">App Analytics</span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={loadEvents} className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={loadEvents} aria-label="Refresh" className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors">
               <RefreshCw className="w-4 h-4" />
             </button>
             <button onClick={exportCSV} className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5">
