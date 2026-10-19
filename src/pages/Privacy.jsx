@@ -27,6 +27,7 @@ export default function Privacy() {
           <section>
             <h2 className="text-foreground font-semibold text-base mb-2">3. Data Storage</h2>
             <p>Your data is stored securely on the Base44 platform infrastructure that hosts the Service. Financial profiles and virtual holdings are associated with your account and protected by role-based access control — only you and authorized admins can access your records.</p>
+            <p className="mt-3">For analytics, a private backup copy of app data (including financial profile entries and account emails) is mirrored to a separate database operated by the project owner. It is refreshed regularly, is not used to display anything in the app, is never sold, and is visible only to the project owner. To have your data removed from both places, contact us.</p>
           </section>
           <section>
             <h2 className="text-foreground font-semibold text-base mb-2">4. AI &amp; Third-Party Services</h2>
