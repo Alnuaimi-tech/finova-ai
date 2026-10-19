@@ -228,7 +228,7 @@ export default function Dashboard() {
               <Share2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t.dash.shareScore}</span>
             </button>
-            <button onClick={handleDownloadPDF} disabled={downloading}
+            <button onClick={handleDownloadPDF} disabled={downloading} aria-label={t.dash.pdfReport}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-2.5 md:px-3 py-1.5 disabled:opacity-60">
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{downloading ? t.dash.generatingPdf : t.dash.pdfReport}</span>
