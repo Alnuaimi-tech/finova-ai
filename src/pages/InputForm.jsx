@@ -150,7 +150,7 @@ export default function InputForm() {
   const handleAnalyze = async () => {
     if (!isValid) { setShowErrors(true); incomeRef.current?.focus(); return; }
     setIsAnalyzing(true);
-    await new Promise(r => setTimeout(r, 1800));
+    await new Promise(r => setTimeout(r, 400));
     const numericData = Object.fromEntries(Object.entries(formData).map(([k, v]) => [k, parseFloat(v) || 0]));
     const m = calculateFinancialScore(numericData);
     const riskLevel = classifyRisk(m.score);
