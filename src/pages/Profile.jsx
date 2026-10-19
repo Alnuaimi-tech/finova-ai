@@ -168,7 +168,7 @@ export default function Profile() {
                     <p className="text-sm font-semibold text-foreground">{link.label}</p>
                     <p className="text-xs text-muted-foreground">{link.sub}</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0 rtl:rotate-180" />
                 </button>
               );
             })}
