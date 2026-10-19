@@ -196,7 +196,7 @@ export default function Home() {
         {/* UAE Localization Banner */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
           className="glass-card rounded-2xl border border-primary/20 bg-primary/5 p-6 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-start">
             <div className="text-4xl">🇦🇪</div>
             <div className="flex-1">
               <h3 className="text-base font-space font-bold text-foreground mb-1">{t.uaeTitle}</h3>
@@ -205,7 +205,7 @@ export default function Home() {
               <button onClick={() => { setDemoMode('form'); setTimeout(() => window.scrollTo({ top: 400, behavior: 'smooth' }), 100); }}
               className="flex-shrink-0 gold-gradient text-primary-foreground px-5 py-2.5 rounded-xl font-space font-semibold text-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
               {t.getMyScore}
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 rtl:rotate-180" />
             </button>
           </div>
         </motion.div>
