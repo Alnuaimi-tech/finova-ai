@@ -10,6 +10,7 @@ export default function useMarketData() {
     },
     staleTime: 30000,
     refetchInterval: 60000,
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: false,
   });
   const quotes = query.data?.quotes || {};
