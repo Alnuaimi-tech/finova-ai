@@ -8,7 +8,7 @@ export const translations = {
     // Nav
     home: 'Home', dashboard: 'Dashboard', market: 'Market', learn: 'Learn', profile: 'Profile',
     // Home hero
-    tagline: '#1 Financial App for UAE Students',
+    tagline: 'A Financial App Built for UAE Students',
     heroTitle1: 'Your personal',
     heroTitle2: 'money coach',
     heroTitle3: '',
@@ -228,7 +228,7 @@ export const translations = {
     // Nav
     home: 'الرئيسية', dashboard: 'لوحتي', market: 'السوق', learn: 'تعلم', profile: 'ملفي',
     // Home hero
-    tagline: 'التطبيق المالي الأول لطلاب الإمارات',
+    tagline: 'تطبيق مالي مصمم لطلاب الإمارات',
     heroTitle1: 'مستشارك المالي',
     heroTitle2: 'الشخصي',
     heroTitle3: '',
