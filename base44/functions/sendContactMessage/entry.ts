@@ -69,6 +69,7 @@ export default async function(req: Request): Promise<Response> {
 
     return Response.json({ success: true });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : 'Unable to send your message right now.' }, { status: 500 });
+    console.error('sendContactMessage failed', error);
+    return Response.json({ error: 'Unable to send your message right now.' }, { status: 500 });
   }
 }
