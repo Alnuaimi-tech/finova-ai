@@ -1,14 +1,16 @@
 import { useEffect, useRef } from 'react';
 
+// UAE (ADX/DFM) symbols are not available in TradingView's free embed and showed a red "!".
+// Only symbols the free ticker can display are listed here.
 const symbols = [
-  { proName: 'DFM:DFMGI', title: 'DFM General Index' },
-  { proName: 'ADX:FADGI', title: 'ADX General Index' },
-  { proName: 'DFM:EMAAR', title: 'Emaar Properties' },
-  { proName: 'ADX:ADCB', title: 'Abu Dhabi Commercial Bank' },
-  { proName: 'ADX:ADIB', title: 'Abu Dhabi Islamic Bank' },
-  { proName: 'ADX:ADNOCDIST', title: 'ADNOC Distribution' },
-  { proName: 'DFM:ALDAR', title: 'Aldar Properties' },
-  { proName: 'DFM:EMIRATESNBD', title: 'Emirates NBD' },
+  { proName: 'FX_IDC:USDAED', title: 'USD / AED' },
+  { proName: 'AMEX:SPY', title: 'S&P 500 ETF' },
+  { proName: 'NASDAQ:QQQ', title: 'Nasdaq-100 ETF' },
+  { proName: 'NASDAQ:AAPL', title: 'Apple' },
+  { proName: 'NASDAQ:NVDA', title: 'NVIDIA' },
+  { proName: 'BITSTAMP:BTCUSD', title: 'Bitcoin' },
+  { proName: 'BITSTAMP:ETHUSD', title: 'Ethereum' },
+  { proName: 'FX:EURUSD', title: 'EUR / USD' },
 ];
 
 export default function TradingViewTickerTape() {
