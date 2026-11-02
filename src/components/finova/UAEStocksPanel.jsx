@@ -1,6 +1,19 @@
 import { useMemo, useState } from 'react';
-import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
 import DemoDFMCard from '@/components/market/DemoDFMCard';
+
+// TradingView's free embed no longer renders ADX symbols ("This symbol is only available on TradingView"),
+// so ADX cards link to the live TradingView page instead of showing a broken chart or a made-up price.
+function LiveLinkCard({ symbol }) {
+  const url = `https://www.tradingview.com/symbols/${symbol.replace(':', '-')}/`;
+  return (
+    <div className="rounded-xl border border-border bg-secondary/20 p-4 space-y-3">
+      <p className="text-sm text-muted-foreground">Live ADX prices aren't included in our free data plan, so we don't show a price here.</p>
+      <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+        View live price on TradingView ↗
+      </a>
+    </div>
+  );
+}
 
 const stocks = [
   { symbol: 'ADX:ADCB', name: 'Abu Dhabi Commercial Bank', exchange: 'ADX', sector: 'Banking' },
@@ -20,8 +33,8 @@ export default function UAEStocksPanel() {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl bg-blue-500/5 border border-blue-500/20 p-4">
-        <p className="text-sm font-semibold text-blue-300">Live ADX charts &amp; illustrative DFM data</p>
-        <p className="text-xs text-muted-foreground mt-1">ADX stocks show real TradingView market data. DFM instruments are shown as demo data — live DFM pricing requires a licensed data feed.</p>
+        <p className="text-sm font-semibold text-blue-300">UAE stocks: what's live and what's demo</p>
+        <p className="text-xs text-muted-foreground mt-1">ADX stocks link to their live TradingView page. DFM prices are labeled demo data — live UAE pricing requires a licensed data feed.</p>
       </div>
       <div className="flex gap-1.5 flex-wrap">
         {sectors.map(sector => (
@@ -40,7 +53,7 @@ export default function UAEStocksPanel() {
             </div>
             {stock.exchange === 'DFM'
               ? <DemoDFMCard symbol={stock.symbol} />
-              : <TradingViewMiniChart symbol={stock.symbol} />}
+              : <LiveLinkCard symbol={stock.symbol} />}
           </article>
         ))}
       </div>
