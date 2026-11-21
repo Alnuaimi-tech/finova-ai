@@ -155,7 +155,14 @@ function ensureSpace(doc, y, needed, limit = 268) {
   return y;
 }
 
-export async function generatePDFReport({ data, metrics, riskLevel, insights, recommendations }) {
+export async function generatePDFReport({ data, metrics, riskLevel, insights, recommendations, lang = 'en', t }) {
+  // Arabic needs real glyph shaping and bidi ordering, which jsPDF's built-in fonts
+  // cannot do — that report is rendered as an RTL HTML page and saved as a PDF.
+  if (lang === 'ar' && t) {
+    const { generateArabicPDFReport } = await import('./generateArabicPDFReport');
+    return generateArabicPDFReport({ data, metrics, riskLevel, insights, recommendations, t });
+  }
+
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   fillPageBg(doc);
 

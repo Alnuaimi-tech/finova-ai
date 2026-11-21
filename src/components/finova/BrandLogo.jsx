@@ -10,7 +10,7 @@ export default function BrandLogo({ size = 'sm', showWordmark = false, showBadge
         <span className="font-space font-bold text-base text-foreground tracking-tight">FINOVA AI</span>
       )}
       {showBadge && (
-        <span className="hidden sm:inline text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 ml-1">UAE 🇦🇪</span>
+        <span className="hidden sm:inline text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 ms-1">UAE 🇦🇪</span>
       )}
     </Link>
   );

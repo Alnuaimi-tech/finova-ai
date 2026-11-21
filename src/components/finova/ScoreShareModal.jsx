@@ -14,7 +14,8 @@ const RISK_STYLE = {
 };
 
 export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
+  const badgeFont = lang === 'ar' ? '"Noto Sans Arabic", Inter, sans-serif' : 'Inter, sans-serif';
   const d = t.dash;
   const riskText = d.risk[riskLevel] || riskLevel;
   const badgeRef = useRef(null);
@@ -110,7 +111,8 @@ export default function ScoreShareModal({ open, onClose, score, riskLevel }) {
                   background: 'linear-gradient(160deg, #0a0f1f 0%, #131a2e 60%, #1a2238 100%)',
                   borderRadius: 24,
                   padding: 28,
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: badgeFont,
+                  direction: lang === 'ar' ? 'rtl' : 'ltr',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>

@@ -196,7 +196,7 @@ export default function Dashboard() {
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
-    await generatePDFReport({ data, metrics, riskLevel, insights, recommendations });
+    await generatePDFReport({ data, metrics, riskLevel, insights, recommendations, lang, t });
     setDownloading(false);
   };
 

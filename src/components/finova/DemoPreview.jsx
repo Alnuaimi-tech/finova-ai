@@ -1,23 +1,17 @@
 import { motion } from 'framer-motion';
 import { Brain, TrendingUp, ShieldAlert, Wallet, PiggyBank, ReceiptText, Lock, Star, ArrowRight, Cpu, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-
-const PREMIUM_BENEFITS = [
-  'Save your financial profile',
-  'Access live UAE market data',
-  'Use the AI Financial Coach',
-  'Track savings goals & progress',
-  'Build your virtual portfolio',
-];
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function DemoPreview({ data, metrics, riskLevel, riskColor, insights, onReset }) {
   const { navigateToLogin } = useAuth();
+  const { t } = useLanguage();
 
   const stats = [
-    { icon: Wallet, label: 'Monthly Income', value: `AED ${data.monthly_income.toLocaleString()}`, color: 'text-gold', border: 'border-yellow-500/20', bg: 'bg-yellow-500/10' },
-    { icon: ReceiptText, label: 'Total Expenses', value: `AED ${metrics.totalExpenses.toLocaleString()}`, color: 'text-blue-400', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
-    { icon: PiggyBank, label: 'Monthly Surplus', value: `${metrics.monthlySurplus >= 0 ? '+' : ''}AED ${metrics.monthlySurplus.toLocaleString()}`, color: metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400', border: metrics.monthlySurplus >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20', bg: metrics.monthlySurplus >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10' },
-    { icon: ShieldAlert, label: 'Savings Rate', value: `${metrics.savingsRate}%`, color: metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400', border: metrics.savingsRate >= 20 ? 'border-emerald-500/20' : 'border-amber-500/20', bg: metrics.savingsRate >= 20 ? 'bg-emerald-500/10' : 'bg-amber-500/10' },
+    { icon: Wallet, label: t.dash.statIncome, value: `AED ${data.monthly_income.toLocaleString('en-US')}`, color: 'text-gold', border: 'border-yellow-500/20', bg: 'bg-yellow-500/10' },
+    { icon: ReceiptText, label: t.dash.statExpenses, value: `AED ${metrics.totalExpenses.toLocaleString('en-US')}`, color: 'text-blue-400', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
+    { icon: PiggyBank, label: t.dash.statSurplus, value: `${metrics.monthlySurplus >= 0 ? '+' : ''}AED ${metrics.monthlySurplus.toLocaleString('en-US')}`, color: metrics.monthlySurplus >= 0 ? 'text-emerald-400' : 'text-rose-400', border: metrics.monthlySurplus >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20', bg: metrics.monthlySurplus >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10' },
+    { icon: ShieldAlert, label: t.dash.statSavingsRate, value: `${metrics.savingsRate}%`, color: metrics.savingsRate >= 20 ? 'text-emerald-400' : metrics.savingsRate >= 10 ? 'text-amber-400' : 'text-rose-400', border: metrics.savingsRate >= 20 ? 'border-emerald-500/20' : 'border-amber-500/20', bg: metrics.savingsRate >= 20 ? 'bg-emerald-500/10' : 'bg-amber-500/10' },
   ];
 
   return (
@@ -28,7 +22,7 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
 
         {/* Score Card */}
         <div className="glass-card rounded-2xl border border-border p-6 text-center glow-gold">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-4">Your FINOVA Financial Score</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-4">{t.demo.scoreLabel}</p>
           <div className="flex items-center justify-center gap-4 mb-3">
             <div className="w-28 h-28 rounded-full flex items-center justify-center"
               style={{ background: `conic-gradient(${riskColor.hex} ${metrics.score * 3.6}deg, rgba(255,255,255,0.05) 0deg)` }}>
@@ -39,10 +33,10 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
             </div>
           </div>
           <span className={`inline-block text-sm font-bold px-4 py-1.5 rounded-full border ${riskColor.bg} ${riskColor.border} ${riskColor.text}`}>
-            {riskLevel}
+            {t.dash.risk[riskLevel] || riskLevel}
           </span>
           <p className="text-xs text-muted-foreground mt-3 max-w-xs mx-auto">
-            Based on your income, expenses, savings rate, and spending patterns.
+            {t.dash.scoreCaption}
           </p>
         </div>
 
@@ -56,7 +50,7 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
                   <Icon className={`w-3.5 h-3.5 ${s.color}`} />
                   <span className="text-xs text-muted-foreground">{s.label}</span>
                 </div>
-                <p className={`text-sm font-bold font-space ${s.color} truncate`}>{s.value}</p>
+                <p className={`text-sm font-bold font-space ${s.color} truncate`} dir="ltr">{s.value}</p>
               </div>
             );
           })}
@@ -65,7 +59,7 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
         {/* 2 free AI insights */}
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium flex items-center gap-1.5">
-            <Brain className="w-3 h-3 text-primary" /> AI Insights Preview
+            <Brain className="w-3 h-3 text-primary" /> {t.demo.insightsPreview}
           </p>
           {insights.slice(0, 2).map((ins, i) => (
             <div key={i} className="glass-card rounded-xl border border-border p-4 flex gap-3 items-start">
@@ -109,17 +103,17 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
       >
         <div className="glass-card rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-xl p-6 shadow-2xl"
           style={{ boxShadow: '0 0 40px rgba(245,196,65,0.12), 0 20px 60px rgba(0,0,0,0.5)' }}>
-          
+
           <div className="flex items-center gap-2 mb-1">
             <div className="w-7 h-7 gold-gradient rounded-lg flex items-center justify-center">
               <Lock className="w-3.5 h-3.5 text-primary-foreground" />
             </div>
-            <span className="font-space font-bold text-base text-foreground">Create a Free Account to Continue</span>
+            <span className="font-space font-bold text-base text-foreground">{t.demo.createTitle}</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-4">Unlock your full dashboard, AI coaching, and market tools.</p>
+          <p className="text-xs text-muted-foreground mb-4">{t.demo.createDesc}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-5">
-            {PREMIUM_BENEFITS.map((b, i) => (
+            {t.demo.benefits.map((b, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
                 {b}
@@ -133,20 +127,20 @@ export default function DemoPreview({ data, metrics, riskLevel, riskColor, insig
               className="flex-1 gold-gradient text-primary-foreground py-3 rounded-xl font-space font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-lg"
             >
               <Star className="w-4 h-4" />
-              Create Free Account
-              <ArrowRight className="w-4 h-4" />
+              {t.demo.createBtn}
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </button>
             <button
               onClick={navigateToLogin}
               className="flex-1 glass-card border border-border py-3 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:border-white/10 transition-all flex items-center justify-center gap-2"
             >
               <Cpu className="w-4 h-4" />
-              Log In to Existing Account
+              {t.demo.loginBtn}
             </button>
           </div>
 
           <button onClick={onReset} className="w-full mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors">
-            ← Try again with different numbers
+            {t.demo.tryAgain}
           </button>
         </div>
       </motion.div>

@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import { useLanguage } from '@/lib/LanguageContext';
 import { format } from 'date-fns';
 import { BarChart3, Users, LogIn, RefreshCw, Download } from 'lucide-react';
 import MobileNav from '../components/finova/MobileNav';
-import SkipLink from '@/components/finova/SkipLink';
+import SkipLink from '../components/finova/SkipLink';
 
 export default function Analytics() {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
+  const A = t.an;
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,15 +66,15 @@ export default function Analytics() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-primary" />
-            <span className="font-space font-bold text-base text-foreground">App Analytics</span>
+            <span className="font-space font-bold text-base text-foreground">{A.title}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={loadEvents} aria-label="Refresh" className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={loadEvents} aria-label={A.refresh} className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors">
               <RefreshCw className="w-4 h-4" />
             </button>
             <button onClick={exportCSV} className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors rounded-lg px-3 py-1.5">
               <Download className="w-3.5 h-3.5" />
-              Export CSV
+              {A.exportCsv}
             </button>
           </div>
         </div>
@@ -81,9 +84,9 @@ export default function Analytics() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: BarChart3, label: 'App Opens', value: totalOpens, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-            { icon: LogIn, label: 'Logins', value: totalLogins, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-            { icon: Users, label: 'Unique Users', value: uniqueUsers, color: 'text-gold', bg: 'bg-yellow-500/10' },
+            { icon: BarChart3, label: A.opens, value: totalOpens, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+            { icon: LogIn, label: A.logins, value: totalLogins, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+            { icon: Users, label: A.users, value: uniqueUsers, color: 'text-gold', bg: 'bg-yellow-500/10' },
           ].map((s, i) => {
             const Icon = s.icon;
             return (
@@ -98,7 +101,7 @@ export default function Analytics() {
 
         {/* Filter */}
         <div className="flex gap-2">
-          {[['all', 'All Events'], ['app_open', 'App Opens'], ['user_login', 'Logins']].map(([val, label]) => (
+          {[['all', A.allEvents], ['app_open', A.opens], ['user_login', A.logins]].map(([val, label]) => (
             <button
               key={val}
               onClick={() => setFilter(val)}
@@ -115,17 +118,17 @@ export default function Analytics() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Date & Time</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Event</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">User</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</th>
+                  <th className="text-start px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{A.dateTime}</th>
+                  <th className="text-start px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{A.event}</th>
+                  <th className="text-start px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{A.user}</th>
+                  <th className="text-start px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{A.email}</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={4} className="text-center py-10 text-muted-foreground text-xs">Loading...</td></tr>
+                  <tr><td colSpan={4} className="text-center py-10 text-muted-foreground text-xs">{A.loading}</td></tr>
                 ) : filtered.length === 0 ? (
-                  <tr><td colSpan={4} className="text-center py-10 text-muted-foreground text-xs">No events recorded yet.</td></tr>
+                  <tr><td colSpan={4} className="text-center py-10 text-muted-foreground text-xs">{A.empty}</td></tr>
                 ) : filtered.map((e, i) => (
                   <tr key={e.id} className={`border-b border-border/50 hover:bg-secondary/20 transition-colors ${i % 2 === 0 ? '' : 'bg-secondary/10'}`}>
                     <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
@@ -133,10 +136,10 @@ export default function Analytics() {
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${e.event_type === 'user_login' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
-                        {e.event_type === 'user_login' ? 'Login' : 'App Open'}
+                        {e.event_type === 'user_login' ? A.login : A.appOpen}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-foreground">{e.user_name || <span className="text-muted-foreground">Guest</span>}</td>
+                    <td className="px-4 py-3 text-xs text-foreground">{e.user_name || <span className="text-muted-foreground">{A.guest}</span>}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{e.user_email || '—'}</td>
                   </tr>
                 ))}

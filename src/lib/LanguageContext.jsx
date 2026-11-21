@@ -311,6 +311,53 @@ export const translations = {
         'Try logging out and back in again',
       ],
     },
+    an: {
+      title: 'App Analytics', refresh: 'Refresh', exportCsv: 'Export CSV',
+      opens: 'App Opens', logins: 'Logins', users: 'Unique Users',
+      allEvents: 'All Events',
+      dateTime: 'Date & Time', event: 'Event', user: 'User', email: 'Email',
+      loading: 'Loading...', empty: 'No events recorded yet.',
+      guest: 'Guest', login: 'Login', appOpen: 'App Open',
+    },
+    // ── Legal pages ──
+    legal: {
+      eyebrow: 'Legal',
+      contactLink: 'Contact',
+      terms: {
+        title: 'Terms of Service',
+        updated: 'Last updated: September 2026',
+        sections: [
+          { h: '1. Acceptance of Terms', p: [['By accessing or using FINOVA AI ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.']] },
+          { h: '2. Educational Purpose — Not Financial Advice', p: [['FINOVA AI is an educational tool designed to help users explore personal finance concepts. The Financial Health Score, AI Coach responses, market data, portfolio simulator, and all other outputs are provided for informational and educational purposes only. They do not constitute licensed financial, investment, legal, or tax advice. You should consult a qualified, licensed financial advisor before making any real investment or financial decisions.']] },
+          { h: '3. Simulated & Demo Data', p: [["Market and portfolio features may include simulated, illustrative, or demo data. Some instruments (for example, DFM-listed stocks) are displayed using demo prices because a licensed real-time data feed is not available at this project's scale. No figure presented should be treated as a live or guaranteed real-time market price. The virtual portfolio uses virtual funds only — no real money is involved."]] },
+          { h: '4. User Accounts & Inputs', p: [['You are responsible for the accuracy of the financial information you enter and for maintaining the confidentiality of your account credentials. You agree not to misuse the Service, attempt to disrupt it, or use it for any unlawful purpose.']] },
+          { h: '5. Third-Party Services', p: [['The Service integrates third-party tools for market data and AI features. We do not control and are not responsible for the accuracy or availability of third-party data, widgets, or models.']] },
+          { h: '6. Disclaimer of Warranties', p: [['The Service is provided "as is" and "as available" without warranties of any kind. We do not guarantee that the Service will be error-free, uninterrupted, or that results will be accurate or suitable for your situation.']] },
+          { h: '7. Limitation of Liability', p: [['To the maximum extent permitted by law, FINOVA AI and its authors shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of, or reliance on, the Service.']] },
+          { h: '8. Changes to These Terms', p: [['We may update these Terms from time to time. Continued use of the Service after changes are posted constitutes acceptance of the revised Terms.']] },
+          { h: '9. Governing Law', p: [['These Terms are governed by the laws of the United Arab Emirates.']] },
+          { h: '10. Contact', p: [['Questions about these Terms? Reach out via the ', { link: true }, ' page.']] },
+        ],
+      },
+      privacy: {
+        title: 'Privacy Policy',
+        updated: 'Last updated: September 2026',
+        sections: [
+          { h: '1. Information We Collect', p: [['When you use FINOVA AI, we may collect: ', { b: 'account information' }, ' such as your name and email (managed by the platform\'s authentication); ', { b: 'financial inputs' }, ' you enter for analysis (income, expenses, savings); and ', { b: 'usage events' }, ' such as app opens and logins used for aggregate analytics.']] },
+          { h: '2. How We Use Your Data', p: [['Your inputs power your personal Financial Health Score, AI Coach responses, and portfolio simulations. Usage events help us understand and improve the Service. We do not sell your personal data.']] },
+          { h: '3. Data Storage', p: [
+            ['Your data is stored securely on the Base44 platform infrastructure that hosts the Service. Financial profiles and virtual holdings are associated with your account and protected by role-based access control — only you and authorized admins can access your records.'],
+            ['For analytics, a private backup copy of app data (including financial profile entries and account emails) is mirrored to a separate database operated by the project owner. It is refreshed regularly, is not used to display anything in the app, is never sold, and is visible only to the project owner. To have your data removed from both places, contact us.'],
+          ] },
+          { h: '4. AI & Third-Party Services', p: [['To deliver AI coaching and market data, the Service sends your prompts and inputs to third-party AI models and market-data providers. Avoid entering sensitive personal data beyond what the Service requires. Third-party widgets (such as TradingView) may set their own cookies in accordance with their own policies.']] },
+          { h: '5. Local Storage', p: [["The Service uses your browser's local storage and session storage to remember preferences such as your language choice and in-progress analysis data. This data stays on your device."]] },
+          { h: '6. Your Rights', p: [['You may request access to or deletion of your data by contacting us. You can also sign out or stop using the Service at any time.']] },
+          { h: "7. Children's Privacy", p: [['FINOVA AI is designed for students and young adults. The Service is not directed at children under 13, and we do not knowingly collect data from them.']] },
+          { h: '8. Changes to This Policy', p: [['We may update this Privacy Policy from time to time. Continued use of the Service after changes are posted constitutes acceptance of the revised policy.']] },
+          { h: '9. Contact', p: [['Questions about privacy? Reach out via the ', { link: true }, ' page.']] },
+        ],
+      },
+    },
     // InputForm
     enterData: 'Enter Your Financial Data',
     aiAnalysis: 'Smart Financial Analysis',
@@ -364,6 +411,28 @@ export const translations = {
     // Demo
     demoTitle: 'Get Your Financial Score — Free',
     demoSubtitle: 'No account needed. Takes 2 minutes.',
+    demo: {
+      scoreLabel: 'Your FINOVA Financial Score',
+      insightsPreview: 'AI Insights Preview',
+      createTitle: 'Create a Free Account to Continue',
+      createDesc: 'Unlock your full dashboard, AI coaching, and market tools.',
+      benefits: [
+        'Save your financial profile',
+        'Access live UAE market data',
+        'Use the AI Financial Coach',
+        'Track savings goals & progress',
+        'Build your virtual portfolio',
+      ],
+      createBtn: 'Create Free Account',
+      loginBtn: 'Log In to Existing Account',
+      tryAgain: '← Try again with different numbers',
+      analyzing: 'Analyzing your finances…',
+      getScore: 'Get My Financial Score',
+      required: 'Required',
+      expensesHint: 'Break down your spending — leave blank if not applicable',
+      savings: 'Savings',
+      localNote: '🔒 Data processed locally — never stored or shared',
+    },
     // Learn page
     learnBadge: 'UAE Financial Literacy',
     learnModules: [
@@ -801,6 +870,53 @@ export const translations = {
         'تجربة تسجيل الخروج ثم الدخول مرة أخرى',
       ],
     },
+    an: {
+      title: 'تحليلات التطبيق', refresh: 'تحديث', exportCsv: 'تصدير CSV',
+      opens: 'مرات فتح التطبيق', logins: 'مرات الدخول', users: 'مستخدمون فريدون',
+      allEvents: 'كل الأحداث',
+      dateTime: 'التاريخ والوقت', event: 'الحدث', user: 'المستخدم', email: 'البريد',
+      loading: 'جارٍ التحميل...', empty: 'لم تُسجّل أي أحداث بعد.',
+      guest: 'زائر', login: 'دخول', appOpen: 'فتح التطبيق',
+    },
+    // ── الصفحات القانونية ──
+    legal: {
+      eyebrow: 'قانوني',
+      contactLink: 'تواصل معنا',
+      terms: {
+        title: 'شروط الخدمة',
+        updated: 'آخر تحديث: سبتمبر 2026',
+        sections: [
+          { h: '1. قبول الشروط', p: [['بدخولك إلى فينوفا AI («الخدمة») أو استخدامك لها، فإنك توافق على الالتزام بشروط الخدمة هذه. وإذا لم توافق عليها، يرجى عدم استخدام الخدمة.']] },
+          { h: '2. غرض تعليمي — ليست نصيحة مالية', p: [['فينوفا AI أداة تعليمية تهدف إلى مساعدة المستخدمين على استكشاف مفاهيم التمويل الشخصي. تُقدَّم نقاط الصحة المالية وإجابات المستشار الذكي وبيانات السوق ومحاكي المحفظة وكل المخرجات الأخرى لأغراض معلوماتية وتعليمية فقط. وهي لا تشكل نصيحة مالية أو استثمارية أو قانونية أو ضريبية مرخصة. وينبغي عليك استشارة مستشار مالي مؤهل ومرخص قبل اتخاذ أي قرار استثماري أو مالي حقيقي.']] },
+          { h: '3. بيانات محاكاة وتجريبية', p: [['قد تشمل ميزات السوق والمحفظة بيانات محاكاة أو توضيحية أو تجريبية. وتُعرض بعض الأدوات (مثل الأسهم المدرجة في سوق دبي) بأسعار تجريبية لأن تغذية البيانات الحية المرخصة غير متاحة بحجم هذا المشروع. ولا ينبغي اعتبار أي رقم معروض سعراً مباشراً أو مضموناً في السوق. وتستخدم المحفظة الافتراضية أموالاً افتراضية فقط — دون أي أموال حقيقية.']] },
+          { h: '4. حسابات المستخدمين والمدخلات', p: [['أنت مسؤول عن دقة المعلومات المالية التي تدخلها وعن الحفاظ على سرية بيانات الدخول إلى حسابك. وتوافق على عدم إساءة استخدام الخدمة أو محاولة تعطيلها أو استخدامها لأي غرض غير قانوني.']] },
+          { h: '5. خدمات الأطراف الثالثة', p: [['تدمج الخدمة أدوات من أطراف ثالثة لبيانات السوق وميزات الذكاء الاصطناعي. ونحن لا نتحكم في دقة أو توفر بيانات أو أدوات أو نماذج تلك الأطراف ولسنا مسؤولين عنها.']] },
+          { h: '6. إخلاء الضمانات', p: [['تُقدَّم الخدمة «كما هي» و«حسب توفرها» دون أي ضمانات من أي نوع. ولا نضمن أن تكون الخدمة خالية من الأخطاء أو متصلة دون انقطاع، ولا أن تكون النتائج دقيقة أو مناسبة لحالتك.']] },
+          { h: '7. حدود المسؤولية', p: [['إلى أقصى حد يسمح به القانون، لا يتحمل فينوفا AI ومؤلفوه أي مسؤولية عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية تنشأ عن استخدامك للخدمة أو اعتمادك عليها.']] },
+          { h: '8. تعديلات هذه الشروط', p: [['قد نحدّث هذه الشروط من وقت لآخر. ويُعدّ استمرارك في استخدام الخدمة بعد نشر التعديلات قبولاً للشروط المعدلة.']] },
+          { h: '9. القانون الحاكم', p: [['تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة.']] },
+          { h: '10. التواصل', p: [['هل لديك أسئلة عن هذه الشروط؟ راسلنا عبر صفحة ', { link: true }, '.']] },
+        ],
+      },
+      privacy: {
+        title: 'سياسة الخصوصية',
+        updated: 'آخر تحديث: سبتمبر 2026',
+        sections: [
+          { h: '1. المعلومات التي نجمعها', p: [['عند استخدامك فينوفا AI، قد نجمع: ', { b: 'معلومات الحساب' }, ' مثل اسمك وبريدك الإلكتروني (وتُدار عبر نظام المصادقة في المنصة)؛ و', { b: 'المدخلات المالية' }, ' التي تدخلها للتحليل (الدخل والمصاريف والمدخرات)؛ و', { b: 'أحداث الاستخدام' }, ' مثل فتح التطبيق وتسجيل الدخول المستخدمة لتحليلات إجمالية.']] },
+          { h: '2. كيف نستخدم بياناتك', p: [['تُستخدم مدخلاتك لحساب نقاط صحتك المالية وإجابات المستشار الذكي ومحاكاة المحفظة. وتساعدنا أحداث الاستخدام على فهم الخدمة وتحسينها. ونحن لا نبيع بياناتك الشخصية.']] },
+          { h: '3. تخزين البيانات', p: [
+            ['تُحفظ بياناتك بأمان على بنية منصة Base44 التي تستضيف الخدمة. وترتبط الملفات المالية والحيازات الافتراضية بحسابك وتُحمى عبر صلاحيات الوصول القائمة على الأدوار — فلا يطّلع على سجلاتك إلا أنت والمسؤولون المخوّلون.'],
+            ['ولأغراض التحليلات، تُنسخ نسخة احتياطية خاصة من بيانات التطبيق (بما فيها مدخلات الملف المالي وبريد الحساب) إلى قاعدة بيانات منفصلة يديرها مالك المشروع. وتُحدَّث بانتظام، ولا تُستخدم لعرض أي شيء في التطبيق، ولا تُباع أبداً، ولا يراها إلا مالك المشروع. ولحذف بياناتك من المكانين، تواصل معنا.'],
+          ] },
+          { h: '4. الذكاء الاصطناعي وخدمات الأطراف الثالثة', p: [['لتقديم المستشار الذكي وبيانات السوق، ترسل الخدمة طلباتك ومدخلاتك إلى نماذج ذكاء اصطناعي ومزودي بيانات سوق من أطراف ثالثة. ويرجى تجنب إدخال بيانات شخصية حساسة تتجاوز ما تتطلبه الخدمة. وقد تضع أدوات الأطراف الثالثة (مثل TradingView) ملفات تعريف ارتباط خاصة بها وفق سياساتها.']] },
+          { h: '5. التخزين المحلي', p: [['تستخدم الخدمة التخزين المحلي وتخزين الجلسة في متصفحك لتذكّر تفضيلاتك مثل اختيار اللغة وبيانات التحليل الجاري. وتبقى هذه البيانات على جهازك.']] },
+          { h: '6. حقوقك', p: [['يمكنك طلب الاطلاع على بياناتك أو حذفها بالتواصل معنا. ويمكنك أيضاً تسجيل الخروج أو التوقف عن استخدام الخدمة في أي وقت.']] },
+          { h: '7. خصوصية الأطفال', p: [['صُمم فينوفا AI للطلاب والشباب. والخدمة ليست موجهة للأطفال دون 13 عاماً، ولا نجمع بياناتهم عن قصد.']] },
+          { h: '8. تعديلات هذه السياسة', p: [['قد نحدّث سياسة الخصوصية هذه من وقت لآخر. ويُعدّ استمرارك في استخدام الخدمة بعد نشر التعديلات قبولاً للسياسة المعدلة.']] },
+          { h: '9. التواصل', p: [['هل لديك أسئلة عن الخصوصية؟ راسلنا عبر صفحة ', { link: true }, '.']] },
+        ],
+      },
+    },
     // ── تقرير PDF ──
     pdf: {
       title: 'تقرير التقدم المالي',
@@ -880,6 +996,28 @@ export const translations = {
     // Demo
     demoTitle: 'احصل على نقاطك المالية — مجاناً',
     demoSubtitle: 'لا حاجة لحساب. يستغرق دقيقتين.',
+    demo: {
+      scoreLabel: 'نقاط فينوفا المالية',
+      insightsPreview: 'معاينة رؤى الذكاء الاصطناعي',
+      createTitle: 'أنشئ حساباً مجانياً للمتابعة',
+      createDesc: 'افتح لوحتك الكاملة والمستشار الذكي وأدوات السوق.',
+      benefits: [
+        'احفظ ملفك المالي',
+        'اطّلع على بيانات السوق الإماراتي المباشرة',
+        'استخدم المستشار المالي الذكي',
+        'تابع أهداف الادخار وتقدمك',
+        'ابنِ محفظتك الافتراضية',
+      ],
+      createBtn: 'أنشئ حساباً مجانياً',
+      loginBtn: 'الدخول إلى حساب موجود',
+      tryAgain: '← حاول مرة أخرى بأرقام مختلفة',
+      analyzing: 'جارٍ تحليل أموالك…',
+      getScore: 'احصل على نقاطي المالية',
+      required: 'مطلوب',
+      expensesHint: 'فصّل إنفاقك — واترك الحقول الفارغة إن لم تنطبق',
+      savings: 'المدخرات',
+      localNote: '🔒 تُعالَج البيانات محلياً — لا تُحفظ ولا تُشارك',
+    },
     // Learn page
     learnBadge: 'الثقافة المالية في الإمارات',
     learnModules: [

@@ -71,7 +71,7 @@ export default function Home() {
             <div className="flex items-baseline gap-1">
               <span className="font-space font-bold text-xl text-foreground tracking-tight">FINOVA</span>
               <span className="font-space font-bold text-xl text-primary">AI</span>
-              <span className="hidden sm:inline text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 ml-1 font-medium">UAE 🇦🇪</span>
+              <span className="hidden sm:inline text-[10px] text-muted-foreground border border-border rounded-full px-2 py-0.5 ms-1 font-medium">UAE 🇦🇪</span>
             </div>
           </div>
           <nav className="hidden md:flex items-center gap-1.5">
@@ -90,7 +90,7 @@ export default function Home() {
               {lang === 'en' ? 'العربية' : 'English'}
             </button>
             <button onClick={openDemo}
-              className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg font-space font-semibold text-xs ml-1 hover:opacity-90 transition-opacity">
+              className="gold-gradient text-primary-foreground px-4 py-2 rounded-lg font-space font-semibold text-xs ms-1 hover:opacity-90 transition-opacity">
               {t.tryFree}
             </button>
           </nav>
@@ -224,8 +224,8 @@ export default function Home() {
       </main>
       <footer className="relative border-t border-border/50 px-4 md:px-6 py-8 mb-16 md:mb-0">
         <div className="max-w-6xl mx-auto flex items-center justify-center gap-6">
-          <button onClick={() => navigate('/about')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</button>
-          <button onClick={() => navigate('/contact')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</button>
+          <button onClick={() => navigate('/about')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.common.about}</button>
+          <button onClick={() => navigate('/contact')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t.common.contact}</button>
         </div>
       </footer>
       <MobileNav />
