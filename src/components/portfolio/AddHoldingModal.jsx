@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const UAE_STOCKS_LIST = [
   { ticker: 'DEWA', name: 'Dubai Electricity & Water Authority', exchange: 'DFM', emoji: '💡', sector: 'Utilities' },
@@ -16,6 +17,8 @@ const UAE_STOCKS_LIST = [
 ];
 
 export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) {
+  const { t } = useLanguage();
+  const mk = t.mk;
   const [selected, setSelected] = useState(UAE_STOCKS_LIST[0]);
   const [quantity, setQuantity] = useState('10');
   const [purchasePrice, setPurchasePrice] = useState(currentPrices[UAE_STOCKS_LIST[0].ticker]?.toString() || '');
@@ -51,7 +54,7 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
           className="glass-card rounded-2xl border border-border p-6 w-full max-w-md"
         >
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold font-space text-foreground">Add Virtual Holding</h2>
+            <h2 className="text-base font-bold font-space text-foreground">{mk.addHoldingTitle}</h2>
             <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">
               <X className="w-4 h-4" />
             </button>
@@ -59,7 +62,7 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-muted-foreground font-medium block mb-2">Select Stock</label>
+              <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.selectStock}</label>
               <select
                 value={selected.ticker}
                 onChange={e => handleStockChange(e.target.value)}
@@ -73,7 +76,7 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-muted-foreground font-medium block mb-2">Quantity (Shares)</label>
+                <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.quantityShares}</label>
                 <input
                   type="number" min="1" value={quantity}
                   onChange={e => setQuantity(e.target.value)}
@@ -81,9 +84,9 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
                 />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground font-medium block mb-2">Buy Price (AED)</label>
+                <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.buyPrice}</label>
                 <input
-                  type="number" required placeholder="Enter buy price" step="0.01" min="0.01" value={purchasePrice}
+                  type="number" required step="0.01" min="0.01" value={purchasePrice}
                   onChange={e => setPurchasePrice(e.target.value)}
                   className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-primary/50"
                 />
@@ -91,8 +94,8 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
             </div>
 
             <div className="rounded-xl bg-primary/5 border border-primary/20 px-4 py-3">
-              <p className="text-xs text-muted-foreground">Total Investment</p>
-              <p className="text-lg font-bold text-gold font-space">
+              <p className="text-xs text-muted-foreground">{mk.totalInvestment}</p>
+              <p className="text-lg font-bold text-gold font-space" dir="ltr">
                 AED {(parseFloat(quantity || 0) * parseFloat(purchasePrice || 0)).toFixed(2)}
               </p>
             </div>
@@ -102,7 +105,7 @@ export default function AddHoldingModal({ onClose, onAdd, currentPrices = {} }) 
               className="w-full gold-gradient text-primary-foreground py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
             >
               <Plus className="w-4 h-4" />
-              Add to Portfolio
+              {mk.addToPortfolio}
             </button>
           </form>
         </motion.div>

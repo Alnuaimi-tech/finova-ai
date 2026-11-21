@@ -3,8 +3,11 @@ import { Trash2, Pencil } from 'lucide-react';
 import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
 import DemoDFMCard from '@/components/market/DemoDFMCard';
 import { dfmDemoPrice } from '@/lib/dfmDemoData';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, index }) {
+  const { t } = useLanguage();
+  const mk = t.mk;
   const isDfm = holding.exchange === 'DFM';
   const effectivePrice = isDfm ? dfmDemoPrice(`DFM:${holding.ticker}`) : currentPrice;
   const invested = holding.purchase_price * holding.quantity;
@@ -27,25 +30,25 @@ export default function HoldingRow({ holding, currentPrice, onDelete, onEdit, in
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground truncate">{holding.name}</p>
-          <p className="text-xs text-muted-foreground">{holding.quantity} × AED {holding.purchase_price.toFixed(2)}</p>
+          <p className="text-xs text-muted-foreground" dir="ltr">{holding.quantity} × AED {holding.purchase_price.toFixed(2)}</p>
         </div>
 
-        <div className="text-right hidden sm:block">
-          <p className="text-xs text-muted-foreground">{isDfm ? 'Demo Value' : 'Value'}</p>
-          <p className="text-sm font-bold text-foreground font-space">{hasPrice ? `AED ${currentValue.toFixed(2)}` : 'Price unavailable'}</p>
+        <div className="text-end hidden sm:block">
+          <p className="text-xs text-muted-foreground">{isDfm ? mk.demoValue : mk.value}</p>
+          <p className="text-sm font-bold text-foreground font-space" dir="ltr">{hasPrice ? `AED ${currentValue.toFixed(2)}` : mk.priceUnavailable}</p>
         </div>
 
-        <div className="text-right flex-shrink-0">
+        <div className="text-end flex-shrink-0">
           {hasPrice ? <>
-            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}{pnlPct}%</p>
-            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`}>{isUp ? '+' : ''}AED {pnl.toFixed(2)}</p>
-            {isDfm && <span className="inline-block text-[9px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-1.5 py-0.5 mt-0.5">Demo</span>}
-          </> : <p className="text-xs text-muted-foreground">Return unavailable</p>}
+            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`} dir="ltr">{isUp ? '+' : ''}{pnlPct}%</p>
+            <p className={`text-xs font-bold ${isUp ? 'text-market-up' : 'text-market-down'}`} dir="ltr">{isUp ? '+' : ''}AED {pnl.toFixed(2)}</p>
+            {isDfm && <span className="inline-block text-[9px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-1.5 py-0.5 mt-0.5">{mk.demoData}</span>}
+          </> : <p className="text-xs text-muted-foreground">{mk.returnUnavailable}</p>}
         </div>
 
         <button
           onClick={() => onEdit?.(holding)}
-          className="ml-1 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0"
+          className="ms-1 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0"
         >
           <Pencil className="w-3.5 h-3.5" />
         </button>

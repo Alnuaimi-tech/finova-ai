@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Wallet, BarChart3, PiggyBank, Percent } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, BarChart3, Percent } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function PortfolioSummaryCard({ totalInvested, totalCurrentValue }) {
+  const { t } = useLanguage();
+  const mk = t.mk;
   const totalPnL = totalCurrentValue - totalInvested;
   const pnlPct = totalInvested > 0 ? ((totalPnL / totalInvested) * 100).toFixed(2) : '0.00';
   const isUp = totalPnL >= 0;
@@ -9,31 +12,31 @@ export default function PortfolioSummaryCard({ totalInvested, totalCurrentValue 
   const stats = [
     {
       icon: Wallet,
-      label: 'Total Invested',
-      value: `AED ${totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      label: mk.totalInvested,
+      value: `AED ${totalInvested.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
       border: 'border-blue-500/20',
     },
     {
       icon: BarChart3,
-      label: 'Current Value',
-      value: `AED ${totalCurrentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      label: mk.currentValue,
+      value: `AED ${totalCurrentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       color: 'text-gold',
       bg: 'bg-yellow-500/10',
       border: 'border-yellow-500/20',
     },
     {
       icon: isUp ? TrendingUp : TrendingDown,
-      label: 'Total P&L',
-      value: `${isUp ? '+' : ''}AED ${totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      label: mk.totalPnl,
+      value: `${isUp ? '+' : ''}AED ${totalPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       color: isUp ? 'text-emerald-400' : 'text-rose-400',
       bg: isUp ? 'bg-emerald-500/10' : 'bg-rose-500/10',
       border: isUp ? 'border-emerald-500/20' : 'border-rose-500/20',
     },
     {
       icon: Percent,
-      label: 'Return %',
+      label: mk.returnPct,
       value: `${isUp ? '+' : ''}${pnlPct}%`,
       color: isUp ? 'text-emerald-400' : 'text-rose-400',
       bg: isUp ? 'bg-emerald-500/10' : 'bg-rose-500/10',
@@ -57,7 +60,7 @@ export default function PortfolioSummaryCard({ totalInvested, totalCurrentValue 
               <Icon className={`w-4 h-4 ${s.color}`} />
               <span className="text-xs text-muted-foreground">{s.label}</span>
             </div>
-            <p className={`text-lg font-bold font-space ${s.color}`}>{s.value}</p>
+            <p className={`text-lg font-bold font-space ${s.color}`} dir="ltr">{s.value}</p>
           </motion.div>
         );
       })}

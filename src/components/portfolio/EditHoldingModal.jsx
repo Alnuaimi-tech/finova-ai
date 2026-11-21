@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Save } from 'lucide-react';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function EditHoldingModal({ holding, onClose, onSubmit }) {
+  const { t } = useLanguage();
+  const mk = t.mk;
   const [quantity, setQuantity] = useState(String(holding.quantity));
   const [purchasePrice, setPurchasePrice] = useState(String(holding.purchase_price));
   const [purchaseDate, setPurchaseDate] = useState(holding.purchase_date || new Date().toISOString().split('T')[0]);
@@ -28,7 +31,7 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <span className="text-xl">{holding.emoji || '📈'}</span>
-            <h2 className="text-base font-bold font-space text-foreground">Edit Holding</h2>
+            <h2 className="text-base font-bold font-space text-foreground">{mk.editHoldingTitle}</h2>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">
             <X className="w-4 h-4" />
@@ -37,13 +40,13 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
 
         <div className="rounded-xl bg-secondary/40 border border-border px-4 py-3 mb-4">
           <p className="text-sm font-semibold text-foreground">{holding.name}</p>
-          <p className="text-xs text-muted-foreground">{holding.ticker} · {holding.exchange} · {holding.sector}</p>
+          <p className="text-xs text-muted-foreground" dir="ltr">{holding.ticker} · {holding.exchange} · {holding.sector}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground font-medium block mb-2">Quantity (Shares)</label>
+              <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.quantityShares}</label>
               <input
                 type="number" min="1" value={quantity}
                 onChange={e => setQuantity(e.target.value)}
@@ -51,7 +54,7 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground font-medium block mb-2">Buy Price (AED)</label>
+              <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.buyPrice}</label>
               <input
                 type="number" step="0.01" min="0.01" value={purchasePrice}
                 onChange={e => setPurchasePrice(e.target.value)}
@@ -61,7 +64,7 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground font-medium block mb-2">Purchase Date</label>
+            <label className="text-xs text-muted-foreground font-medium block mb-2">{mk.purchaseDate}</label>
             <input
               type="date" value={purchaseDate}
               onChange={e => setPurchaseDate(e.target.value)}
@@ -70,8 +73,8 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
           </div>
 
           <div className="rounded-xl bg-primary/5 border border-primary/20 px-4 py-3">
-            <p className="text-xs text-muted-foreground">Current Value</p>
-            <p className="text-lg font-bold text-gold font-space">
+            <p className="text-xs text-muted-foreground">{mk.currentValueLabel}</p>
+            <p className="text-lg font-bold text-gold font-space" dir="ltr">
               AED {(parseFloat(quantity || 0) * parseFloat(purchasePrice || 0)).toFixed(2)}
             </p>
           </div>
@@ -81,7 +84,7 @@ export default function EditHoldingModal({ holding, onClose, onSubmit }) {
             className="w-full gold-gradient text-primary-foreground py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
           >
             <Save className="w-4 h-4" />
-            Save Changes
+            {mk.saveChanges}
           </button>
         </form>
       </motion.div>

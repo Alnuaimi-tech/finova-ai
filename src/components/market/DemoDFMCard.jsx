@@ -1,28 +1,29 @@
 import { useMemo } from 'react';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
 import { dfmDemoPrice, dfmDemoSeries, dfmUnit } from '@/lib/dfmDemoData';
-
-const DEMO_NOTE = 'Demo data — live DFM pricing requires a licensed data feed.';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function DemoDFMCard({ symbol, height = 220, compact = false }) {
+  const { t } = useLanguage();
+  const mk = t.mk;
   const price = useMemo(() => dfmDemoPrice(symbol), [symbol]);
   const series = useMemo(() => dfmDemoSeries(symbol), [symbol]);
   const unit = dfmUnit(symbol);
   const isIndex = unit === 'pts';
-  const formatted = isIndex ? price.toLocaleString(undefined, { maximumFractionDigits: 0 }) : price.toFixed(2);
+  const formatted = isIndex ? price.toLocaleString('en-US', { maximumFractionDigits: 0 }) : price.toFixed(2);
   const gradId = `dfm-grad-${symbol.replace(/[^a-z0-9]/gi, '')}`;
 
   return (
     <div className="w-full space-y-2">
       <div className="flex items-end justify-between gap-2">
         <div>
-          <p className="text-xl font-bold font-space text-foreground">
-            {isIndex ? `${formatted} pts` : `AED ${formatted}`}
+          <p className="text-xl font-bold font-space text-foreground" dir="ltr">
+            {isIndex ? `${formatted} ${mk.pts}` : `AED ${formatted}`}
           </p>
-          {!compact && <p className="text-[11px] text-muted-foreground">Illustrative reference price</p>}
+          {!compact && <p className="text-[11px] text-muted-foreground">{mk.illustrative}</p>}
         </div>
         <span className="inline-flex items-center text-[10px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-2 py-1 whitespace-nowrap">
-          Demo data
+          {mk.demoData}
         </span>
       </div>
       <div style={{ height }} className="w-full">
@@ -39,7 +40,7 @@ export default function DemoDFMCard({ symbol, height = 220, compact = false }) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-[10px] text-amber-300/80 leading-relaxed">{DEMO_NOTE}</p>
+      <p className="text-[10px] text-amber-300/80 leading-relaxed">{mk.demoNote}</p>
     </div>
   );
 }

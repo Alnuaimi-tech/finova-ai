@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function ContactForm() {
+  const { t } = useLanguage();
+  const c = t.contact;
   const [form, setForm] = useState({ name: '', email: '', message: '', website: '' });
   const [status, setStatus] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -35,17 +38,17 @@ export default function ContactForm() {
         onChange={(e) => update('website', e.target.value)}
         className="absolute h-px w-px -left-[9999px] opacity-0 overflow-hidden"
       />
-      {[['name', 'Name', 'Your name'], ['email', 'Email', 'you@example.com']].map(([key, label, placeholder]) => (
+      {[['name', c.name, c.namePlaceholder], ['email', c.email, c.emailPlaceholder]].map(([key, label, placeholder]) => (
         <label key={key} className="block text-sm font-medium text-foreground">{label}
           <input required type={key === 'email' ? 'email' : 'text'} maxLength={key === 'name' ? 100 : 200} value={form[key]} onChange={(e) => update(key, e.target.value)} placeholder={placeholder} className="mt-2 w-full rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/60" />
         </label>
       ))}
-      <label className="block text-sm font-medium text-foreground">Message
-        <textarea required maxLength={2000} rows={6} value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="How can we help?" className="mt-2 w-full resize-none rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/60" />
+      <label className="block text-sm font-medium text-foreground">{c.message}
+        <textarea required maxLength={2000} rows={6} value={form.message} onChange={(e) => update('message', e.target.value)} placeholder={c.messagePlaceholder} className="mt-2 w-full resize-none rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/60" />
       </label>
-      <button disabled={status === 'sending'} className="w-full gold-gradient text-primary-foreground rounded-xl py-3 font-space font-bold disabled:opacity-60">{status === 'sending' ? 'Sending…' : 'Send message'}</button>
-      {status === 'sent' && <p className="text-sm text-emerald-400">Thanks—your message has been received.</p>}
-      {status === 'error' && <p className="text-sm text-rose-400">{errorMessage || 'Your message could not be sent. Please try again.'}</p>}
+      <button disabled={status === 'sending'} className="w-full gold-gradient text-primary-foreground rounded-xl py-3 font-space font-bold disabled:opacity-60">{status === 'sending' ? c.sending : c.send}</button>
+      {status === 'sent' && <p className="text-sm text-emerald-400">{c.sent}</p>}
+      {status === 'error' && <p className="text-sm text-rose-400">{errorMessage || c.error}</p>}
     </form>
   );
 }

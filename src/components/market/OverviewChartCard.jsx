@@ -1,7 +1,6 @@
 import TradingViewMiniChart from '@/components/market/TradingViewMiniChart';
 import QuoteTimestamp from '@/components/market/QuoteTimestamp';
-
-const GROUP_LABELS = { indices: 'Global Indices', stocks: 'Major Stocks', crypto: 'Cryptocurrency', forex: 'Forex' };
+import { useLanguage } from '@/lib/LanguageContext';
 
 const TV_SYMBOLS = {
   'SPY': 'SPY',
@@ -15,11 +14,12 @@ const TV_SYMBOLS = {
 };
 
 export default function OverviewChartCard({ asset, quote }) {
+  const { t } = useLanguage();
   if (!quote) return null;
   const hasChange = Number.isFinite(quote.changePercent);
   const color = !hasChange ? 'text-muted-foreground' : quote.changePercent >= 0 ? 'text-market-up' : 'text-market-down';
   const tvSymbol = TV_SYMBOLS[asset.symbol] || asset.symbol;
-  const groupLabel = GROUP_LABELS[asset.group] || asset.group;
+  const groupLabel = t.mk.groups[asset.group] || asset.group;
   const subtitle = asset.exchange ? `${asset.exchange} · ${groupLabel}` : groupLabel;
   const decimals = asset.group === 'forex' ? 4 : 2;
 
@@ -36,7 +36,7 @@ export default function OverviewChartCard({ asset, quote }) {
           <span className="text-xs text-muted-foreground font-medium">{quote.currency || asset.currency || ''}</span>
         </p>
         <p className={`text-xs font-semibold mt-1 ${color}`}>
-          {hasChange ? `${quote.changePercent >= 0 ? '+' : ''}${quote.changePercent.toFixed(2)}%` : 'Daily change unavailable'}
+          {hasChange ? `${quote.changePercent >= 0 ? '+' : ''}${quote.changePercent.toFixed(2)}%` : t.mk.dailyChangeUnavailable}
         </p>
         <QuoteTimestamp fetchedAt={quote.fetchedAt} />
       </div>
