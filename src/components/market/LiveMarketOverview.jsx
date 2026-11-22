@@ -1,4 +1,5 @@
 import OverviewChartCard from '@/components/market/OverviewChartCard';
+import GoldSpotCard from '@/components/market/GoldSpotCard';
 import { useLanguage } from '@/lib/LanguageContext';
 
 const GROUPS = ['indices', 'stocks', 'crypto', 'forex'];
@@ -7,6 +8,7 @@ export default function LiveMarketOverview({ market }) {
   const { t } = useLanguage();
   return (
     <div className="space-y-6">
+      <GoldSpotCard market={market} />
       {GROUPS.map((id) => (
         <section key={id}>
           <h3 className="text-sm font-space font-bold mb-3">{t.mk.groups[id]}</h3>

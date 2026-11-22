@@ -59,9 +59,24 @@
               "batch": 1
             }
           },
-          "then": "end",
+          "then": "refresh_gold",
           "x-base44": {
             "title": "Refresh forex and stocks"
+          }
+        }
+      },
+      {
+        "refresh_gold": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "getMarketData",
+            "args": {
+              "batch": 2
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Refresh gold spot price"
           }
         }
       }

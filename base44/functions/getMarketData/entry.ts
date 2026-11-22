@@ -13,6 +13,7 @@ const assets = [
   { symbol: 'EUR/USD', name: 'Euro / US Dollar', group: 'forex', currency: 'USD' },
   { symbol: 'AAPL', name: 'Apple', group: 'stocks', exchange: 'NASDAQ', currency: 'USD' },
   { symbol: 'NVDA', name: 'NVIDIA', group: 'stocks', exchange: 'NASDAQ', currency: 'USD' },
+  { symbol: 'XAU/USD', name: 'Gold', group: 'metals', currency: 'USD', unit: 'USD' },
 ];
 
 const toNumber = value => value == null || value === '' || !Number.isFinite(Number(value)) ? null : Number(value);
@@ -53,7 +54,7 @@ export default async function(req) {
     const user = await client.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     const { batch = 0, force = false } = await req.json();
-    if (force && user.role !== 'admin') return Response.json({ error: 'Forbidden — force refresh requires admin' }, { status: 403 });
+    if (user.role !== 'admin' && (force || batch === 2)) return Response.json({ error: 'Forbidden' }, { status: 403 });
     if (!Number.isInteger(batch) || batch < 0 || batch >= Math.ceil(assets.length / batchSize)) return Response.json({ error: 'Invalid batch' }, { status: 400 });
     const store = client.asServiceRole.entities.MarketDataCache;
     let [state] = await store.filter({ key: 'twelve-data-v2' }, 'created_date', 1);
@@ -68,8 +69,9 @@ export default async function(req) {
     }
     const now = Date.now();
     if (state.lease_until > now) return Response.json({ updated: 0, message: 'Another refresh is in progress; existing prices retained.' });
-    const due = assets.slice(batch * batchSize, (batch + 1) * batchSize)
-      .filter(asset => force || now - (state.attempts?.[asset.symbol] || 0) >= 9 * 60000);
+    const batchAssets = assets.slice(batch * batchSize, (batch + 1) * batchSize);
+    const goldOnly = batchAssets.length === 1 && batchAssets[0].symbol === 'XAU/USD';
+    const due = batchAssets.filter(asset => force || now - (state.attempts?.[asset.symbol] || 0) >= 9 * 60000);
     if (!due.length) return Response.json({ updated: 0, message: 'This batch was already refreshed.' });
     const day = new Date(now).toISOString().slice(0, 10);
     const used = state.budget_day === day ? state.credits_used || 0 : 0;
@@ -106,7 +108,9 @@ export default async function(req) {
     await store.update(state.id, {
       credits_used: used + requestCount,
       lease_until: lastRequestAt + requestGapMs,
-      message: successful === due.length ? '' : 'Some prices could not refresh; last-known real values remain visible.',
+      ...(goldOnly ? {} : {
+        message: successful === due.length ? '' : 'Some prices could not refresh; last-known real values remain visible.',
+      }),
     });
     return Response.json({ updated: successful, attempted: due.map(a => a.symbol), requests: requestCount,
       stored: Object.keys(quotes), issues: Object.fromEntries(due.filter(a => issues[a.symbol]).map(a => [a.symbol, issues[a.symbol]])) });
